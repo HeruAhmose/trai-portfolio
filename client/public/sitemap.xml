@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://trai.example/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://trai.example/materials</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/true-melange</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/queen-califia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/community</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/mela-nation</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/melanina</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/founder</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/patents</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/research</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/quantum</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/energy</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/manufacturing</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/case-studies</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/timeline</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://trai.example/contact</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+</urlset>

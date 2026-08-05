@@ -1,0 +1,19 @@
+{
+  "name": "TRAI Sovereign Technology Portfolio",
+  "short_name": "TRAI",
+  "description": "Jonathan Peoples | Sovereign Technology Portfolio — Materials Science, Cybersecurity, Community Impact",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050607",
+  "theme_color": "#d6a33a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["portfolio", "technology", "research"],
+  "lang": "en-US"
+}

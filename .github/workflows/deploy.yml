@@ -1,0 +1,87 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Where to deploy
+        required: true
+        default: pages
+        type: choice
+        options: [pages, netlify, vercel]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Guard and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci --prefer-offline --no-audit
+      - name: Verified-facts guard
+        run: node scripts/check-facts.mjs
+      - name: Build
+        env:
+          VITE_SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$VITE_SITE_URL" ]; then
+            echo "::warning::SITE_URL variable not set; building with the default domain."
+          fi
+          npx vite build
+      - uses: actions/upload-artifact@v4
+        with: { name: dist, path: dist/public/ }
+
+  pages:
+    name: GitHub Pages
+    if: github.event_name == 'push' || inputs.target == 'pages'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist }
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: dist }
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+  netlify:
+    name: Netlify
+    if: inputs.target == 'netlify'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist }
+      - env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: npx --yes netlify-cli@17 deploy --dir=dist --prod
+
+  vercel:
+    name: Vercel
+    if: inputs.target == 'vercel'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist }
+      - env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: npx --yes vercel@latest deploy dist --prod --yes --token "$VERCEL_TOKEN"

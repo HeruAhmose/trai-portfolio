@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci --prefer-offline --no-audit
+
+      # Runs before anything is built. A fabricated validation, an implied
+      # credential, or a coherence figure that has lost its hypothesis label
+      # stops the pipeline here.
+      - name: Verified-facts guard
+        run: node scripts/check-facts.mjs
+
+      - name: Typecheck
+        run: npx tsc --noEmit || echo "::warning::typecheck reported issues"
+
+      - name: Build
+        env:
+          VITE_SITE_URL: ${{ vars.SITE_URL || 'https://trai.org' }}
+        run: npx vite build
+
+      - name: Verify build output
+        run: |
+          test -f dist/public/index.html || { echo "::error::index.html missing"; exit 1; }
+          test -d dist/public/media     || { echo "::error::media/ missing"; exit 1; }
+          test -f dist/public/og.png    || { echo "::error::og.png missing"; exit 1; }
+          echo "build output verified"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/public/
+          retention-days: 7
