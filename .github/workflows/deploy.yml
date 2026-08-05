@@ -53,7 +53,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: dist, path: dist }
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
@@ -67,7 +67,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: dist, path: dist }
       - env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
@@ -80,7 +80,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: dist, path: dist }
       - env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
