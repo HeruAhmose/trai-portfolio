@@ -1,11 +1,11 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 
 interface ExtremeNeonLightingProps {
   children?: React.ReactNode;
   className?: string;
   glowColor?: string;
-  intensity?: 'low' | 'medium' | 'high' | 'extreme';
+  intensity?: "low" | "medium" | "high" | "extreme";
   animated?: boolean;
 }
 
@@ -20,35 +20,35 @@ interface ExtremeNeonLightingProps {
  */
 export const ExtremeNeonLighting: React.FC<ExtremeNeonLightingProps> = ({
   children,
-  className = '',
-  glowColor = '#00D9FF',
-  intensity = 'high',
+  className = "",
+  glowColor = "#00D9FF",
+  intensity = "high",
   animated = true,
 }) => {
   const getBlurAmount = () => {
     switch (intensity) {
-      case 'low':
-        return '20px';
-      case 'medium':
-        return '40px';
-      case 'high':
-        return '60px';
-      case 'extreme':
-        return '100px';
+      case "low":
+        return "20px";
+      case "medium":
+        return "40px";
+      case "high":
+        return "60px";
+      case "extreme":
+        return "100px";
       default:
-        return '60px';
+        return "60px";
     }
   };
 
   const getOpacity = () => {
     switch (intensity) {
-      case 'low':
+      case "low":
         return 0.3;
-      case 'medium':
+      case "medium":
         return 0.5;
-      case 'high':
+      case "high":
         return 0.7;
-      case 'extreme':
+      case "extreme":
         return 1;
       default:
         return 0.7;
@@ -63,7 +63,7 @@ export const ExtremeNeonLighting: React.FC<ExtremeNeonLightingProps> = ({
       transition: {
         duration: 3,
         repeat: Infinity,
-        ease: 'easeInOut',
+        ease: "easeInOut",
       },
     },
   } as any;
@@ -95,11 +95,15 @@ export const ExtremeNeonLighting: React.FC<ExtremeNeonLightingProps> = ({
             variants={{
               initial: { opacity: getOpacity() * 0.3 },
               animate: {
-                opacity: [getOpacity() * 0.3, getOpacity() * 0.6, getOpacity() * 0.3],
+                opacity: [
+                  getOpacity() * 0.3,
+                  getOpacity() * 0.6,
+                  getOpacity() * 0.3,
+                ],
                 transition: {
                   duration: 4,
                   repeat: Infinity,
-                  ease: 'easeInOut',
+                  ease: "easeInOut",
                   delay: 0.5,
                 },
               },
@@ -122,7 +126,7 @@ export const ExtremeNeonLighting: React.FC<ExtremeNeonLightingProps> = ({
                 transition: {
                   duration: 2,
                   repeat: Infinity,
-                  ease: 'easeInOut',
+                  ease: "easeInOut",
                 },
               },
             }}
@@ -138,18 +142,22 @@ export const ExtremeNeonLighting: React.FC<ExtremeNeonLightingProps> = ({
           <div
             className="absolute inset-0 rounded-lg pointer-events-none"
             style={{
-              background: `radial-gradient(circle, ${glowColor}${Math.floor(getOpacity() * 255)
+              background: `radial-gradient(circle, ${glowColor}${Math.floor(
+                getOpacity() * 255
+              )
                 .toString(16)
-                .padStart(2, '0')} 0%, transparent 70%)`,
+                .padStart(2, "0")} 0%, transparent 70%)`,
               filter: `blur(${getBlurAmount()})`,
             }}
           />
           <div
             className="absolute inset-0 rounded-lg pointer-events-none"
             style={{
-              background: `radial-gradient(circle, ${glowColor}${Math.floor(getOpacity() * 0.5 * 255)
+              background: `radial-gradient(circle, ${glowColor}${Math.floor(
+                getOpacity() * 0.5 * 255
+              )
                 .toString(16)
-                .padStart(2, '0')} 0%, transparent 80%)`,
+                .padStart(2, "0")} 0%, transparent 80%)`,
               filter: `blur(calc(${getBlurAmount()} * 1.5))`,
             }}
           />
@@ -164,7 +172,7 @@ export const ExtremeNeonLighting: React.FC<ExtremeNeonLightingProps> = ({
         className="absolute inset-0 rounded-lg pointer-events-none opacity-50"
         style={{
           background: `linear-gradient(135deg, ${glowColor}20 0%, transparent 50%, ${glowColor}20 100%)`,
-          mixBlendMode: 'screen',
+          mixBlendMode: "screen",
         }}
       />
     </div>
@@ -183,8 +191,8 @@ interface VolumetricLightRaysProps {
 }
 
 export const VolumetricLightRays: React.FC<VolumetricLightRaysProps> = ({
-  className = '',
-  color = '#00D9FF',
+  className = "",
+  color = "#00D9FF",
   rayCount = 8,
   animated = true,
 }) => {
@@ -194,25 +202,27 @@ export const VolumetricLightRays: React.FC<VolumetricLightRaysProps> = ({
   });
 
   return (
-    <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
+    <div
+      className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}
+    >
       {rays.map((angle, i) => (
         <motion.div
           key={i}
           className="absolute origin-center"
           style={{
-            width: '2px',
-            height: '200%',
-            left: '50%',
-            top: '50%',
+            width: "2px",
+            height: "200%",
+            left: "50%",
+            top: "50%",
             background: `linear-gradient(to bottom, ${color}80 0%, ${color}40 50%, transparent 100%)`,
             transform: `translateX(-50%) translateY(-50%) rotate(${angle}deg)`,
-            filter: 'blur(2px)',
+            filter: "blur(2px)",
           }}
           animate={
             animated
               ? {
                   opacity: [0.3, 0.8, 0.3],
-                  filter: ['blur(2px)', 'blur(4px)', 'blur(2px)'],
+                  filter: ["blur(2px)", "blur(4px)", "blur(2px)"],
                 }
               : {}
           }
@@ -221,7 +231,7 @@ export const VolumetricLightRays: React.FC<VolumetricLightRaysProps> = ({
               ? {
                   duration: 3 + i * 0.2,
                   repeat: Infinity,
-                  ease: 'easeInOut',
+                  ease: "easeInOut",
                 }
               : {}
           }
@@ -244,7 +254,7 @@ interface ChromaticAberrationProps {
 
 export const ChromaticAberration: React.FC<ChromaticAberrationProps> = ({
   children,
-  className = '',
+  className = "",
   intensity = 2,
   animated = false,
 }) => {
@@ -268,7 +278,7 @@ export const ChromaticAberration: React.FC<ChromaticAberrationProps> = ({
           ? {
               duration: 4,
               repeat: Infinity,
-              ease: 'easeInOut',
+              ease: "easeInOut",
             }
           : {}
       }
@@ -286,22 +296,22 @@ interface BloomEffectProps {
   children: React.ReactNode;
   className?: string;
   color?: string;
-  intensity?: 'low' | 'medium' | 'high';
+  intensity?: "low" | "medium" | "high";
 }
 
 export const BloomEffect: React.FC<BloomEffectProps> = ({
   children,
-  className = '',
-  color = '#DAA520',
-  intensity = 'high',
+  className = "",
+  color = "#DAA520",
+  intensity = "high",
 }) => {
   const getBloomAmount = () => {
     switch (intensity) {
-      case 'low':
+      case "low":
         return 10;
-      case 'medium':
+      case "medium":
         return 20;
-      case 'high':
+      case "high":
         return 40;
       default:
         return 20;

@@ -94,7 +94,7 @@ export const createVectorGradient = (
 ) => {
   return `
     <linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
-      ${colors.map((c) => `<stop offset="${c.offset}%" stop-color="${c.color}" stop-opacity="${c.opacity}"/>`).join('')}
+      ${colors.map(c => `<stop offset="${c.offset}%" stop-color="${c.color}" stop-opacity="${c.opacity}"/>`).join("")}
     </linearGradient>
   `;
 };
@@ -102,7 +102,11 @@ export const createVectorGradient = (
 /**
  * Generate glow filter for SVG
  */
-export const createGlowFilter = (id: string, color: string, intensity: number = 4) => {
+export const createGlowFilter = (
+  id: string,
+  color: string,
+  intensity: number = 4
+) => {
   return `
     <filter id="${id}" x="-100%" y="-100%" width="300%" height="300%">
       <feGaussianBlur stdDeviation="${intensity}" result="blur"/>
@@ -123,14 +127,14 @@ export const setupPointerAura = (element: HTMLElement) => {
   const updatePointerPosition = (e: MouseEvent) => {
     const x = e.clientX;
     const y = e.clientY;
-    element.style.setProperty('--pointer-x', `${x}px`);
-    element.style.setProperty('--pointer-y', `${y}px`);
+    element.style.setProperty("--pointer-x", `${x}px`);
+    element.style.setProperty("--pointer-y", `${y}px`);
   };
 
-  document.addEventListener('pointermove', updatePointerPosition);
+  document.addEventListener("pointermove", updatePointerPosition);
 
   return () => {
-    document.removeEventListener('pointermove', updatePointerPosition);
+    document.removeEventListener("pointermove", updatePointerPosition);
   };
 };
 
@@ -140,37 +144,47 @@ export const setupPointerAura = (element: HTMLElement) => {
 export const setupScrollProgress = (element: HTMLElement) => {
   const updateProgress = () => {
     const scrollTop = window.scrollY;
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const maxScroll = Math.max(
+      1,
+      document.documentElement.scrollHeight - window.innerHeight
+    );
     const ratio = Math.min(1, Math.max(0, scrollTop / maxScroll));
     element.style.transform = `scaleX(${ratio})`;
   };
 
-  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener("scroll", updateProgress, { passive: true });
 
   return () => {
-    window.removeEventListener('scroll', updateProgress);
+    window.removeEventListener("scroll", updateProgress);
   };
 };
 
 /**
  * Motion preference detection
  */
-export const getMotionPreference = (): 'reduce' | 'normal' => {
-  if (typeof window === 'undefined') return 'normal';
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduce' : 'normal';
+export const getMotionPreference = (): "reduce" | "normal" => {
+  if (typeof window === "undefined") return "normal";
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? "reduce"
+    : "normal";
 };
 
 /**
  * Starfield canvas generation
  */
 export const generateStarfield = (canvas: HTMLCanvasElement) => {
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  const stars: Array<{ x: number; y: number; radius: number; opacity: number }> = [];
+  const stars: Array<{
+    x: number;
+    y: number;
+    radius: number;
+    opacity: number;
+  }> = [];
   const starCount = Math.floor((canvas.width * canvas.height) / 10000);
 
   for (let i = 0; i < starCount; i++) {
@@ -183,10 +197,10 @@ export const generateStarfield = (canvas: HTMLCanvasElement) => {
   }
 
   const drawStars = () => {
-    ctx.fillStyle = 'rgba(10, 14, 39, 0.02)';
+    ctx.fillStyle = "rgba(10, 14, 39, 0.02)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    stars.forEach((star) => {
+    stars.forEach(star => {
       ctx.fillStyle = `rgba(240, 207, 123, ${star.opacity})`;
       ctx.beginPath();
       ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
@@ -207,9 +221,9 @@ export const generateStarfield = (canvas: HTMLCanvasElement) => {
     canvas.height = window.innerHeight;
   };
 
-  window.addEventListener('resize', handleResize);
+  window.addEventListener("resize", handleResize);
 
   return () => {
-    window.removeEventListener('resize', handleResize);
+    window.removeEventListener("resize", handleResize);
   };
 };

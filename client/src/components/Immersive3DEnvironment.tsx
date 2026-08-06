@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 interface Room {
   id: string;
@@ -15,54 +15,54 @@ export const Immersive3DEnvironment: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [playerPos, setPlayerPos] = useState({ x: 0, y: 0, z: 0 });
   const [playerRot, setPlayerRot] = useState({ x: 0, y: 0 });
-  const [currentRoom, setCurrentRoom] = useState('lobby');
+  const [currentRoom, setCurrentRoom] = useState("lobby");
   const keysPressed = useRef<Record<string, boolean>>({});
 
   const rooms: Room[] = [
     {
-      id: 'lobby',
-      name: 'Sovereign Intelligence Hub',
+      id: "lobby",
+      name: "Sovereign Intelligence Hub",
       x: 0,
       y: 0,
       z: 0,
-      description: 'Central command center for cybersecurity operations',
-      color: '#00d9ff',
+      description: "Central command center for cybersecurity operations",
+      color: "#00d9ff",
     },
     {
-      id: 'lab',
-      name: 'Material Science Laboratory',
+      id: "lab",
+      name: "Material Science Laboratory",
       x: 500,
       y: 0,
       z: 0,
-      description: 'Advanced research facility for composite materials',
-      color: '#ffd700',
+      description: "Advanced research facility for composite materials",
+      color: "#ffd700",
     },
     {
-      id: 'quantum',
-      name: 'Quantum Computing Chamber',
+      id: "quantum",
+      name: "Quantum Computing Chamber",
       x: 0,
       y: 500,
       z: 0,
-      description: 'Quantum coherence and computing research',
-      color: '#ff00ff',
+      description: "Quantum coherence and computing research",
+      color: "#ff00ff",
     },
     {
-      id: 'energy',
-      name: 'Energy Harvesting Station',
+      id: "energy",
+      name: "Energy Harvesting Station",
       x: -500,
       y: 0,
       z: 0,
-      description: 'Renewable energy generation and storage',
-      color: '#00ff00',
+      description: "Renewable energy generation and storage",
+      color: "#00ff00",
     },
     {
-      id: 'ai',
-      name: 'AI Governance Center',
+      id: "ai",
+      name: "AI Governance Center",
       x: 0,
       y: -500,
       z: 0,
-      description: 'Queen Califia ethical AI systems',
-      color: '#ff6600',
+      description: "Queen Califia ethical AI systems",
+      color: "#ff6600",
     },
   ];
 
@@ -76,19 +76,19 @@ export const Immersive3DEnvironment: React.FC = () => {
       keysPressed.current[e.key.toLowerCase()] = false;
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
   // Update player position
   useEffect(() => {
     const interval = setInterval(() => {
-      setPlayerPos((prev) => {
+      setPlayerPos(prev => {
         let newX = prev.x;
         let newY = prev.y;
         let newZ = prev.z;
@@ -96,15 +96,15 @@ export const Immersive3DEnvironment: React.FC = () => {
         const speed = 5;
         const keys = keysPressed.current;
 
-        if (keys['w'] || keys['arrowup']) newZ -= speed;
-        if (keys['s'] || keys['arrowdown']) newZ += speed;
-        if (keys['a'] || keys['arrowleft']) newX -= speed;
-        if (keys['d'] || keys['arrowright']) newX += speed;
-        if (keys[' ']) newY += speed;
-        if (keys['shift']) newY -= speed;
+        if (keys["w"] || keys["arrowup"]) newZ -= speed;
+        if (keys["s"] || keys["arrowdown"]) newZ += speed;
+        if (keys["a"] || keys["arrowleft"]) newX -= speed;
+        if (keys["d"] || keys["arrowright"]) newX += speed;
+        if (keys[" "]) newY += speed;
+        if (keys["shift"]) newY -= speed;
 
         // Check room proximity
-        rooms.forEach((room) => {
+        rooms.forEach(room => {
           const dx = newX - room.x;
           const dy = newY - room.y;
           const dz = newZ - room.z;
@@ -138,8 +138,8 @@ export const Immersive3DEnvironment: React.FC = () => {
       });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   // Render 3D environment
@@ -147,18 +147,18 @@ export const Immersive3DEnvironment: React.FC = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = 1000;
     canvas.height = 600;
 
     // Clear canvas
-    ctx.fillStyle = '#0a0e27';
+    ctx.fillStyle = "#0a0e27";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw starfield background
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = "#ffffff";
     for (let i = 0; i < 100; i++) {
       const x = (Math.sin(i * 12.9898) * 43758.5453) % canvas.width;
       const y = (Math.sin(i * 78.233) * 43758.5453) % canvas.height;
@@ -167,11 +167,11 @@ export const Immersive3DEnvironment: React.FC = () => {
     }
 
     // Draw horizon
-    ctx.fillStyle = '#1a2a4a';
+    ctx.fillStyle = "#1a2a4a";
     ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
 
     // Draw rooms
-    rooms.forEach((room) => {
+    rooms.forEach(room => {
       const dx = room.x - playerPos.x;
       const dy = room.y - playerPos.y;
       const dz = room.z - playerPos.z;
@@ -204,40 +204,57 @@ export const Immersive3DEnvironment: React.FC = () => {
 
         // Draw label
         ctx.fillStyle = room.color;
-        ctx.font = 'bold 12px monospace';
-        ctx.textAlign = 'center';
+        ctx.font = "bold 12px monospace";
+        ctx.textAlign = "center";
         ctx.fillText(room.name, screenX, screenY - size / 2 - 15);
 
         // Highlight current room
         if (room.id === currentRoom) {
-          ctx.strokeStyle = '#ffd700';
+          ctx.strokeStyle = "#ffd700";
           ctx.lineWidth = 3;
-          ctx.strokeRect(screenX - size / 2 - 5, screenY - size / 2 - 5, size + 10, size + 10);
+          ctx.strokeRect(
+            screenX - size / 2 - 5,
+            screenY - size / 2 - 5,
+            size + 10,
+            size + 10
+          );
         }
       }
     });
 
     // Draw HUD
-    ctx.fillStyle = '#00d9ff';
-    ctx.font = 'bold 12px monospace';
-    ctx.textAlign = 'left';
+    ctx.fillStyle = "#00d9ff";
+    ctx.font = "bold 12px monospace";
+    ctx.textAlign = "left";
 
-    ctx.fillText(`Position: (${playerPos.x.toFixed(0)}, ${playerPos.y.toFixed(0)}, ${playerPos.z.toFixed(0)})`, 10, 20);
-    ctx.fillText(`Rotation: (${(playerRot.x * 180 / Math.PI).toFixed(0)}°, ${(playerRot.y * 180 / Math.PI).toFixed(0)}°)`, 10, 35);
+    ctx.fillText(
+      `Position: (${playerPos.x.toFixed(0)}, ${playerPos.y.toFixed(0)}, ${playerPos.z.toFixed(0)})`,
+      10,
+      20
+    );
+    ctx.fillText(
+      `Rotation: (${((playerRot.x * 180) / Math.PI).toFixed(0)}°, ${((playerRot.y * 180) / Math.PI).toFixed(0)}°)`,
+      10,
+      35
+    );
 
-    const currentRoomData = rooms.find((r) => r.id === currentRoom);
+    const currentRoomData = rooms.find(r => r.id === currentRoom);
     if (currentRoomData) {
       ctx.fillStyle = currentRoomData.color;
       ctx.fillText(`Current: ${currentRoomData.name}`, 10, 50);
-      ctx.fillStyle = '#ffd700';
-      ctx.font = '11px monospace';
+      ctx.fillStyle = "#ffd700";
+      ctx.font = "11px monospace";
       ctx.fillText(currentRoomData.description, 10, 65);
     }
 
     // Draw controls
-    ctx.fillStyle = '#00ff00';
-    ctx.font = 'bold 11px monospace';
-    ctx.fillText('WASD/Arrows: Move | Space/Shift: Up/Down | Mouse: Look', 10, canvas.height - 10);
+    ctx.fillStyle = "#00ff00";
+    ctx.font = "bold 11px monospace";
+    ctx.fillText(
+      "WASD/Arrows: Move | Space/Shift: Up/Down | Mouse: Look",
+      10,
+      canvas.height - 10
+    );
   }, [playerPos, playerRot, currentRoom, rooms]);
 
   return (
@@ -257,13 +274,13 @@ export const Immersive3DEnvironment: React.FC = () => {
         />
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          {rooms.map((room) => (
+          {rooms.map(room => (
             <motion.div
               key={room.id}
               className={`p-3 rounded border text-center text-xs transition-all ${
                 currentRoom === room.id
-                  ? 'bg-black/70 border-gold-400/70'
-                  : 'bg-black/50 border-cyan-400/30'
+                  ? "bg-black/70 border-gold-400/70"
+                  : "bg-black/50 border-cyan-400/30"
               }`}
               whileHover={{ scale: 1.05 }}
             >
@@ -272,15 +289,21 @@ export const Immersive3DEnvironment: React.FC = () => {
                 style={{ backgroundColor: room.color }}
               />
               <div className="font-bold text-cyan-400">{room.name}</div>
-              <div className="text-gold-400 mt-1 text-xs">{room.description}</div>
+              <div className="text-gold-400 mt-1 text-xs">
+                {room.description}
+              </div>
             </motion.div>
           ))}
         </div>
 
         <div className="mt-6 p-4 bg-black/50 rounded border border-cyan-400/20">
-          <h4 className="text-sm font-bold text-cyan-400 mb-2">Navigation Guide</h4>
+          <h4 className="text-sm font-bold text-cyan-400 mb-2">
+            Navigation Guide
+          </h4>
           <div className="text-xs text-gold-400 font-mono space-y-1">
-            <div>• Use WASD or Arrow Keys to navigate through the environment</div>
+            <div>
+              • Use WASD or Arrow Keys to navigate through the environment
+            </div>
             <div>• Press Space to move up, Shift to move down</div>
             <div>• Move your mouse to look around</div>
             <div>• Approach rooms to enter them and view their content</div>

@@ -1,25 +1,25 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 interface AdvancedAnimationsProps {
   children: React.ReactNode;
-  type?: 'morph' | 'liquid' | 'particle' | 'wave' | 'pulse' | 'shimmer';
+  type?: "morph" | "liquid" | "particle" | "wave" | "pulse" | "shimmer";
   intensity?: number;
   className?: string;
 }
 
 export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
   children,
-  type = 'pulse',
+  type = "pulse",
   intensity = 1,
-  className = '',
+  className = "",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       @keyframes morph-shape {
         0%, 100% {
@@ -128,12 +128,12 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
   }, []);
 
   const animationClass = {
-    morph: 'morph-animation',
-    liquid: 'liquid-animation',
-    particle: 'particle-animation',
-    wave: 'wave-animation',
-    pulse: 'pulse-animation',
-    shimmer: 'shimmer-animation',
+    morph: "morph-animation",
+    liquid: "liquid-animation",
+    particle: "particle-animation",
+    wave: "wave-animation",
+    pulse: "pulse-animation",
+    shimmer: "shimmer-animation",
   }[type];
 
   return (

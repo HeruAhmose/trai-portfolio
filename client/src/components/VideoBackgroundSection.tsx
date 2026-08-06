@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 /**
  * Video Background Section Component
@@ -40,16 +40,16 @@ export const VideoBackgroundSection: React.FC<VideoBackgroundProps> = ({
       console.warn(`Failed to load video: ${videoUrl}`);
     };
 
-    video.addEventListener('loadeddata', handleLoadedData);
-    video.addEventListener('error', handleError);
+    video.addEventListener("loadeddata", handleLoadedData);
+    video.addEventListener("error", handleError);
 
     // Attempt to load video
     video.src = videoUrl;
     video.load();
 
     return () => {
-      video.removeEventListener('loadeddata', handleLoadedData);
-      video.removeEventListener('error', handleError);
+      video.removeEventListener("loadeddata", handleLoadedData);
+      video.removeEventListener("error", handleError);
     };
   }, [videoUrl]);
 
@@ -67,7 +67,7 @@ export const VideoBackgroundSection: React.FC<VideoBackgroundProps> = ({
             playsInline
             style={{
               opacity: isVideoLoaded ? 1 : 0,
-              transition: 'opacity 0.5s ease-in-out',
+              transition: "opacity 0.5s ease-in-out",
             }}
           />
         ) : (
@@ -107,7 +107,7 @@ export const VideoBackgroundSection: React.FC<VideoBackgroundProps> = ({
           <motion.div
             className="mb-6 flex justify-center"
             initial={{ width: 0 }}
-            whileInView={{ width: '60px' }}
+            whileInView={{ width: "60px" }}
             transition={{ delay: 0.2, duration: 0.6 }}
           >
             <div
@@ -176,19 +176,19 @@ export const VideoBackgroundSection: React.FC<VideoBackgroundProps> = ({
  */
 export const createPlaceholderVideoUrl = (color: string): string => {
   // Create a simple animated canvas video as placeholder
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = 1920;
   canvas.height = 1080;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
 
-  if (!ctx) return '';
+  if (!ctx) return "";
 
   // Draw gradient
   const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  gradient.addColorStop(0, color + '40');
-  gradient.addColorStop(1, '#000000');
+  gradient.addColorStop(0, color + "40");
+  gradient.addColorStop(1, "#000000");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  return canvas.toDataURL('video/mp4');
+  return canvas.toDataURL("video/mp4");
 };

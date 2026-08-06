@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface Particle {
   x: number;
@@ -14,7 +14,7 @@ export const MassiveParticleSystem: React.FC<{
   particleCount?: number;
   intensity?: number;
   className?: string;
-}> = ({ particleCount = 50000, intensity = 1, className = '' }) => {
+}> = ({ particleCount = 50000, intensity = 1, className = "" }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const animationRef = useRef<number | undefined>(undefined);
@@ -23,7 +23,7 @@ export const MassiveParticleSystem: React.FC<{
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d', {}) as CanvasRenderingContext2D | null;
+    const ctx = canvas.getContext("2d", {}) as CanvasRenderingContext2D | null;
     if (!ctx) return;
 
     // Set canvas size
@@ -50,7 +50,7 @@ export const MassiveParticleSystem: React.FC<{
       frameCount++;
 
       // Clear with fade effect
-      ctx.fillStyle = 'rgba(5, 5, 15, 0.05)';
+      ctx.fillStyle = "rgba(5, 5, 15, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Update and draw particles
@@ -96,7 +96,7 @@ export const MassiveParticleSystem: React.FC<{
         ctx.fillRect(p.x, p.y, p.size, p.size);
       }
 
-      ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+      ctx.shadowColor = "rgba(0, 0, 0, 0)";
       animationRef.current = requestAnimationFrame(animate);
     };
 
@@ -108,10 +108,10 @@ export const MassiveParticleSystem: React.FC<{
       canvas.height = window.innerHeight;
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }

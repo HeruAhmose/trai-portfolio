@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 /**
  * Advanced 3D visualization using Canvas 3D rendering
@@ -15,7 +15,7 @@ export const AdvancedThreeDVisualization = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Set canvas size
@@ -25,7 +25,7 @@ export const AdvancedThreeDVisualization = () => {
     };
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener("resize", resizeCanvas);
 
     // Track mouse position
     const handleMouseMove = (e: MouseEvent) => {
@@ -35,7 +35,7 @@ export const AdvancedThreeDVisualization = () => {
       };
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
 
     // 3D Point class
     class Point3D {
@@ -110,7 +110,7 @@ export const AdvancedThreeDVisualization = () => {
       time += 0.01;
 
       // Clear with fade
-      ctx.fillStyle = 'rgba(10, 14, 39, 0.15)';
+      ctx.fillStyle = "rgba(10, 14, 39, 0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const centerX = canvas.width / 2;
@@ -118,7 +118,7 @@ export const AdvancedThreeDVisualization = () => {
       const focalLength = 300;
 
       // Update and project particles
-      particles.forEach((particle) => {
+      particles.forEach(particle => {
         particle.update();
 
         // Apply mouse influence
@@ -201,14 +201,14 @@ export const AdvancedThreeDVisualization = () => {
       ctx.rotate(time * 0.1);
 
       // Outer ring
-      ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+      ctx.strokeStyle = "rgba(255, 215, 0, 0.3)";
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(0, 0, 150, 0, Math.PI * 2);
       ctx.stroke();
 
       // Inner hexagon
-      ctx.strokeStyle = 'rgba(0, 217, 255, 0.3)';
+      ctx.strokeStyle = "rgba(0, 217, 255, 0.3)";
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let i = 0; i < 6; i++) {
@@ -229,8 +229,8 @@ export const AdvancedThreeDVisualization = () => {
     animate();
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("mousemove", handleMouseMove);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
@@ -242,14 +242,22 @@ export const AdvancedThreeDVisualization = () => {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ background: 'radial-gradient(ellipse at center, rgba(10,14,39,0.8) 0%, rgba(5,7,20,1) 100%)' }}
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(10,14,39,0.8) 0%, rgba(5,7,20,1) 100%)",
+        }}
       />
 
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/50">
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, repeatType: 'loop', ease: 'linear' }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "loop",
+              ease: "linear",
+            }}
             className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full"
           />
         </div>
@@ -277,10 +285,10 @@ export const HolographicMetrics = ({
           className="relative"
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-mono text-foreground">{metric.label}</span>
-            <span
-              className="text-sm font-mono text-primary animate-pulse-opacity"
-            >
+            <span className="text-sm font-mono text-foreground">
+              {metric.label}
+            </span>
+            <span className="text-sm font-mono text-primary animate-pulse-opacity">
               {Math.round((metric.value / metric.max) * 100)}%
             </span>
           </div>
@@ -292,7 +300,7 @@ export const HolographicMetrics = ({
               whileInView={{ width: `${(metric.value / metric.max) * 100}%` }}
               transition={{ duration: 1, delay: idx * 0.1 }}
               style={{
-                boxShadow: `0 0 20px ${metric.color.includes('yellow') ? '#ffd700' : '#00d9ff'}`,
+                boxShadow: `0 0 20px ${metric.color.includes("yellow") ? "#ffd700" : "#00d9ff"}`,
               }}
             />
           </div>
@@ -310,8 +318,18 @@ export const HolographicGrid = () => {
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <svg className="w-full h-full opacity-20" preserveAspectRatio="none">
         <defs>
-          <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-            <path d="M 50 0 L 0 0 0 50" fill="none" stroke="url(#gridGradient)" strokeWidth="1" />
+          <pattern
+            id="grid"
+            width="50"
+            height="50"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M 50 0 L 0 0 0 50"
+              fill="none"
+              stroke="url(#gridGradient)"
+              strokeWidth="1"
+            />
           </pattern>
           <linearGradient id="gridGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffd700" stopOpacity="0.3" />
@@ -325,8 +343,9 @@ export const HolographicGrid = () => {
       <motion.div
         className="absolute inset-0 animate-scan-line"
         style={{
-          background: 'linear-gradient(180deg, transparent 0%, rgba(0, 217, 255, 0.1) 50%, transparent 100%)',
-          backgroundSize: '100% 200%',
+          background:
+            "linear-gradient(180deg, transparent 0%, rgba(0, 217, 255, 0.1) 50%, transparent 100%)",
+          backgroundSize: "100% 200%",
         }}
       />
     </div>

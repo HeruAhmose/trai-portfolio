@@ -1,5 +1,5 @@
-import { useNeonCursorTrail } from '@/hooks/useNeonCursorTrail';
-import { useEffect, useState } from 'react';
+import { useNeonCursorTrail } from "@/hooks/useNeonCursorTrail";
+import { useEffect, useState } from "react";
 
 interface NeonCursorTrailProps {
   enabled?: boolean;
@@ -20,7 +20,7 @@ export const NeonCursorTrail = ({ enabled = true }: NeonCursorTrailProps) => {
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-50"
       style={{
-        mixBlendMode: 'screen',
+        mixBlendMode: "screen",
       }}
     />
   );

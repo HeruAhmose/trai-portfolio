@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 export const WebGLShaderEffects: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -7,7 +7,7 @@ export const WebGLShaderEffects: React.FC = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext('webgl2');
+    const gl = canvas.getContext("webgl2");
     if (!gl) return;
 
     // Set canvas size
@@ -99,14 +99,17 @@ export const WebGLShaderEffects: React.FC = () => {
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error('Shader compilation error:', gl.getShaderInfoLog(shader));
+        console.error("Shader compilation error:", gl.getShaderInfoLog(shader));
         return null;
       }
       return shader;
     };
 
     const vertexShader = compileShader(vertexShaderSource, gl.VERTEX_SHADER);
-    const fragmentShader = compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER);
+    const fragmentShader = compileShader(
+      fragmentShaderSource,
+      gl.FRAGMENT_SHADER
+    );
 
     if (!vertexShader || !fragmentShader) return;
 
@@ -118,32 +121,33 @@ export const WebGLShaderEffects: React.FC = () => {
     gl.linkProgram(program);
 
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error('Program linking error:', gl.getProgramInfoLog(program));
+      console.error("Program linking error:", gl.getProgramInfoLog(program));
       return;
     }
 
     // Create buffer
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    const positions = new Float32Array([
-      -1, -1, 1, -1, -1, 1, 1, 1,
-    ]);
+    const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
     gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
     // Get attribute location
-    const positionAttributeLocation = gl.getAttribLocation(program, 'position');
+    const positionAttributeLocation = gl.getAttribLocation(program, "position");
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
     // Get uniform locations
-    const resolutionUniformLocation = gl.getUniformLocation(program, 'resolution');
-    const timeUniformLocation = gl.getUniformLocation(program, 'time');
-    const mouseUniformLocation = gl.getUniformLocation(program, 'mouse');
+    const resolutionUniformLocation = gl.getUniformLocation(
+      program,
+      "resolution"
+    );
+    const timeUniformLocation = gl.getUniformLocation(program, "time");
+    const mouseUniformLocation = gl.getUniformLocation(program, "mouse");
 
     // Track mouse position
     let mouseX = 0;
     let mouseY = 0;
-    window.addEventListener('mousemove', (e) => {
+    window.addEventListener("mousemove", e => {
       mouseX = e.clientX / window.innerWidth;
       mouseY = e.clientY / window.innerHeight;
     });
@@ -171,11 +175,11 @@ export const WebGLShaderEffects: React.FC = () => {
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', () => {});
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", () => {});
     };
   }, []);
 
@@ -183,7 +187,7 @@ export const WebGLShaderEffects: React.FC = () => {
     <canvas
       ref={canvasRef}
       className="fixed top-0 left-0 w-full h-full -z-10 opacity-20"
-      style={{ mixBlendMode: 'screen' }}
+      style={{ mixBlendMode: "screen" }}
     />
   );
 };
