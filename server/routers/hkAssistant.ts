@@ -113,13 +113,32 @@ export const hkAssistantRouter = router({
           messages,
         });
 
-        const assistantMessage =
-          response.choices[0]?.message?.content || 'I apologize, but I was unable to process your question.';
+        /* The model may return either a plain string or an array of content
+           blocks. Normalize here, at the boundary, so every consumer of this
+           procedure receives a string. Previously the raw union leaked into
+           the client and broke its typing. */
+        const raw = response.choices[0]?.message?.content;
+        const assistantMessage: string =
+          typeof raw === 'string'
+            ? raw
+            : Array.isArray(raw)
+              ? raw
+                  .map((part: unknown) =>
+                    typeof part === 'string'
+                      ? part
+                      : (part && typeof part === 'object' && 'text' in part
+                          ? String((part as { text?: unknown }).text ?? '')
+                          : '')
+                  )
+                  .join('')
+              : '';
+        const finalMessage: string =
+          assistantMessage.trim() || 'I apologize, but I was unable to process your question.';
 
         // Save to persistent memory and award points
         if (input.sessionId) {
           await db.saveConversationMessage(input.sessionId, 'user', input.question);
-          await db.saveConversationMessage(input.sessionId, 'assistant', String(assistantMessage));
+          await db.saveConversationMessage(input.sessionId, 'assistant', finalMessage);
           const history = await db.getConversationHistory(input.sessionId, 5);
           if (history.length <= 2) {
             await db.addPoints(input.sessionId, 15, 'hk-conversationalist');
@@ -136,7 +155,7 @@ export const hkAssistantRouter = router({
 
         return {
           success: true,
-          response: assistantMessage,
+          response: finalMessage,
           conversationId: `hk-${Date.now()}`,
           sessionId: input.sessionId,
         };

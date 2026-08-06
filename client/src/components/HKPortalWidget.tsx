@@ -41,14 +41,38 @@ export function HKPortalWidget() {
   const send = async (text: string) => {
     if (!text.trim() || isLoading) return;
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content: text };
-    setMessages(prev => [...prev, userMsg]);
+
+    /* The router's schema requires `question`, not `message`. Sending the wrong
+       key meant every request failed zod validation before it reached the
+       model, so the widget could only ever return its error string. */
+    const history = messages
+      .filter((m) => m.id !== '0')            /* drop the canned greeting */
+      .map((m) => ({ role: m.role, content: m.content }));
+
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setIsLoading(true);
     try {
-      const result = await queryHK.mutateAsync({ message: text, sessionId });
-      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: result.response }]);
+      const result = await queryHK.mutateAsync({
+        question: text,
+        conversationHistory: history,
+        sessionId,
+      });
+      /* Typed explicitly: without it, TypeScript widens the object literal and
+         it stops being assignable to SetStateAction<Message[]>. */
+      const reply: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: result.response,
+      };
+      setMessages((prev) => [...prev, reply]);
     } catch {
-      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: 'The bridge is temporarily unavailable. Please try again.' }]);
+      const fail: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'The bridge is temporarily unavailable. Please try again.',
+      };
+      setMessages((prev) => [...prev, fail]);
     } finally {
       setIsLoading(false);
     }

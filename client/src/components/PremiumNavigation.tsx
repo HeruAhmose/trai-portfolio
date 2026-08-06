@@ -76,7 +76,7 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
           <a href="/" className="flex items-center gap-3 text-2xl font-bold text-gradient tracking-widest">
             TRAI
             <img
-              src="/manus-storage/headshot1_fb711a3f.jpg"
+              src="/media/archive/founder-portrait.jpg"
               alt="Jonathan Peoples"
               className="w-8 h-8 rounded-full object-cover object-top border border-[#d8aa43]/30 hidden xl:block"
               style={{ filter: 'none' }}

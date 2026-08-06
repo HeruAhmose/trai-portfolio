@@ -4,11 +4,11 @@ import { motion } from 'framer-motion';
 
 
 const PHOTOS = {
-  headshot: '/manus-storage/headshot1_fb711a3f.jpg',
-  navyWhites: '/manus-storage/navy-whites_cf342aba.jpg',
-  footballSalisbury: '/manus-storage/football-salisbury_118f7bb4.webp',
-  trackKannapolis: '/manus-storage/track-kannapolis_c3422516.jpg',
-  football2006: '/manus-storage/football-2006_6d3ae5f7.jpg',
+  headshot: '/media/archive/founder-portrait.jpg',
+  navyWhites: '/media/archive/navy-whites.jpg',
+  footballSalisbury: '/media/archive/salisbury-44.jpg',
+  trackKannapolis: '/media/archive/track-handoff.jpg',
+  football2006: '/media/archive/maritime-portrait.jpg',
 };
 
 const C = {

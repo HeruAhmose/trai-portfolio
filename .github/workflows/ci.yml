@@ -36,7 +36,7 @@ jobs:
         run: node scripts/check-facts.mjs
 
       - name: Typecheck
-        run: npx tsc --noEmit || echo "::warning::typecheck reported issues"
+        run: npx tsc --noEmit
 
       - name: Build
         env:

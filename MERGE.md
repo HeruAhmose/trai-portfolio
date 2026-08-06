@@ -101,3 +101,64 @@ Clean checkout, no `node_modules`:
 `tsc --noEmit` still reports pre-existing errors in `_core/hooks/useAuth.ts` and
 tRPC router typing. They predate all of this and are unrelated. That is why the
 CI typecheck is advisory while the facts guard is a hard gate.
+
+---
+
+# Follow-up: HK widget and type errors
+
+## The HK widget was broken, not just mistyped
+
+It sent `{ message: text }`. The router's zod schema requires `question`. Every
+request failed validation before it reached the model, so the widget could only
+ever return its own error string — "The bridge is temporarily unavailable."
+Anyone who typed into it got that, every time.
+
+Fixed, and two things added while in there:
+
+- **Conversation history is now sent.** The router accepts
+  `conversationHistory` and always did; the widget never passed it, so H.K. had
+  no memory within a session even though the server was built for it. The canned
+  greeting is filtered out so it does not pollute the context.
+- **Replies are explicitly typed as `Message`.** Without the annotation
+  TypeScript widens the object literal and it stops being assignable to
+  `SetStateAction<Message[]>` — the second reported error.
+
+## 38 type errors to zero
+
+Most of them were not real. `@types/node` and `vite` are declared in
+`package.json` but were absent from `node_modules` after an earlier
+`--package-lock-only` regeneration, so `tsc` could not resolve `vite/client` or
+Node globals and cascaded. A clean `npm install` cleared 37 of them.
+
+The one genuine error was in the H.K. response path: the model can return
+either a string or an array of content blocks, and the raw union was leaking
+through the procedure into the client. Normalized at the server boundary —
+where it belongs — rather than patched in the widget. The server already did
+`String(assistantMessage)` when writing to the database, so it half-knew about
+this; now every consumer of the procedure gets a string.
+
+**`npx tsc --noEmit` now reports 0 errors**, so the CI typecheck has been
+restored to a hard gate. It was advisory only because 38 pre-existing errors
+would have blocked every deploy.
+
+## Eight more broken images
+
+v10 had reintroduced `/manus-storage/` paths that do not exist in the
+repository — including the founder headshot, which renders in the navigation on
+every page. All eight repointed to real processed assets across
+`PremiumNavigation`, `CommunityImpact`, `MaterialsScience` and `FounderPage`.
+
+**Four remain and were deliberately left alone:** the Mela Nation vision images.
+There is no equivalent asset in the media set, and substituting an unrelated
+render there would be worse than a broken image — it would misrepresent a
+venture that is still in development. They need real artwork, or the section
+needs to change.
+
+## Verified
+
+Clean install, no `node_modules`:
+
+- `npm install` · **`tsc --noEmit` 0 errors** · facts guard clean across 248
+  files · `vite build` succeeds
+- Served and loaded: **20/20 media images, zero 404s**, 7 organ buttons,
+  ecosystem bar, intro plays and clears, zero console errors, zero overflow

@@ -26,7 +26,7 @@ export default function CommunityImpact() {
             Addressing the digital divide in North Carolina. Free, community-based digital navigation services across the Triangle Area (Durham, Raleigh, Chapel Hill). North Carolina has over 1.2M residents lacking adequate broadband access (NCDIT 2023 data).
           </p>
           <div className="mt-8 overflow-hidden rounded-lg max-w-2xl">
-            <img src="/manus-storage/techbridge-promo_2ff0d92f.jpg" alt="TechBridge Collective — Tech Problems Don't Wait. Neither Do We." className="w-full h-auto" />
+            <img src="/media/tamerian/lattice.jpg" alt="TechBridge Collective — Tech Problems Don't Wait. Neither Do We." className="w-full h-auto" />
           </div>
         </motion.div>
       </section>
