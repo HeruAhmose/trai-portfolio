@@ -14,7 +14,7 @@ void main() {
 }`;
 
 const FRAG = `#version 300 es
-precision mediump float;
+precision highp float;
 uniform float u_time;
 uniform vec2 u_resolution;
 uniform vec3 u_tint;
@@ -181,65 +181,21 @@ export function SovereignNebulaGL({ className = '', variant = 'default' }: { cla
     resize();
     window.addEventListener('resize', resize);
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let startTime = 0;
-    let visible = true;
-
-    const drawFrame = (t: number) => {
+    const render = (ts: number) => {
+      if (!startTime) startTime = ts;
+      const t = (ts - startTime) / 1000;
       gl.uniform1f(uTime, t);
       gl.uniform2f(uRes, canvas.width, canvas.height);
       gl.uniform3f(uTint, tint[0], tint[1], tint[2]);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    };
-
-    const render = (ts: number) => {
-      if (!visible) return;
-      if (!startTime) startTime = ts;
-      drawFrame((ts - startTime) / 1000);
       rafRef.current = requestAnimationFrame(render);
     };
-
-    if (reduced) {
-      // One composed frame, then stop. The nebula reads as a still image.
-      drawFrame(6.0);
-    } else {
-      rafRef.current = requestAnimationFrame(render);
-    }
-
-    // A full-screen fragment shader is the most expensive thing on the page.
-    // Once the hero scrolls away there is no reason to keep paying for it.
-    let io: IntersectionObserver | null = null;
-    if (!reduced && 'IntersectionObserver' in window) {
-      io = new IntersectionObserver(
-        ([e]) => {
-          const wasVisible = visible;
-          visible = e.isIntersecting;
-          if (visible && !wasVisible) {
-            startTime = 0;
-            rafRef.current = requestAnimationFrame(render);
-          }
-        },
-        { threshold: 0 }
-      );
-      io.observe(canvas);
-    }
-
-    const onHide = () => {
-      if (document.hidden) {
-        visible = false;
-      } else if (!reduced) {
-        visible = true;
-        startTime = 0;
-        rafRef.current = requestAnimationFrame(render);
-      }
-    };
-    document.addEventListener('visibilitychange', onHide);
+    rafRef.current = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('resize', resize);
-      document.removeEventListener('visibilitychange', onHide);
-      if (io) io.disconnect();
       gl.deleteProgram(prog);
     };
   }, [variant]);

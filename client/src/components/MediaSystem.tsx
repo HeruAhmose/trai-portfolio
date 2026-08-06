@@ -20,7 +20,7 @@ import {
   TAMERIAN,
   TECHNOLOGIES,
 } from '@/lib/media';
-import sovereignAudio from '@/lib/sovereignAudio';
+import { useSovereignSound } from '@/hooks/useSovereignSound';
 
 const CHIP: Record<Provenance, string> = {
   photograph: 'text-[#d8aa43] border-[#d8aa43]/35',
@@ -121,7 +121,9 @@ export const VideoPanel: React.FC<{
 /* ----------------------------------------------------------- ArchiveRail
    The origin story as a horizontal rail. A father's №44, a son's №6, the
    track, the academy, and a community ranking two decades later. */
-export const ArchiveRail: React.FC = () => (
+export const ArchiveRail: React.FC = () => {
+  const sound = useSovereignSound();
+  return (
   <div className="relative">
     <div
       className="flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory -mx-6 px-6 lg:-mx-12 lg:px-12"
@@ -138,20 +140,22 @@ export const ArchiveRail: React.FC = () => (
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ delay: Math.min(i * 0.04, 0.3) }}
-          onMouseEnter={() => sovereignAudio.hover(i)}
+          onMouseEnter={() => sound.hover()}
         >
           <MediaFrame item={item} className="w-full h-full border border-[#d8aa43]/10" />
         </motion.div>
       ))}
+      </div>
+      <p className="text-[0.62rem] font-sans tracking-[0.16em] uppercase text-[#f4f0e6]/25 mt-1">
+        Scroll →
+      </p>
     </div>
-    <p className="text-[0.62rem] font-sans tracking-[0.16em] uppercase text-[#f4f0e6]/25 mt-1">
-      Scroll →
-    </p>
-  </div>
-);
+  );
+};
 
 /* -------------------------------------------------------- BiomimicryGrid */
 export const BiomimicryGrid: React.FC = () => {
+  const sound = useSovereignSound();
   const picks = [TAMERIAN[1], TAMERIAN[2], TAMERIAN[4]];
   return (
     <div className="grid sm:grid-cols-3 gap-4">
@@ -162,7 +166,7 @@ export const BiomimicryGrid: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: i * 0.08 }}
-          onMouseEnter={() => sovereignAudio.hover(i)}
+          onMouseEnter={() => sound.hover()}
         >
           <MediaFrame item={item} className="aspect-[3/4] border border-[#d8aa43]/10" />
         </motion.div>
@@ -174,7 +178,9 @@ export const BiomimicryGrid: React.FC = () => {
 /* -------------------------------------------------------- TechnologyGrid
    Section 7 of the TRAI business plan. Every card states its stage, so the
    Helm and the Circuit read as research and Queen Califia reads as shipped. */
-export const TechnologyGrid: React.FC = () => (
+export const TechnologyGrid: React.FC = () => {
+  const sound = useSovereignSound();
+  return (
   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {TECHNOLOGIES.map((t, i) => (
       <motion.article
@@ -184,7 +190,7 @@ export const TechnologyGrid: React.FC = () => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: i * 0.05 }}
-        onMouseEnter={() => sovereignAudio.hover(i)}
+        onMouseEnter={() => sound.hover()}
       >
         {t.media && (
           <div className="aspect-[16/10] overflow-hidden">
@@ -205,8 +211,9 @@ export const TechnologyGrid: React.FC = () => (
           <span className="text-[0.62rem] font-mono tracking-wide text-[#d8aa43]/70">{t.stage}</span>
         </div>
       </motion.article>
-    ))}
-  </div>
-);
+      ))}
+    </div>
+  );
+};
 
 export default MediaFrame;

@@ -1,234 +1,177 @@
-/**
- * OrganPortal — the immersive full-screen experience behind each organ card.
- *
- * Replaces the previous behaviour, where clicking a card navigated away and the
- * `activeOrgan` state was declared but never set. This is a real modal:
- * focus-trapped, Escape-closable, scroll-locked, `aria-modal`, with a live
- * visualisation and the organ's verified figures.
- *
- * Every number below is drawn from VERIFIED_FACTS.md. Nothing is invented, and
- * the one hypothesis in the set is labelled as such.
- */
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { useLocation } from 'wouter';
-import OrganCanvas, { OrganKey } from './OrganCanvas';
-import sovereignAudio from '@/lib/sovereignAudio';
+import React, { useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { NeuralNetworkViz } from './NeuralNetworkViz';
+import { QuantumComputingViz } from './QuantumComputingViz';
+import { BlockchainVisualization } from './BlockchainVisualization';
+import { DNAHelix } from './DNAHelix';
+import { AdvancedPhysicsSimulation } from './AdvancedPhysicsSimulation';
+import AMCVisualization from './AMCVisualization';
 
-export interface OrganDatum {
+interface OrganData {
   num: string;
   role: string;
   name: string;
-  key: OrganKey;
-  tagline: string;
-  body: string;
-  metrics: { k: string; v: string; note?: string }[];
-  route: string | null;
-  external: string | null;
-  status: string;
+  desc: string;
+  route: string;
+  external?: string | null;
 }
-
-export const ORGAN_DATA: OrganDatum[] = [
-  {
-    num: '01',
-    role: 'Skeleton',
-    name: 'Tamerian Materials',
-    key: 'skeleton',
-    tagline: 'Material sovereignty',
-    body: 'A hemp-derived carbon composite engineered for multi-modal energy harvesting and quantum sensing. The hemp-carbon matrix carries piezoelectric quartz and tourmaline, magnetite, and rare-earth dopants in a single body, so one material converts mechanical, thermal and magnetic gradients at once.',
-    metrics: [
-      { k: 'Patent', v: '63/934,269', note: 'Filed Dec 11 2025 · 25 claims · Conf #6305' },
-      { k: 'Hemp-carbon matrix', v: '40–70 vol%', note: 'Pyrolysis 700–1400 °C' },
-      { k: 'Conductivity', v: '10²–10⁶ S/m' },
-      { k: 'Piezo output', v: '50–500 μW/cm²' },
-      { k: 'Combined output', v: '80–800 μW/cm²' },
-      { k: 'Thermoelectric ZT', v: '1.0–2.5', note: '5–10× Bi₂Te₃' },
-      { k: 'Spin-Seebeck', v: '+40–60%' },
-      { k: 'Coherence T₂', v: '>500 ns', note: 'HYPOTHESIS — not confirmed' },
-      { k: 'Literature', v: '51 papers cited' },
-    ],
-    route: '/materials',
-    external: 'https://tamerian-materials.com/',
-    status: 'Patent filed · entity pending',
-  },
-  {
-    num: '02',
-    role: 'Heart',
-    name: 'True Melange Φ',
-    key: 'heart',
-    tagline: 'Biological sovereignty',
-    body: 'A saffron-hemp biotechnology platform. The first product is Blue-Gold Daily, a ready-to-drink tea built on a saffron dose matching a published 12-week randomised controlled trial, with colour from an alga and a flower rather than a dye.',
-    metrics: [
-      { k: 'Saffron', v: '28 mg', note: 'Affron® · Pharmactive · single-sourced' },
-      { k: 'Standardisation', v: '≥3.5% Lepticrosalides®', note: 'US10933110B2' },
-      { k: 'Grade', v: 'ISO 3632 Cat I' },
-      { k: 'Primary colour', v: '21 CFR 73.167', note: 'Galdieria extract blue' },
-      { k: 'Accent colour', v: '21 CFR 73.69', note: 'Butterfly pea · teas authorised' },
-      { k: 'Hemp inputs', v: 'GRN 765/771/778', note: 'No CBD · no THC' },
-      { k: 'Format', v: '12 oz sleek can', note: '$7–10 · DTC-first' },
-      { k: 'Co-packer', v: 'In outreach', note: 'Carolina Beverage · Niche Beverage' },
-    ],
-    route: '/true-melange',
-    external: null,
-    status: 'Formulation locked · pre-production',
-  },
-  {
-    num: '03',
-    role: 'Brain',
-    name: 'Queen Califia',
-    key: 'brain',
-    tagline: 'Cognitive sovereignty',
-    body: 'An autonomous cybersecurity platform on a triple-core architecture — Cyber Core, Identity Core and Markets Core — with a generative training engine. It secures the portfolio’s intellectual property and operations, and stands as its own product.',
-    metrics: [
-      { k: 'Architecture', v: 'Triple-core', note: 'Cyber · Identity · Markets' },
-      { k: 'Stack', v: 'Flask / React' },
-      { k: 'Deployment', v: 'Live', note: 'queencalifia-cyberai.web.app' },
-      { k: 'Named for', v: 'Queen Califia', note: 'Black warrior queen, 1510 novel' },
-      { k: 'Designations', v: 'Veteran-owned · Black-owned' },
-    ],
-    route: '/queen-califia',
-    external: 'https://queencalifia-cyberai.web.app/',
-    status: 'Deployed · entity pending',
-  },
-  {
-    num: '04',
-    role: 'Vessels',
-    name: 'Mela Nation',
-    key: 'vessels',
-    tagline: 'Mobility sovereignty',
-    body: 'The circulatory layer. Movement of materials and people, last-mile logistics, community access and supply-chain resilience — the routes that let every other organ reach the places it serves.',
-    metrics: [
-      { k: 'Function', v: 'Circulatory' },
-      { k: 'Scope', v: 'Last-mile logistics' },
-      { k: 'Serves', v: 'All ventures' },
-      { k: 'Entity', v: 'EIN filed' },
-    ],
-    route: '/mela-nation',
-    external: null,
-    status: 'EIN filed · early development',
-  },
-  {
-    num: '05',
-    role: 'Skin',
-    name: 'MeLaNiNa',
-    key: 'skin',
-    tagline: 'Identity sovereignty',
-    body: 'The visible layer. Hemp apparel and cultural expression carrying employee-ownership and wealth pathways — the surface the world reads first, made from the same crop that runs through the rest of the body.',
-    metrics: [
-      { k: 'Function', v: 'Identity' },
-      { k: 'Material', v: 'Hemp textile' },
-      { k: 'Model', v: 'Employee-ownership pathways' },
-      { k: 'Entity', v: 'EIN filed' },
-    ],
-    route: '/melanina',
-    external: null,
-    status: 'EIN filed · early development',
-  },
-  {
-    num: '06',
-    role: 'Hands',
-    name: 'TechBridge',
-    key: 'hands',
-    tagline: 'Community reach',
-    body: 'Community technology hubs staffed by paid Digital Navigators, with H.K. — an assistant powered by Claude — carrying the load between visits. Named for Horace King, the enslaved master bridge builder whose spans still stand.',
-    metrics: [
-      { k: 'Need', v: '1.2M NC residents', note: 'lack digital access' },
-      { k: 'Investment', v: '$250K / 2 years' },
-      { k: 'Year 1', v: '2 hubs · 4 Navigators' },
-      { k: 'Year 2', v: '4 hubs' },
-      { k: 'Reach', v: '3,200 residents', note: 'serviceable obtainable market' },
-      { k: 'Navigator pay', v: '$20/hr' },
-      { k: 'Named for', v: 'Horace King', note: 'enslaved master bridge builder' },
-    ],
-    route: '/community',
-    external: 'https://techbridge-collective.org/',
-    status: 'Site live · entity pending',
-  },
-  {
-    num: '07',
-    role: 'Lymphatic',
-    name: 'The Peoples Foundation',
-    key: 'lymphatic',
-    tagline: 'Regenerative return',
-    body: 'The layer that closes the loop. Designed to receive defined charitable allocations from the ventures and return them to the community as programs — the reason the architecture is regenerative rather than merely commercial.',
-    metrics: [
-      { k: 'Form', v: '508(c)(1)(a)' },
-      { k: 'Entity', v: 'EIN obtained', note: 'federal tax-exempt pending' },
-      { k: 'Function', v: 'Beneficiary layer' },
-      { k: 'Programs', v: 'Community return' },
-    ],
-    route: null,
-    external: null,
-    status: 'EIN obtained · exempt status pending',
-  },
-];
 
 interface Props {
-  index: number | null;
+  organ: OrganData | null;
   onClose: () => void;
-  /** Move to another organ without leaving the portal. */
-  onNavigate: (i: number) => void;
+  onNavigate: (route: string) => void;
 }
 
-export const OrganPortal: React.FC<Props> = ({ index, onClose, onNavigate }) => {
-  const [, navigate] = useLocation();
+const ORGAN_CONTENT: Record<string, {
+  tagline: string;
+  facts: string[];
+  status: string;
+  statusColor: string;
+  viz: React.ReactNode;
+  color: string;
+}> = {
+  '01': {
+    tagline: 'The structural foundation. Where carbon becomes sovereignty.',
+    facts: [
+      'U.S. Patent App 63/934,269 · Filed Dec 11, 2025 · 25 Claims',
+      'Confirmation #6305 · Micro Entity · Jonathan Peoples, inventor',
+      'Hemp-Carbon Matrix: 40–70 vol%, pyrolysis 700–1400°C',
+      'Conductivity: 10²–10⁶ S/m (vs. copper: 5.8×10⁷)',
+      'Piezoelectric output: 50–500 μW/cm² (proposed)',
+      'Thermoelectric ZT: 1.0–2.5 target (vs. Bi₂Te₃ baseline)',
+      'Quantum coherence T₂ > 500 ns at 300K (research target)',
+      '51 peer-reviewed papers cited in validation framework',
+    ],
+    status: 'Patent Filed · Research Stage',
+    statusColor: '#c87941',
+    viz: <AMCVisualization isActive={true} />,
+    color: '#c87941',
+  },
+  '02': {
+    tagline: 'What the organism metabolizes. The daily ritual of sovereignty.',
+    facts: [
+      'First SKU: Blue-Gold Daily — 12 oz RTD tea, $7–10 tier',
+      'Affron® 28 mg/day (Pharmactive) · ISO 3632 Cat I standardized',
+      'Lepticrosalides® ≥3.5% · US Patent 10933110B2',
+      'Hemp: hempseed oil + protein only (GRAS GRN 765/771/778)',
+      'No CBD · No THC · No flower/leaf derivatives',
+      'Colorant: Galdieria extract blue (21 CFR 73.167)',
+      'Claims: mood support, focus, antioxidant status, stress resilience',
+      'DTC-first · Co-packer outreach: Carolina Beverage Group, Mooresville NC',
+    ],
+    status: 'Formulation Stage · Pre-Launch',
+    statusColor: '#d8aa43',
+    viz: <DNAHelix interactive={true} />,
+    color: '#d8aa43',
+  },
+  '03': {
+    tagline: 'Autonomous intelligence. The nervous system of the organism.',
+    facts: [
+      'Flask/React stack · Triple-core: Cyber Core, Identity Core, Markets Core',
+      'Sovereign Afrofuturist aesthetic · Generative AI training engine',
+      'Dual role: fundable cybersecurity product + AI-ops layer for TRAI',
+      'Veteran-owned and Black-owned business designations',
+      'Live at queencalifia-cyberai.web.app',
+      'H.K. AI triage integration (Claude API + deterministic state machine)',
+      'Named for Queen Califia — the legendary Black Amazon queen of California',
+    ],
+    status: 'Live · Active Development',
+    statusColor: '#4a9eff',
+    viz: <NeuralNetworkViz />,
+    color: '#4a9eff',
+  },
+  '04': {
+    tagline: 'The blood vessels. Moving what the heart makes.',
+    facts: [
+      'Last-mile logistics and community access infrastructure',
+      'Resilient distribution routes for TRAI organ products',
+      'Community mobility sovereignty — not extraction, circulation',
+      'Designed to serve the Triangle Area (Durham, Raleigh, Chapel Hill)',
+      'Coordinates with TechBridge for digital access delivery',
+      'Employee-ownership pathway built into operating structure',
+    ],
+    status: 'Concept Stage · Structuring',
+    statusColor: '#e85d3a',
+    viz: <AdvancedPhysicsSimulation />,
+    color: '#e85d3a',
+  },
+  '05': {
+    tagline: 'The skin that carries memory. Identity as sovereignty.',
+    facts: [
+      'Hemp-derived apparel and cultural expression platform',
+      'Employee-ownership pathways built into the business model',
+      'Cultural memory encoded in material — not just fashion',
+      'Melanin as architecture, not aesthetic',
+      'Coordinates with True Melange Φ on hemp supply chain',
+      'Community co-design model — not top-down product development',
+    ],
+    status: 'Concept Stage · Designing',
+    statusColor: '#9b59b6',
+    viz: <QuantumComputingViz />,
+    color: '#9b59b6',
+  },
+  '06': {
+    tagline: 'The hands that build bridges. Digital access as a right.',
+    facts: [
+      '1.2M NC residents lack adequate broadband access (NCDIT 2023)',
+      '$250K total investment over 2-year pilot',
+      'Year 1: 2 hubs, 4 Digital Navigators · Year 2: 4 hubs',
+      'SOM (2-year pilot): 3,200 residents served',
+      'Cost per TechMinute Year 1: ~$31 · Year 2: ~$21',
+      'Navigator pay: $20/hr · Budget: 55% payroll / 45% ops',
+      'H.K. AI triage (Claude API) · Named for Horace King',
+      'Contact: aitconsult22@gmail.com · (216) 307-0174',
+    ],
+    status: 'Active · Pilot Phase',
+    statusColor: '#2ecc71',
+    viz: <BlockchainVisualization blockCount={6} />,
+    color: '#2ecc71',
+  },
+  '07': {
+    tagline: 'Return is not optional. Surplus flows back to the community.',
+    facts: [
+      'EIN obtained · Federal tax-exempt status application pending',
+      'Designed to receive defined charitable allocations from TRAI',
+      'Programs: bereavement, violence interruption, youth athletics',
+      'Digital navigation coordination with TechBridge',
+      'Spiritual healing and community wellbeing programs',
+      'Allocations subject to written agreements and counsel review',
+      'The Peoples Foundation — named for the community it serves',
+    ],
+    status: 'Legal Formation · EIN Obtained',
+    statusColor: '#d8aa43',
+    viz: <AMCVisualization isActive={true} />,
+    color: '#d8aa43',
+  },
+};
+
+export function OrganPortal({ organ, onClose, onNavigate }: Props) {
+  const content = organ ? ORGAN_CONTENT[organ.num] : null;
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreTo = useRef<HTMLElement | null>(null);
-  const open = index !== null;
 
-  /* Presence is managed explicitly rather than left to AnimatePresence, which
-     was leaving the fixed-position wrapper mounted after close — an invisible
-     overlay across the whole page. `shown` drives the animation; `mounted`
-     drives the DOM, and is always cleared on a timer we control. */
-  const [mounted, setMounted] = useState(false);
-  const [shown, setShown] = useState(false);
-  const [held, setHeld] = useState<number>(0);
-
+  /* Scroll lock, focus capture, and focus restore on close. Without the
+     restore, a keyboard user is dropped at the top of the document every time
+     they close a portal. */
   useEffect(() => {
-    if (index !== null) {
-      setHeld(index);
-      setMounted(true);
-      const r = requestAnimationFrame(() => setShown(true));
-      return () => cancelAnimationFrame(r);
-    }
-    setShown(false);
-    // Unmount is driven by the fade completing (below). This timer is a
-    // backstop so the fixed overlay can never survive a missed callback.
-    const t = window.setTimeout(() => setMounted(false), 340);
-    return () => window.clearTimeout(t);
-  }, [index]);
-
-  const organ = ORGAN_DATA[held] ?? ORGAN_DATA[0];
-
-  const close = useCallback(() => {
-    if (index !== null) sovereignAudio.portalClose(index);
-    onClose();
-  }, [index, onClose]);
-
-  /* Scroll lock, focus capture and restore */
-  useEffect(() => {
-    if (!open) return;
+    if (!organ) return;
     restoreTo.current = document.activeElement as HTMLElement;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const id = window.setTimeout(() => panelRef.current?.focus(), 40);
-    panelRef.current?.scrollTo?.({ top: 0 });
     return () => {
       document.body.style.overflow = prev;
       window.clearTimeout(id);
       restoreTo.current?.focus?.();
     };
-  }, [open, index]);
+  }, [organ]);
 
-  /* Escape to close, Tab trapped inside the panel */
+  /* Escape closes; Tab is trapped inside the panel. A modal that lets focus
+     escape behind the backdrop is worse than no modal. */
   useEffect(() => {
-    if (!open) return;
+    if (!organ) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        close();
-        return;
-      }
+      if (e.key === 'Escape') { e.preventDefault(); onClose(); return; }
       if (e.key !== 'Tab' || !panelRef.current) return;
       const f = Array.from(
         panelRef.current.querySelectorAll<HTMLElement>(
@@ -236,178 +179,161 @@ export const OrganPortal: React.FC<Props> = ({ index, onClose, onNavigate }) => 
         )
       ).filter((el) => el.offsetParent !== null);
       if (!f.length) return;
-      const first = f[0];
-      const last = f[f.length - 1];
-      const inside = panelRef.current.contains(document.activeElement);
-      if (!inside) {
+      const first = f[0], last = f[f.length - 1];
+      if (!panelRef.current.contains(document.activeElement)) {
         e.preventDefault();
         (e.shiftKey ? last : first).focus();
         return;
       }
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open, close]);
-
-  if (!mounted) return null;
+  }, [organ, onClose]);
 
   return (
-    <>
-      {(
+    <AnimatePresence>
+      {organ && content && (
         <motion.div
           key="organ-portal"
-          className="fixed inset-0 z-[100] flex items-stretch"
-          style={{ pointerEvents: shown ? 'auto' : 'none' }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={organ.name + ' — ' + organ.role}
+          className="fixed inset-0 z-[200] flex items-stretch"
           initial={{ opacity: 0 }}
-          animate={{ opacity: shown ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          onAnimationComplete={() => {
-            if (!shown) setMounted(false);
-          }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
         >
-          <div
-            className="absolute inset-0 bg-[#050709]/94 backdrop-blur-sm"
-            onClick={close}
+          {/* Backdrop */}
+          <motion.div
+            className="absolute inset-0"
+            style={{ background: 'rgba(3,4,6,0.96)', backdropFilter: 'blur(24px)' }}
+            onClick={onClose}
             aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           />
 
+          {/* Portal content */}
           <motion.div
             ref={panelRef}
             tabIndex={-1}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="organ-portal-title"
-            className="relative z-10 w-full h-full overflow-y-auto outline-none"
-            initial={{ y: 26, opacity: 0 }}
-            animate={{ y: shown ? 0 : 16, opacity: shown ? 1 : 0 }}
-            transition={{ duration: 0.36, ease: [0.23, 1, 0.32, 1] }}
+            className="relative z-10 w-full flex flex-col lg:flex-row overflow-y-auto outline-none"
+            initial={{ scale: 0.94, opacity: 0, y: 40 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.96, opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
           >
-            {/* Live visualisation, full bleed behind the content */}
-            <div className="absolute inset-0 pointer-events-none">
-              <OrganCanvas organ={organ.key} className="w-full h-full opacity-45" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#050709] via-[#050709]/70 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050709] via-transparent to-[#050709]/80" />
+            {/* Left: Visualization */}
+            <div
+              className="lg:w-[55%] relative flex items-center justify-center min-h-[320px] lg:min-h-screen overflow-hidden"
+              style={{ background: `radial-gradient(ellipse at 40% 50%, ${content.color}12 0%, #030406 70%)` }}
+            >
+              {/* Accent border */}
+              <div className="absolute inset-y-0 right-0 w-px" style={{ background: `linear-gradient(180deg, transparent, ${content.color}40, transparent)` }} />
+              <div className="w-full h-full min-h-[400px] p-8">
+                {content.viz}
+              </div>
+              {/* Organ number watermark */}
+              <div
+                className="absolute bottom-8 left-8 text-[8rem] font-bold leading-none pointer-events-none select-none"
+                style={{ color: `${content.color}08`, fontFamily: 'serif' }}
+              >
+                {organ.num}
+              </div>
             </div>
 
-            <div className="relative max-w-[1380px] mx-auto px-6 lg:px-12 py-20 lg:py-28">
-              <div className="flex items-start justify-between gap-6 mb-12">
-                <div>
-                  <p className="text-xs tracking-[0.22em] uppercase text-[#d8aa43]/70 font-sans mb-3">
-                    {organ.num} — {organ.role} · {organ.tagline}
-                  </p>
-                  <h2
-                    id="organ-portal-title"
-                    className="text-[clamp(2.4rem,6vw,4.6rem)] font-bold leading-[1.02]"
-                    style={{ color: '#f4f0e6', WebkitTextFillColor: '#f4f0e6' }}
-                  >
-                    {organ.name}
-                  </h2>
-                </div>
-                <button
-                  onClick={close}
-                  className="shrink-0 border border-[#d8aa43]/30 text-[#d8aa43] px-4 py-2 text-xs tracking-[0.18em] uppercase font-sans hover:bg-[#d8aa43] hover:text-[#050709] transition-colors"
-                  aria-label="Close and return to the organism"
-                >
-                  Close ✕
-                </button>
-              </div>
-
-              <div className="grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-20">
-                <div>
-                  <p className="text-[#f4f0e6]/72 font-sans leading-relaxed text-[1.02rem] max-w-[60ch]">
-                    {organ.body}
-                  </p>
-                  <p className="mt-8 text-xs font-sans tracking-[0.16em] uppercase text-[#d8aa43]/60">
-                    Status · {organ.status}
-                  </p>
-                  <div className="flex flex-wrap gap-3 mt-10">
-                    {organ.external && (
-                      <a
-                        href={organ.external}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="border border-[#d8aa43] text-[#d8aa43] px-6 py-3 text-xs tracking-[0.18em] uppercase font-sans hover:bg-[#d8aa43] hover:text-[#050709] transition-colors"
-                      >
-                        Visit live site ↗
-                      </a>
-                    )}
-                    {organ.route && (
-                      <button
-                        onClick={() => {
-                          close();
-                          navigate(organ.route!);
-                        }}
-                        className="border border-[#d8aa43]/25 text-[#f4f0e6]/70 px-6 py-3 text-xs tracking-[0.18em] uppercase font-sans hover:border-[#d8aa43]/60 hover:text-[#f4f0e6] transition-colors"
-                      >
-                        Full detail →
-                      </button>
-                    )}
+            {/* Right: Content */}
+            <div className="lg:w-[45%] flex flex-col justify-between p-8 lg:p-12 overflow-y-auto" style={{ background: '#030406' }}>
+              {/* Header */}
+              <div>
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-mono tracking-[0.2em] uppercase" style={{ color: `${content.color}80` }}>
+                      {organ.num} · {organ.role}
+                    </span>
+                    <span
+                      className="text-[10px] font-mono px-2 py-0.5 border"
+                      style={{ borderColor: `${content.statusColor}40`, color: content.statusColor }}
+                    >
+                      {content.status}
+                    </span>
                   </div>
+                  <button
+                    onClick={onClose}
+                    className="text-[#f4f0e6]/30 hover:text-[#f4f0e6]/70 transition-colors text-xl leading-none"
+                    aria-label="Close portal"
+                  >
+                    ✕
+                  </button>
                 </div>
 
-                <div>
-                  <p className="text-xs tracking-[0.22em] uppercase text-[#d8aa43]/70 font-sans mb-5">
-                    Verified figures
-                  </p>
-                  <dl className="border-t border-[#d8aa43]/12">
-                    {organ.metrics.map((m) => (
-                      <div
-                        key={m.k}
-                        className="grid grid-cols-[1fr_auto] gap-4 py-3 border-b border-[#d8aa43]/12 items-baseline"
-                      >
-                        <dt className="text-xs font-sans tracking-wide text-[#f4f0e6]/55">
-                          {m.k}
-                          {m.note && (
-                            <span className="block text-[0.68rem] text-[#f4f0e6]/32 mt-0.5">
-                              {m.note}
-                            </span>
-                          )}
-                        </dt>
-                        <dd className="font-mono text-sm text-[#d8aa43] text-right">{m.v}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                  <p className="mt-5 text-[0.68rem] font-sans text-[#f4f0e6]/28 leading-relaxed">
-                    Figures are drawn from the project’s verified-facts record. Where a value is a
-                    hypothesis rather than a measurement, it is labelled.
-                  </p>
+                <h2
+                  className="text-[clamp(2rem,4vw,3rem)] font-bold mb-4 leading-tight"
+                  style={{ color: '#f4f0e6', fontFamily: '"Cormorant Garamond", serif' }}
+                >
+                  {organ.name}
+                </h2>
+                <p className="text-lg font-sans mb-8 leading-relaxed" style={{ color: content.color }}>
+                  {content.tagline}
+                </p>
+
+                {/* Facts */}
+                <div className="space-y-3 mb-10">
+                  {content.facts.map((fact, i) => (
+                    <motion.div
+                      key={i}
+                      className="flex gap-3 items-start"
+                      initial={{ opacity: 0, x: 16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + i * 0.06, ease: [0.23, 1, 0.32, 1] }}
+                    >
+                      <div className="w-1 h-1 rounded-full mt-2 flex-shrink-0" style={{ background: content.color }} />
+                      <p className="text-sm font-sans text-[#f4f0e6]/55 leading-relaxed">{fact}</p>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
 
-              {/* Lateral navigation between organs, without leaving the portal */}
-              <div className="mt-16 pt-8 border-t border-[#d8aa43]/12 flex flex-wrap gap-2">
-                {ORGAN_DATA.map((o, i) => (
-                  <button
-                    key={o.num}
-                    onClick={() => {
-                      if (i === index) return;
-                      sovereignAudio.select(i);
-                      onNavigate(i);
-                    }}
-                    aria-current={i === index ? 'true' : undefined}
-                    className={`px-3 py-2 text-[0.66rem] font-sans tracking-[0.14em] uppercase border transition-colors ${
-                      i === index
-                        ? 'border-[#d8aa43] text-[#d8aa43]'
-                        : 'border-[#d8aa43]/15 text-[#f4f0e6]/45 hover:border-[#d8aa43]/45 hover:text-[#f4f0e6]/80'
-                    }`}
+              {/* Actions */}
+              <div className="flex flex-wrap gap-3 pt-6 border-t" style={{ borderColor: `${content.color}15` }}>
+                <motion.button
+                  onClick={() => { onClose(); onNavigate(organ.route); }}
+                  className="flex-1 min-w-[140px] py-3.5 text-sm font-sans font-bold tracking-[0.1em] uppercase"
+                  style={{ background: content.color, color: '#050709' }}
+                  whileHover={{ opacity: 0.9 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  Enter {organ.name} →
+                </motion.button>
+                {organ.external && (
+                  <motion.a
+                    href={organ.external}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 min-w-[120px] py-3.5 text-sm font-sans font-bold tracking-[0.1em] uppercase text-center border transition-colors"
+                    style={{ borderColor: `${content.color}40`, color: content.color }}
+                    whileHover={{ borderColor: content.color, background: `${content.color}10` }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    {o.num} {o.role}
-                  </button>
-                ))}
+                    Live Site ↗
+                  </motion.a>
+                )}
+                <motion.button
+                  onClick={onClose}
+                  className="py-3.5 px-4 text-sm font-mono text-[#f4f0e6]/25 hover:text-[#f4f0e6]/50 transition-colors"
+                  whileTap={{ scale: 0.97 }}
+                >
+                  ← Back
+                </motion.button>
               </div>
             </div>
           </motion.div>
         </motion.div>
       )}
-    </>
+    </AnimatePresence>
   );
-};
-
-export default OrganPortal;
+}

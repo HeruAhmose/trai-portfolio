@@ -196,10 +196,10 @@ export default function MaterialsScience() {
         <p className="text-xs font-mono text-[#d8aa43]/60 tracking-[0.2em] uppercase mb-8">Conceptual Visualization — Research Direction</p>
         <div className="grid md:grid-cols-2 gap-4">
           <motion.div className="overflow-hidden rounded" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <img src="/media/tamerian/living-circuit.jpg" alt="Energy transfer visualization concept" className="w-full h-64 object-cover" style={{ filter: 'brightness(0.85) saturate(0.9)' }} />
+            <img src="/manus-storage/tamerian-concept1_5d40f97b.jpg" alt="Energy transfer visualization concept" className="w-full h-64 object-cover" style={{ filter: 'brightness(0.85) saturate(0.9)' }} />
           </motion.div>
           <motion.div className="overflow-hidden rounded" initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-            <img src="/media/tamerian/helix-lab.jpg" alt="Lattice structure visualization concept" className="w-full h-64 object-cover" style={{ filter: 'brightness(0.85) saturate(0.9)' }} />
+            <img src="/manus-storage/tamerian-concept2_9525501b.jpg" alt="Lattice structure visualization concept" className="w-full h-64 object-cover" style={{ filter: 'brightness(0.85) saturate(0.9)' }} />
           </motion.div>
         </div>
       <p className="text-xs font-mono text-muted-foreground mt-4">Conceptual AI renders for research communication purposes only. Not photographs of actual materials or devices.</p>

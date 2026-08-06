@@ -815,15 +815,3 @@ button:active, a:active {
     rgba(5,7,9,0.90) 100%
   );
 }
-
-
-/* ---------------------------------------------------------------------------
-   Offset fixed site chrome below the shared TRAI ecosystem bar.
-   The bar publishes its measured height as --trai-eco-h; when it is absent the
-   variable is undefined and the fallback keeps the site standalone-correct.
-   -------------------------------------------------------------------------*/
-nav.fixed.top-0,
-header.fixed.top-0,
-.fixed.top-0[class*="z-"] {
-  top: var(--trai-eco-h, 0px) !important;
-}

@@ -187,7 +187,7 @@ const CASE_STUDIES: CaseStudy[] = [
     solution:
       'Incorporated Eu, Nd, Er, Yb, Ce rare-earth elements in quartz host matrix with quantum dot architecture, achieving room-temperature quantum coherence and self-powered operation.',
     impact:
-      'Target architecture for self-powered quantum sensors: T₂ coherence >5 μs (HYPOTHESIS — not confirmed), sensitivity 10⁻¹² T/√Hz, operating at 300 K without external power.',
+      'Target architecture for self-powered quantum sensors: T₂ coherence >5 μs (HYPOTHESIS — not confirmed), sensitivity 10⁻¹² T/√Hz, and operational at 300 K without external power.',
     metrics: [
       { label: 'Coherence Time', value: '>5 μs', icon: '🔬', color: 'primary' },
       { label: 'Sensitivity', value: '10⁻¹² T/√Hz', icon: '📊', color: 'cyan-400' },

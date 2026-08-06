@@ -244,7 +244,7 @@ export const OrganCanvas: React.FC<Props> = ({ organ, className, active = true }
     };
 
     /* -------------------------------------------------------------- skin
-       Woven hemp fibre — warp and weft interlacing. Textile as identity. */
+       Woven hemp fiber — warp and weft interlacing. Textile as identity. */
     const skin = () => {
       const gap = 15;
       ctx.lineWidth = 2.4;
@@ -314,7 +314,7 @@ export const OrganCanvas: React.FC<Props> = ({ organ, className, active = true }
     };
 
     /* --------------------------------------------------------- lymphatic
-       Return flow: surplus drawn inward from the periphery to the centre,
+       Return flow: surplus drawn inward from the periphery to the center,
        then radiating back out as capacity. */
     const drops = Array.from({ length: 46 }, (_, i) => ({
       a: (i / 46) * 6.283,

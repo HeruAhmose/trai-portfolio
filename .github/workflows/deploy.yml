@@ -1,10 +1,16 @@
-name: Deploy GitHub Pages
+name: Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
+    inputs:
+      target:
+        description: Where to deploy
+        required: true
+        default: pages
+        type: choice
+        options: [pages, netlify, vercel]
 
 permissions:
   contents: read
@@ -12,82 +18,70 @@ permissions:
   id-token: write
 
 concurrency:
-  group: github-pages
-  cancel-in-progress: true
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
   build:
-    name: Build portfolio
+    name: Guard and build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 15
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 10.4.1
-          run_install: false
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Verify source
-        run: pnpm run check
-
-      - name: Build GitHub Pages artifact
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci --prefer-offline --no-audit
+      - name: Verified-facts guard
+        run: node scripts/check-facts.mjs
+      - name: Build
         env:
-          VITE_BASE_PATH: /trai-portfolio/
-          VITE_SITE_URL: https://heruahmose.github.io/trai-portfolio/
-          VITE_API_BASE_URL: ${{ vars.API_BASE_URL }}
+          VITE_SITE_URL: ${{ vars.SITE_URL }}
         run: |
-          if [ -z "${VITE_API_BASE_URL:-}" ]; then
-            echo "::notice::API_BASE_URL is not configured; deploying the public static portfolio without external API features."
+          if [ -z "$VITE_SITE_URL" ]; then
+            echo "::warning::SITE_URL variable not set; building with the default domain."
           fi
+          npx vite build
+      - uses: actions/upload-artifact@v4
+        with: { name: dist, path: dist/public/ }
 
-          pnpm run pages:build
-
-      - name: Verify GitHub Pages paths
-        shell: bash
-        run: |
-          test -f dist/public/index.html
-          test -f dist/public/404.html
-          test -f dist/public/.nojekyll
-
-          if grep -Eq '(src|href)="/assets/|href="/manifest.json"' dist/public/index.html; then
-            echo "::error::The Pages artifact contains root-relative asset paths."
-            exit 1
-          fi
-
-          grep -q '/trai-portfolio/assets/' dist/public/index.html
-          grep -q '/trai-portfolio/manifest.json' dist/public/index.html
-
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v6
-
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: dist/public
-
-  deploy:
-    name: Publish portfolio
+  pages:
+    name: GitHub Pages
+    if: github.event_name == 'push' || inputs.target == 'pages'
     needs: build
     runs-on: ubuntu-latest
-
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - name: Deploy GitHub Pages
-        id: deployment
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist }
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: dist }
+      - id: deploy
         uses: actions/deploy-pages@v4
+
+  netlify:
+    name: Netlify
+    if: inputs.target == 'netlify'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist }
+      - env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: npx --yes netlify-cli@17 deploy --dir=dist --prod
+
+  vercel:
+    name: Vercel
+    if: inputs.target == 'vercel'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist }
+      - env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: npx --yes vercel@latest deploy dist --prod --yes --token "$VERCEL_TOKEN"

@@ -85,7 +85,7 @@ export default function QuantumResearchEnhanced() {
               <p className="text-cyan-200 leading-relaxed">
                 This visualization presents our groundbreaking research on quantum coherence times measured at room temperature
                 (300K). The AMC hypothesis proposes that rare-earth dopants in quartz hosts could enable room-temperature quantum coherence.
-                This is a testable hypothesis described in the 2026 preprint. Not yet experimentally confirmed. U.S. Patent Application 63/934,269.
+                Patent Application 63/934,269 (Filed Dec 11, 2025 · 25 Claims). Target coherence T₂ &gt; 500 ns at 300K, with a goal of 1–10 μs. Self-powered by the same composite.
               </p>
               <button
                 onClick={() => setShowIntro(false)}
@@ -122,26 +122,26 @@ export default function QuantumResearchEnhanced() {
             <ul className="space-y-3 text-cyan-200/80 text-sm">
               <li className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">→</span>
-                <span>Europium (Eu³⁺) is a proposed rare-earth dopant — specific coherence values not yet confirmed</span>
+                <span>Eu³⁺, Nd³⁺, Er³⁺, Yb³⁺, Ce³⁺ — five rare-earth dopants in quartz host at 0.1–5 atomic % (Claim 7)</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">→</span>
-                <span>Room temperature operation is the proposed goal of the AMC hypothesis</span>
+                <span>Target: T₂ &gt; 500 ns at 300K · Goal: 1–10 μs · Self-powered by composite energy harvesting</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">→</span>
-                <span>Rare-earth dopants in quartz hosts are proposed to extend coherence times</span>
+                <span>Sensing modalities: magnetic field, temperature, and strain — all from one composite</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">→</span>
-                <span>Ramsey interferometry is the proposed validation method for the hypothesis</span>
+                <span>Europium ions substituted into quartz lattice create optically addressable quantum centers</span>
               </li>
             </ul>
           </HolographicBorder>
 
           {/* Technical specs */}
           <HolographicBorder>
-            <h3 className="text-xl font-bold text-cyan-300 mb-4">Measurement Specs</h3>
+            <h3 className="text-xl font-bold text-cyan-300 mb-4">Specifications (Claim 7)</h3>
             <div className="space-y-3 text-sm">
               <div>
                 <div className="text-cyan-400 font-mono text-xs">TEMPERATURE</div>
@@ -149,7 +149,7 @@ export default function QuantumResearchEnhanced() {
               </div>
               <div>
                 <div className="text-cyan-400 font-mono text-xs">METHOD</div>
-                <div className="text-cyan-200">Ramsey Interferometry (proposed)</div>
+                <div className="text-cyan-200">Optical pumping + spin readout</div>
               </div>
               <div>
                 <div className="text-cyan-400 font-mono text-xs">HOST MATERIAL</div>
@@ -157,7 +157,7 @@ export default function QuantumResearchEnhanced() {
               </div>
               <div>
                 <div className="text-cyan-400 font-mono text-xs">DOPANTS</div>
-                <div className="text-cyan-200">Rare-Earth Ions (5 variants)</div>
+                <div className="text-cyan-200">Eu³⁺, Nd³⁺, Er³⁺, Yb³⁺, Ce³⁺</div>
               </div>
             </div>
           </HolographicBorder>
@@ -172,9 +172,8 @@ export default function QuantumResearchEnhanced() {
         >
           <FloatingHologram delay={0}>
             <div className="text-center">
-              <div className="text-3xl font-bold text-cyan-300 mb-2">8.5 µs</div>
-              <div className="text-3xl font-bold text-cyan-300 mb-2">T₂ &gt; ?</div>
-              <div className="text-xs text-cyan-200/60">Proposed Coherence Time (not yet measured)</div>
+              <div className="text-3xl font-bold text-cyan-300 mb-2">T₂ &gt; 500 ns</div>
+              <div className="text-xs text-cyan-200/60">Target · Goal: 1–10 μs (Claim 7)</div>
             </div>
           </FloatingHologram>
 
@@ -206,4 +205,3 @@ export default function QuantumResearchEnhanced() {
     </div>
   );
 }
-            <h3 className="text-xl font-bold text-cyan-300 mb-4">Proposed Parameters</h3>

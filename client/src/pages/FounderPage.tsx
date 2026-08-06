@@ -4,11 +4,11 @@ import { motion } from 'framer-motion';
 
 
 const PHOTOS = {
-  headshot: '/media/archive/founder-portrait.jpg',
-  navyWhites: '/media/archive/navy-whites.jpg',
-  footballSalisbury: '/media/archive/salisbury-44.jpg',
-  trackKannapolis: '/media/archive/track-handoff.jpg',
-  football2006: '/media/archive/maritime-portrait.jpg',
+  headshot: '/manus-storage/headshot1_fb711a3f.jpg',
+  navyWhites: '/manus-storage/navy-whites_cf342aba.jpg',
+  footballSalisbury: '/manus-storage/football-salisbury_118f7bb4.webp',
+  trackKannapolis: '/manus-storage/track-kannapolis_c3422516.jpg',
+  football2006: '/manus-storage/football-2006_6d3ae5f7.jpg',
 };
 
 const C = {
@@ -23,10 +23,10 @@ const TIMELINE = [
     era: 'Origin',
     period: 'Salisbury, NC',
     title: 'Built on discipline.',
-    copy: 'Jonathan Peoples grew up in Salisbury, North Carolina — a city with deep roots in Black American history. From the beginning, discipline was not optional. It was the foundation.',
+    copy: 'Jonathan Peoples was born in Salisbury, North Carolina and raised in Kannapolis — cities with deep roots in Black American history. From the beginning, discipline was not optional. It was the foundation.',
     photo: PHOTOS.footballSalisbury,
-    photoAlt: 'Jonathan Peoples, Salisbury #44',
-    photoCaption: 'Salisbury High School, #44',
+    photoAlt: 'Jonathan Peoples, Salisbury #6 — born Salisbury, raised Kannapolis',
+    photoCaption: 'Salisbury, NC · #6 · Jonathan Peoples',
   },
   {
     era: 'Athletics',
@@ -65,7 +65,7 @@ const CREDENTIALS = [
   'Patent Applicant · App 63/934,269 · 25 Claims',
   'Founder · AIT Consulting LTD',
   'Founder · TRAI Sovereignty Architecture',
-  'GitHub: HeruAhmose · Concord, NC',
+  'GitHub: HeruAhmose · Born Salisbury · Raised Kannapolis, NC',
 ];
 
 function TimelineSection({ item, index }: { item: typeof TIMELINE[0]; index: number }) {

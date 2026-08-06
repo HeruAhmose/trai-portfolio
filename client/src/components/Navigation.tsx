@@ -26,7 +26,7 @@ export default function Navigation({
 
   return (
     <motion.nav
-      className="fixed left-0 right-0 bg-background/80 backdrop-blur-md border-b border-border z-40"
+      className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-md border-b border-border z-40"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}

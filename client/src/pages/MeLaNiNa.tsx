@@ -3,8 +3,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 import { DNAHelix } from '@/components/DNAHelix';
-import { VideoPanel } from '@/components/MediaSystem';
-import { VIDEO } from '@/lib/media';
 
 export default function MeLaNiNa() {
   return (
@@ -35,14 +33,6 @@ export default function MeLaNiNa() {
           </motion.div>
         </div>
       </section>
-      {/* ── BRAND FILM ── */}
-      <section className="py-24">
-        <div className="max-w-[1380px] mx-auto px-6 lg:px-12">
-          <p className="text-xs tracking-[0.22em] uppercase text-[#d8aa43]/70 mb-6 font-sans">Brand film</p>
-          <VideoPanel video={VIDEO.melanina} className="aspect-video border border-[#d8aa43]/10" />
-        </div>
-      </section>
-
       <section className="py-32 bg-[#070b0f]">
         <div className="max-w-[1380px] mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center">

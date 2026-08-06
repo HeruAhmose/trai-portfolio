@@ -31,9 +31,12 @@ const FORBIDDEN = [
     allowedBy: /NIST\s+(Cybersecurity Framework|CSF|SP\s*800|800-\d+|guidelines?|standards?|compliance)/i,
     why: 'NIST has not validated this work (naming the compliance framework is fine)' },
   // "Not peer reviewed" is the honest disclosure we want to keep.
+  // Citing other people's peer-reviewed literature is legitimate and is the
+  // normal shape of a references section. What is not legitimate is claiming
+  // that OUR work has been peer reviewed.
   { re: /\bpeer[- ]reviewed\b/i,
-    allowedBy: /\b(not|non|pre|awaiting|pending|prior to|yet to be)[- ]?peer[- ]reviewed\b|peer[- ]reviewed\s*(publication)?\s*(is )?(pending|planned|forthcoming)/i,
-    why: 'no peer-reviewed publication exists yet' },
+    allowedBy: /\b(not|non|pre|awaiting|pending|prior to|yet to be)[- ]?peer[- ]reviewed\b|peer[- ]reviewed\s*(publication)?\s*(is )?(pending|planned|forthcoming)|\d+\s+peer[- ]reviewed\s+(papers?|studies|articles|sources|references)|peer[- ]reviewed\s+(papers?|studies|literature|sources|references)\s+(cited|referenced|reviewed|surveyed)/i,
+    why: 'no peer-reviewed publication of this work exists yet (citing others is fine)' },
   { re: /\bpost[- ]doctoral dissertation\b/i,
     why: 'implies credentials and institutional review that do not exist' },
   { re: /\bpatent(ed)?\s+(technology|process|material)\b/i,

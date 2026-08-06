@@ -7,7 +7,7 @@
  * photograph without either borrowing the other's credibility.
  *
  *   photograph — a real photograph of a real thing
- *   rendering  — a generated illustration of a real programme
+ *   rendering  — a generated illustration of a real program
  *   concept    — a speculative design visual for work in R&D
  *
  * Assets excluded during processing (minors, third parties who have not
@@ -111,7 +111,7 @@ export const ARCHIVE: MediaItem[] = [
 ];
 
 /* ---------------------------------------------------------------- tamerian
-   Renderings. Illustrations of a real, patent-anchored materials programme —
+   Renderings. Illustrations of a real, patent-anchored materials program —
    never presented as micrographs or measurements. */
 export const TAMERIAN: MediaItem[] = [
   {
@@ -123,7 +123,7 @@ export const TAMERIAN: MediaItem[] = [
   {
     src: '/media/tamerian/butterfly-wing.jpg',
     alt: 'A butterfly wing in iridescent teal with circuit-like traces following the wing veins',
-    caption: 'Structural colour — wing scale as conductor',
+    caption: 'Structural color — wing scale as conductor',
     provenance: 'rendering',
     portrait: true,
   },
@@ -136,7 +136,7 @@ export const TAMERIAN: MediaItem[] = [
   },
   {
     src: '/media/tamerian/lattice.jpg',
-    alt: 'A dense silver cellular lattice with coloured nodes distributed across its membranes',
+    alt: 'A dense silver cellular lattice with colored nodes distributed across its membranes',
     caption: 'Lattice study — node distribution',
     provenance: 'rendering',
   },
@@ -154,7 +154,7 @@ export const TAMERIAN: MediaItem[] = [
   },
   {
     src: '/media/tamerian/coral-forms.jpg',
-    alt: 'Abstract coloured columnar forms interleaved with coral-like structures',
+    alt: 'Abstract colored columnar forms interleaved with coral-like structures',
     caption: 'Growth forms — columnar study',
     provenance: 'rendering',
   },
@@ -244,14 +244,14 @@ export const TECHNOLOGIES: Technology[] = [
   {
     name: 'The Tamerian Engine',
     role: 'The converter',
-    body: 'The energy-conversion programme built on the Ore substrate, targeting multi-modal harvesting from ambient mechanical, thermal and magnetic sources.',
+    body: 'The energy-conversion program built on the Ore substrate, targeting multi-modal harvesting from ambient mechanical, thermal and magnetic sources.',
     stage: 'Research and development',
     media: TAMERIAN[6],
   },
   {
     name: 'Tamerian Helm',
     role: 'The interface',
-    body: 'A wearable interface concept pairing the Ore substrate with a layered crystal geometry. The crown and section studies are design work; the underlying materials science is the Ore programme.',
+    body: 'A wearable interface concept pairing the Ore substrate with a layered crystal geometry. The crown and section studies are design work; the underlying materials science is the Ore program.',
     stage: 'Research and development',
     media: CONCEPT[0],
   },
