@@ -134,8 +134,13 @@ function App() {
   // Intro plays on initial page load only — not on client-side navigation between pages
   const [introPhase, setIntroPhase] = useState<'sovereign' | 'cinematic' | 'done'>(() => {
     // If the user landed directly on a subpage (not root), skip the intro
-    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
-      return 'done';
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+      const rootPath = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
+      if (currentPath !== rootPath) {
+        return 'done';
+      }
     }
     return 'sovereign';
   });
