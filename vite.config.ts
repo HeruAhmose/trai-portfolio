@@ -151,6 +151,47 @@ function vitePluginManusDebugCollector(): Plugin {
 
 const plugins = [react(), tailwindcss(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
 
+function manualChunks(id: string): string | undefined {
+  const normalizedId = id.replace(/\\/g, "/");
+
+  if (!normalizedId.includes("/node_modules/")) {
+    return undefined;
+  }
+
+  if (
+    normalizedId.includes("/node_modules/react/") ||
+    normalizedId.includes("/node_modules/react-dom/") ||
+    normalizedId.includes("/node_modules/scheduler/")
+  ) {
+    return "vendor-react";
+  }
+
+  if (normalizedId.includes("/node_modules/framer-motion/")) {
+    return "vendor-motion";
+  }
+
+  if (
+    normalizedId.includes("/node_modules/@tanstack/") ||
+    normalizedId.includes("/node_modules/@trpc/") ||
+    normalizedId.includes("/node_modules/superjson/")
+  ) {
+    return "vendor-data";
+  }
+
+  if (normalizedId.includes("/node_modules/@react-three/")) {
+    return "vendor-react-three";
+  }
+
+  if (normalizedId.includes("/node_modules/three/examples/")) {
+    return "vendor-three-addons";
+  }
+
+  if (normalizedId.includes("/node_modules/three/")) {
+    return "vendor-three-core";
+  }
+
+  return undefined;
+}
 export default defineConfig({
   plugins,
   resolve: {
@@ -166,6 +207,11 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks,
+      },
+    },
   },
   server: {
     host: true,

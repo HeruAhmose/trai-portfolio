@@ -8,7 +8,6 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { CeremonialIntro } from './components/CeremonialIntro';
 import { EnhancedNavigation } from './components/EnhancedNavigation';
 import { PremiumNavigation } from './components/PremiumNavigation';
-import HKAssistant from './components/HKAssistant';
 // Lazy-loaded pages for code splitting
 const HomeCinematic = lazy(() => import('./pages/HomeCinematic').then(m => ({ default: m.HomeCinematic })));
 const CaseStudies = lazy(() => import('./pages/CaseStudies'));
@@ -49,7 +48,12 @@ const MeLaNiNaPage = lazy(() => import('./pages/MeLaNiNa'));
 const FounderPage = lazy(() => import('./pages/FounderPage'));
 const PeoplesFoundation = lazy(() => import('./pages/PeoplesFoundation'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
-import { CommandPalette } from './components/CommandPalette';
+const HKAssistant = lazy(() => import('./components/HKAssistant'));
+const CommandPalette = lazy(() =>
+  import('./components/CommandPalette').then(module => ({
+    default: module.CommandPalette,
+  }))
+);
 import { GamificationHUD } from './components/GamificationHUD';
 import { SovereignAudioEngine } from './components/SovereignAudioEngine';
 import { ScrollProgressIndicator } from './components/ScrollProgressIndicator';
@@ -121,7 +125,9 @@ function Router() {
 
 function App() {
   const [hkAssistantOpen, setHkAssistantOpen] = useState(false);
+  const [hkAssistantLoaded, setHkAssistantLoaded] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [commandPaletteLoaded, setCommandPaletteLoaded] = useState(false);
   const [location, setLocation] = useLocation();
   const [audioEnabled, setAudioEnabled] = useState(true);
   const sessionId = useSessionId();
@@ -138,6 +144,18 @@ function App() {
     // Force dark theme
     document.documentElement.classList.add('dark');
   }, []);
+
+  useEffect(() => {
+    if (hkAssistantOpen) {
+      setHkAssistantLoaded(true);
+    }
+  }, [hkAssistantOpen]);
+
+  useEffect(() => {
+    if (commandPaletteOpen) {
+      setCommandPaletteLoaded(true);
+    }
+  }, [commandPaletteOpen]);
 
   // Cmd+K / Ctrl+K to open command palette
   useEffect(() => {
@@ -210,7 +228,14 @@ function App() {
           <TooltipProvider>
             <Toaster />
             {/* Command Palette (Cmd+K) */}
-            <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
+            {commandPaletteLoaded && (
+              <Suspense fallback={null}>
+                <CommandPalette
+                  isOpen={commandPaletteOpen}
+                  onClose={() => setCommandPaletteOpen(false)}
+                />
+              </Suspense>
+            )}
 
             {/* Ceremonial intro — plays every visit */}
             {introPhase === 'sovereign' && (
@@ -255,7 +280,14 @@ function App() {
               </motion.button>
 
               {/* H.K. Assistant */}
-              <HKAssistant isOpen={hkAssistantOpen} onClose={() => setHkAssistantOpen(false)} />
+              {hkAssistantLoaded && (
+                <Suspense fallback={null}>
+                  <HKAssistant
+                    isOpen={hkAssistantOpen}
+                    onClose={() => setHkAssistantOpen(false)}
+                  />
+                </Suspense>
+              )}
             </>
           </TooltipProvider>
             </ThemeProvider>
