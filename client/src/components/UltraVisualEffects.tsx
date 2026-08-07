@@ -1,14 +1,14 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 /**
  * Ultra Visual Effects Component
  * Extreme visual appeal with multiple layered effects
  */
 export const UltraVisualEffects: React.FC<{
-  intensity?: 'low' | 'medium' | 'high';
+  intensity?: "low" | "medium" | "high";
   children?: React.ReactNode;
-}> = ({ intensity = 'high', children }) => {
+}> = ({ intensity = "high", children }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -16,7 +16,7 @@ export const UltraVisualEffects: React.FC<{
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = window.innerWidth;
@@ -35,7 +35,7 @@ export const UltraVisualEffects: React.FC<{
       time += 0.01;
 
       // Clear with fade
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw multiple layers of effects
@@ -54,8 +54,11 @@ export const UltraVisualEffects: React.FC<{
     ) => {
       const particleCount = Math.floor(50 * intensity);
       for (let i = 0; i < particleCount; i++) {
-        const x = (Math.sin(time * 0.5 + i) * canvas.width) / 2 + canvas.width / 2;
-        const y = (Math.cos(time * 0.3 + i * 0.5) * canvas.height) / 2 + canvas.height / 2;
+        const x =
+          (Math.sin(time * 0.5 + i) * canvas.width) / 2 + canvas.width / 2;
+        const y =
+          (Math.cos(time * 0.3 + i * 0.5) * canvas.height) / 2 +
+          canvas.height / 2;
         const size = 2 + Math.sin(time + i) * 2;
         const opacity = (Math.sin(time * 2 + i) + 1) / 2;
 
@@ -92,7 +95,12 @@ export const UltraVisualEffects: React.FC<{
       time: number,
       intensity: number
     ) => {
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
       gradient.addColorStop(0, `rgba(218, 165, 32, ${0.1 * intensity})`);
       gradient.addColorStop(0.5, `rgba(0, 217, 255, ${0.2 * intensity})`);
       gradient.addColorStop(1, `rgba(255, 0, 127, ${0.1 * intensity})`);
@@ -118,7 +126,12 @@ export const UltraVisualEffects: React.FC<{
         ctx.fillRect(glitchX, glitchY, glitchWidth, glitchHeight);
 
         ctx.fillStyle = `rgba(0, 217, 255, ${Math.random() * 0.2 * intensity})`;
-        ctx.fillRect(glitchX + 5, glitchY + 5, glitchWidth - 10, glitchHeight - 10);
+        ctx.fillRect(
+          glitchX + 5,
+          glitchY + 5,
+          glitchWidth - 10,
+          glitchHeight - 10
+        );
       }
     };
 
@@ -129,11 +142,11 @@ export const UltraVisualEffects: React.FC<{
       canvas.height = window.innerHeight;
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, [intensity]);
 
@@ -174,7 +187,7 @@ export const UltraVisualEffects: React.FC<{
         className="fixed inset-0 pointer-events-none"
         style={{
           background:
-            'linear-gradient(45deg, rgba(218,165,32,0.05), rgba(0,217,255,0.05))',
+            "linear-gradient(45deg, rgba(218,165,32,0.05), rgba(0,217,255,0.05))",
           zIndex: 2,
         }}
         animate={{

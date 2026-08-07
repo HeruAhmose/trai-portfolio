@@ -1,12 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Zap, Layers, Brain, Volume2, Hand, Box } from 'lucide-react';
-import { AstronomicalEffects } from '@/components/AstronomicalEffects';
-import { ExtremeNeonLighting, VolumetricLightRays, BloomEffect } from '@/components/ExtremeNeonLighting';
-import { AdvancedRadarChart, AnimatedBarChart } from '@/components/AdvancedDataViz';
-import { Interactive3DScene } from '@/components/Interactive3DScene';
-import { GestureNavigation } from '@/components/GestureNavigation';
-import { SoundReactiveEffects } from '@/components/SoundReactiveEffects';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Zap,
+  Layers,
+  Brain,
+  Volume2,
+  Hand,
+  Box,
+} from "lucide-react";
+import { AstronomicalEffects } from "@/components/AstronomicalEffects";
+import {
+  ExtremeNeonLighting,
+  VolumetricLightRays,
+  BloomEffect,
+} from "@/components/ExtremeNeonLighting";
+import {
+  AdvancedRadarChart,
+  AnimatedBarChart,
+} from "@/components/AdvancedDataViz";
+import { Interactive3DScene } from "@/components/Interactive3DScene";
+import { GestureNavigation } from "@/components/GestureNavigation";
+import { SoundReactiveEffects } from "@/components/SoundReactiveEffects";
 
 /**
  * Ultimate home page with all state-of-the-art features:
@@ -18,7 +33,9 @@ import { SoundReactiveEffects } from '@/components/SoundReactiveEffects';
  * - Advanced data visualizations
  */
 export default function HomeUltimate() {
-  const [activeFeature, setActiveFeature] = useState<'3d' | 'gesture' | 'sound' | 'none'>('none');
+  const [activeFeature, setActiveFeature] = useState<
+    "3d" | "gesture" | "sound" | "none"
+  >("none");
   const [showMetrics, setShowMetrics] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -49,30 +66,30 @@ export default function HomeUltimate() {
   };
 
   const metricsData = [
-    { label: 'Cybersecurity', value: 95, max: 100, color: '#FF0080' },
-    { label: 'Innovation', value: 92, max: 100, color: '#00D9FF' },
-    { label: 'Impact', value: 88, max: 100, color: '#DAA520' },
-    { label: 'Research', value: 90, max: 100, color: '#228B22' },
+    { label: "Cybersecurity", value: 95, max: 100, color: "#FF0080" },
+    { label: "Innovation", value: 92, max: 100, color: "#00D9FF" },
+    { label: "Impact", value: 88, max: 100, color: "#DAA520" },
+    { label: "Research", value: 90, max: 100, color: "#228B22" },
   ];
 
   const skillsData = [
-    { label: 'Cybersecurity', value: 95, max: 100, color: '#FF0080' },
-    { label: 'Material Science', value: 87, max: 100, color: '#DAA520' },
-    { label: 'AI/ML Systems', value: 92, max: 100, color: '#00D9FF' },
-    { label: 'Community Impact', value: 90, max: 100, color: '#228B22' },
+    { label: "Cybersecurity", value: 95, max: 100, color: "#FF0080" },
+    { label: "Material Science", value: 87, max: 100, color: "#DAA520" },
+    { label: "AI/ML Systems", value: 92, max: 100, color: "#00D9FF" },
+    { label: "Community Impact", value: 90, max: 100, color: "#228B22" },
   ];
 
   const handleProjectClick = (projectId: string) => {
-    console.log('Project clicked:', projectId);
+    console.log("Project clicked:", projectId);
     // Navigate to project details
   };
 
   const handleSwipeLeft = () => {
-    setCurrentPage((prev) => (prev + 1) % 3);
+    setCurrentPage(prev => (prev + 1) % 3);
   };
 
   const handleSwipeRight = () => {
-    setCurrentPage((prev) => (prev - 1 + 3) % 3);
+    setCurrentPage(prev => (prev - 1 + 3) % 3);
   };
 
   return (
@@ -81,18 +98,22 @@ export default function HomeUltimate() {
       <AstronomicalEffects intensity="high" />
 
       {/* Interactive 3D scene */}
-      {activeFeature === '3d' && <Interactive3DScene onProjectClick={handleProjectClick} />}
+      {activeFeature === "3d" && (
+        <Interactive3DScene onProjectClick={handleProjectClick} />
+      )}
 
       {/* Gesture navigation */}
       <GestureNavigation
         onSwipeLeft={handleSwipeLeft}
         onSwipeRight={handleSwipeRight}
-        onSwipeUp={() => window.scrollBy({ top: -200, behavior: 'smooth' })}
-        onSwipeDown={() => window.scrollBy({ top: 200, behavior: 'smooth' })}
+        onSwipeUp={() => window.scrollBy({ top: -200, behavior: "smooth" })}
+        onSwipeDown={() => window.scrollBy({ top: 200, behavior: "smooth" })}
       />
 
       {/* Sound reactive effects */}
-      {activeFeature === 'sound' && <SoundReactiveEffects enabled intensity="high" />}
+      {activeFeature === "sound" && (
+        <SoundReactiveEffects enabled intensity="high" />
+      )}
 
       {/* Hero Section */}
       <motion.section
@@ -106,7 +127,11 @@ export default function HomeUltimate() {
         <motion.div className="relative z-10 max-w-5xl mx-auto text-center space-y-8">
           {/* Title */}
           <motion.div variants={itemVariants}>
-            <ExtremeNeonLighting glowColor="#00D9FF" intensity="extreme" animated>
+            <ExtremeNeonLighting
+              glowColor="#00D9FF"
+              intensity="extreme"
+              animated
+            >
               <h1 className="text-7xl md:text-8xl font-bold tracking-wider mb-4 bg-gradient-to-r from-afro-gold via-afro-sapphire to-afro-emerald bg-clip-text text-transparent">
                 JONATHAN PEOPLES
               </h1>
@@ -116,7 +141,8 @@ export default function HomeUltimate() {
               animate={{ opacity: [0.6, 1, 0.6] }}
               transition={{ duration: 3, repeat: Infinity } as any}
             >
-              Sovereign Tech Architect | Cybersecurity Innovator | Material Science Pioneer
+              Sovereign Tech Architect | Cybersecurity Innovator | Material
+              Science Pioneer
             </motion.p>
           </motion.div>
 
@@ -124,35 +150,46 @@ export default function HomeUltimate() {
           <motion.div variants={itemVariants} className="space-y-4">
             <BloomEffect color="#DAA520" intensity="high">
               <p className="text-lg text-foreground/70 max-w-3xl mx-auto leading-relaxed">
-                Pioneering next-generation technologies that empower communities, secure digital sovereignty,
-                and advance scientific innovation through Afrofuturistic design and cutting-edge engineering.
+                Pioneering next-generation technologies that empower
+                communities, secure digital sovereignty, and advance scientific
+                innovation through Afrofuturistic design and cutting-edge
+                engineering.
               </p>
             </BloomEffect>
           </motion.div>
 
           {/* Feature Buttons */}
-          <motion.div variants={itemVariants} className="flex gap-4 justify-center flex-wrap pt-8">
+          <motion.div
+            variants={itemVariants}
+            className="flex gap-4 justify-center flex-wrap pt-8"
+          >
             <ExtremeNeonLighting glowColor="#FF0080" intensity="high" animated>
               <motion.button
                 className="px-8 py-4 bg-gradient-to-r from-afro-gold to-afro-emerald text-black font-bold rounded-lg hover:scale-105 transition-transform flex items-center gap-2"
-                onClick={() => setActiveFeature(activeFeature === '3d' ? 'none' : '3d')}
+                onClick={() =>
+                  setActiveFeature(activeFeature === "3d" ? "none" : "3d")
+                }
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Box className="w-5 h-5" />
-                {activeFeature === '3d' ? 'Hide 3D' : 'View 3D Projects'}
+                {activeFeature === "3d" ? "Hide 3D" : "View 3D Projects"}
               </motion.button>
             </ExtremeNeonLighting>
 
             <ExtremeNeonLighting glowColor="#00D9FF" intensity="high" animated>
               <motion.button
                 className="px-8 py-4 bg-gradient-to-r from-afro-sapphire to-afro-emerald text-white font-bold rounded-lg hover:scale-105 transition-transform flex items-center gap-2"
-                onClick={() => setActiveFeature(activeFeature === 'sound' ? 'none' : 'sound')}
+                onClick={() =>
+                  setActiveFeature(activeFeature === "sound" ? "none" : "sound")
+                }
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Volume2 className="w-5 h-5" />
-                {activeFeature === 'sound' ? 'Disable Sound' : 'Enable Sound Reactive'}
+                {activeFeature === "sound"
+                  ? "Disable Sound"
+                  : "Enable Sound Reactive"}
               </motion.button>
             </ExtremeNeonLighting>
 
@@ -177,8 +214,18 @@ export default function HomeUltimate() {
         >
           <div className="text-afro-gold text-center">
             <p className="text-sm mb-2">Scroll to explore</p>
-            <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            <svg
+              className="w-6 h-6 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
             </svg>
           </div>
         </motion.div>
@@ -206,21 +253,23 @@ export default function HomeUltimate() {
             {[
               {
                 icon: <Zap className="w-12 h-12" />,
-                title: 'Cybersecurity',
-                description: 'Quantum-ready encryption and sovereign security architecture',
-                color: '#FF0080',
+                title: "Cybersecurity",
+                description:
+                  "Quantum-ready encryption and sovereign security architecture",
+                color: "#FF0080",
               },
               {
                 icon: <Layers className="w-12 h-12" />,
-                title: 'Material Science',
-                description: 'Multi-modal composite transduction with 25+ patent claims',
-                color: '#DAA520',
+                title: "Material Science",
+                description:
+                  "Multi-modal composite transduction with 25+ patent claims",
+                color: "#DAA520",
               },
               {
                 icon: <Brain className="w-12 h-12" />,
-                title: 'Community Impact',
-                description: 'TechBridge Collective bridging digital divides',
-                color: '#00D9FF',
+                title: "Community Impact",
+                description: "TechBridge Collective bridging digital divides",
+                color: "#00D9FF",
               },
             ].map((item, index) => (
               <motion.div
@@ -228,12 +277,22 @@ export default function HomeUltimate() {
                 variants={itemVariants}
                 whileHover={{ scale: 1.05 }}
               >
-                <ExtremeNeonLighting glowColor={item.color} intensity="high" animated>
+                <ExtremeNeonLighting
+                  glowColor={item.color}
+                  intensity="high"
+                  animated
+                >
                   <div className="p-8 bg-background/50 rounded-lg border border-foreground/20 backdrop-blur-sm h-full">
-                    <div className="text-5xl mb-4" style={{ color: item.color }}>
+                    <div
+                      className="text-5xl mb-4"
+                      style={{ color: item.color }}
+                    >
                       {item.icon}
                     </div>
-                    <h3 className="text-2xl font-bold mb-3" style={{ color: item.color }}>
+                    <h3
+                      className="text-2xl font-bold mb-3"
+                      style={{ color: item.color }}
+                    >
                       {item.title}
                     </h3>
                     <p className="text-foreground/80">{item.description}</p>
@@ -266,9 +325,15 @@ export default function HomeUltimate() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1 }}
               >
-                <ExtremeNeonLighting glowColor="#00D9FF" intensity="medium" animated>
+                <ExtremeNeonLighting
+                  glowColor="#00D9FF"
+                  intensity="medium"
+                  animated
+                >
                   <div className="p-8 bg-background/50 rounded-lg border border-foreground/20 backdrop-blur-sm">
-                    <h3 className="text-xl font-bold mb-6 text-center text-afro-gold">Capability Matrix</h3>
+                    <h3 className="text-xl font-bold mb-6 text-center text-afro-gold">
+                      Capability Matrix
+                    </h3>
                     <AdvancedRadarChart data={metricsData} animated />
                   </div>
                 </ExtremeNeonLighting>
@@ -279,9 +344,15 @@ export default function HomeUltimate() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.2 }}
               >
-                <ExtremeNeonLighting glowColor="#FF0080" intensity="medium" animated>
+                <ExtremeNeonLighting
+                  glowColor="#FF0080"
+                  intensity="medium"
+                  animated
+                >
                   <div className="p-8 bg-background/50 rounded-lg border border-foreground/20 backdrop-blur-sm">
-                    <h3 className="text-xl font-bold mb-6 text-center text-afro-gold">Technical Proficiency</h3>
+                    <h3 className="text-xl font-bold mb-6 text-center text-afro-gold">
+                      Technical Proficiency
+                    </h3>
                     <AnimatedBarChart data={skillsData} />
                   </div>
                 </ExtremeNeonLighting>

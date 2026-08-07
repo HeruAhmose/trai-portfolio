@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface AwakeningStatus {
   label: string;
-  status: 'waiting' | 'processing' | 'complete';
+  status: "waiting" | "processing" | "complete";
 }
 
 interface SovereignAwakeningProps {
   onComplete: () => void;
 }
 
-export default function SovereignAwakening({ onComplete }: SovereignAwakeningProps) {
+export default function SovereignAwakening({
+  onComplete,
+}: SovereignAwakeningProps) {
   const [statuses, setStatuses] = useState<AwakeningStatus[]>([
-    { label: 'HEX MESH', status: 'waiting' },
-    { label: 'AURA', status: 'waiting' },
-    { label: 'VOICE', status: 'waiting' },
-    { label: 'TRANSITION MATRIX', status: 'waiting' },
+    { label: "HEX MESH", status: "waiting" },
+    { label: "AURA", status: "waiting" },
+    { label: "VOICE", status: "waiting" },
+    { label: "TRANSITION MATRIX", status: "waiting" },
   ]);
   const [isComplete, setIsComplete] = useState(false);
   const [skipClicked, setSkipClicked] = useState(false);
@@ -36,16 +38,16 @@ export default function SovereignAwakening({ onComplete }: SovereignAwakeningPro
 
     const timeouts = timings.map(({ index, delay }) =>
       setTimeout(() => {
-        setStatuses((prev) => {
+        setStatuses(prev => {
           const updated = [...prev];
-          updated[index] = { ...updated[index], status: 'processing' };
+          updated[index] = { ...updated[index], status: "processing" };
           return updated;
         });
 
         setTimeout(() => {
-          setStatuses((prev) => {
+          setStatuses(prev => {
             const updated = [...prev];
-            updated[index] = { ...updated[index], status: 'complete' };
+            updated[index] = { ...updated[index], status: "complete" };
             return updated;
           });
 
@@ -59,32 +61,32 @@ export default function SovereignAwakening({ onComplete }: SovereignAwakeningPro
       }, delay)
     );
 
-    return () => timeouts.forEach((t) => clearTimeout(t));
+    return () => timeouts.forEach(t => clearTimeout(t));
   }, [skipClicked, onComplete]);
 
-  const getStatusColor = (status: AwakeningStatus['status']) => {
+  const getStatusColor = (status: AwakeningStatus["status"]) => {
     switch (status) {
-      case 'waiting':
-        return 'text-muted-foreground';
-      case 'processing':
-        return 'text-cyan-400 animate-pulse';
-      case 'complete':
-        return 'text-primary';
+      case "waiting":
+        return "text-muted-foreground";
+      case "processing":
+        return "text-cyan-400 animate-pulse";
+      case "complete":
+        return "text-primary";
       default:
-        return 'text-muted-foreground';
+        return "text-muted-foreground";
     }
   };
 
-  const getStatusSymbol = (status: AwakeningStatus['status']) => {
+  const getStatusSymbol = (status: AwakeningStatus["status"]) => {
     switch (status) {
-      case 'waiting':
-        return '◯';
-      case 'processing':
-        return '◐';
-      case 'complete':
-        return '◉';
+      case "waiting":
+        return "◯";
+      case "processing":
+        return "◐";
+      case "complete":
+        return "◉";
       default:
-        return '◯';
+        return "◯";
     }
   };
 
@@ -115,9 +117,9 @@ export default function SovereignAwakening({ onComplete }: SovereignAwakeningPro
                 transition={{
                   duration: Math.max(0.1, 3 + Math.random() * 2),
                   repeat: Infinity,
-                  repeatType: 'loop',
+                  repeatType: "loop",
                   delay: Math.max(0, Math.random() * 2),
-                  type: 'tween',
+                  type: "tween",
                 }}
               />
             ))}
@@ -130,15 +132,13 @@ export default function SovereignAwakening({ onComplete }: SovereignAwakeningPro
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
-            <div
-              className="absolute inset-0 border-2 border-primary rounded-full animate-spin-slow"
-            />
-            <div
-              className="absolute inset-4 border border-primary rounded-full opacity-50 animate-spin-reverse"
-            />
+            <div className="absolute inset-0 border-2 border-primary rounded-full animate-spin-slow" />
+            <div className="absolute inset-4 border border-primary rounded-full opacity-50 animate-spin-reverse" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary neon-text">◉</div>
+                <div className="text-2xl font-bold text-primary neon-text">
+                  ◉
+                </div>
               </div>
             </div>
           </motion.div>
@@ -163,16 +163,22 @@ export default function SovereignAwakening({ onComplete }: SovereignAwakeningPro
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.2 }}
                 >
-                  <span className={`text-lg font-mono ${getStatusColor(status.status)}`}>
+                  <span
+                    className={`text-lg font-mono ${getStatusColor(status.status)}`}
+                  >
                     {getStatusSymbol(status.status)}
                   </span>
-                  <span className={`font-mono text-sm tracking-widest ${getStatusColor(status.status)}`}>
+                  <span
+                    className={`font-mono text-sm tracking-widest ${getStatusColor(status.status)}`}
+                  >
                     {status.label}
                   </span>
-                  <span className={`text-xs font-mono ${getStatusColor(status.status)}`}>
-                    {status.status === 'waiting' && 'WAITING'}
-                    {status.status === 'processing' && 'PROCESSING'}
-                    {status.status === 'complete' && 'COMPLETE'}
+                  <span
+                    className={`text-xs font-mono ${getStatusColor(status.status)}`}
+                  >
+                    {status.status === "waiting" && "WAITING"}
+                    {status.status === "processing" && "PROCESSING"}
+                    {status.status === "complete" && "COMPLETE"}
                   </span>
                 </motion.div>
               ))}

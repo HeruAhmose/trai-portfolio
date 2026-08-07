@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
 interface Particle {
   x: number;
@@ -8,19 +8,19 @@ interface Particle {
   life: number;
   size: number;
   color: string;
-  type: 'standard' | 'glow' | 'trail';
+  type: "standard" | "glow" | "trail";
 }
 
 export const AdvancedParticleSystem: React.FC<{
   width?: number;
   height?: number;
   particleCount?: number;
-  emitterType?: 'fountain' | 'explosion' | 'ambient' | 'swarm';
+  emitterType?: "fountain" | "explosion" | "ambient" | "swarm";
 }> = ({
   width = 800,
   height = 600,
   particleCount = 200,
-  emitterType = 'ambient',
+  emitterType = "ambient",
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
@@ -30,7 +30,7 @@ export const AdvancedParticleSystem: React.FC<{
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     canvas.width = width;
@@ -40,7 +40,7 @@ export const AdvancedParticleSystem: React.FC<{
       timeRef.current++;
 
       // Clear canvas with fade effect
-      ctx.fillStyle = 'rgba(10, 14, 39, 0.1)';
+      ctx.fillStyle = "rgba(10, 14, 39, 0.1)";
       ctx.fillRect(0, 0, width, height);
 
       // Add new particles based on emitter type
@@ -51,11 +51,11 @@ export const AdvancedParticleSystem: React.FC<{
 
       // Update and render particles
       particlesRef.current = particlesRef.current
-        .map((p) => updateParticle(p, emitterType))
-        .filter((p) => p.life > 0);
+        .map(p => updateParticle(p, emitterType))
+        .filter(p => p.life > 0);
 
       // Render particles with advanced effects
-      particlesRef.current.forEach((p) => {
+      particlesRef.current.forEach(p => {
         renderParticle(ctx, p);
       });
 
@@ -70,7 +70,7 @@ export const AdvancedParticleSystem: React.FC<{
 
     for (let i = 0; i < count; i++) {
       switch (type) {
-        case 'fountain':
+        case "fountain":
           particles.push({
             x: width / 2 + (Math.random() - 0.5) * 50,
             y: height,
@@ -79,11 +79,11 @@ export const AdvancedParticleSystem: React.FC<{
             life: 1,
             size: Math.random() * 3 + 1,
             color: `hsl(${Math.random() * 60 + 180}, 100%, 50%)`,
-            type: Math.random() > 0.7 ? 'glow' : 'standard',
+            type: Math.random() > 0.7 ? "glow" : "standard",
           });
           break;
 
-        case 'explosion':
+        case "explosion":
           particles.push({
             x: width / 2,
             y: height / 2,
@@ -92,11 +92,11 @@ export const AdvancedParticleSystem: React.FC<{
             life: 1,
             size: Math.random() * 4 + 2,
             color: `hsl(${Math.random() * 60}, 100%, ${Math.random() * 30 + 50}%)`,
-            type: 'trail',
+            type: "trail",
           });
           break;
 
-        case 'swarm':
+        case "swarm":
           const angle = (i / count) * Math.PI * 2;
           const speed = 3 + Math.random() * 2;
           particles.push({
@@ -107,11 +107,11 @@ export const AdvancedParticleSystem: React.FC<{
             life: 1,
             size: Math.random() * 2 + 1,
             color: `hsl(${200 + Math.random() * 60}, 80%, 50%)`,
-            type: 'glow',
+            type: "glow",
           });
           break;
 
-        case 'ambient':
+        case "ambient":
         default:
           particles.push({
             x: Math.random() * width,
@@ -121,7 +121,7 @@ export const AdvancedParticleSystem: React.FC<{
             life: 1,
             size: Math.random() * 1.5 + 0.5,
             color: `hsla(${Math.random() * 360}, 100%, 50%, ${Math.random() * 0.5 + 0.3})`,
-            type: 'standard',
+            type: "standard",
           });
           break;
       }
@@ -139,12 +139,12 @@ export const AdvancedParticleSystem: React.FC<{
     updated.life -= 0.01;
 
     // Gravity
-    if (type === 'fountain' || type === 'explosion') {
+    if (type === "fountain" || type === "explosion") {
       updated.vy += 0.2;
     }
 
     // Swarm behavior
-    if (type === 'swarm') {
+    if (type === "swarm") {
       const centerX = width / 2;
       const centerY = height / 2;
       const dx = centerX - updated.x;
@@ -158,7 +158,7 @@ export const AdvancedParticleSystem: React.FC<{
     }
 
     // Ambient drift
-    if (type === 'ambient') {
+    if (type === "ambient") {
       updated.vx += (Math.random() - 0.5) * 0.1;
       updated.vy += (Math.random() - 0.5) * 0.1;
     }
@@ -178,7 +178,7 @@ export const AdvancedParticleSystem: React.FC<{
     ctx.globalAlpha = p.life;
 
     switch (p.type) {
-      case 'glow':
+      case "glow":
         // Glowing particle with bloom effect
         ctx.shadowColor = p.color;
         ctx.shadowBlur = 15;
@@ -188,18 +188,25 @@ export const AdvancedParticleSystem: React.FC<{
         ctx.fill();
         break;
 
-      case 'trail':
+      case "trail":
         // Trail particle with gradient
-        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2);
+        const gradient = ctx.createRadialGradient(
+          p.x,
+          p.y,
+          0,
+          p.x,
+          p.y,
+          p.size * 2
+        );
         gradient.addColorStop(0, p.color);
-        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+        gradient.addColorStop(1, "rgba(0,0,0,0)");
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
         ctx.fill();
         break;
 
-      case 'standard':
+      case "standard":
       default:
         ctx.fillStyle = p.color;
         ctx.beginPath();

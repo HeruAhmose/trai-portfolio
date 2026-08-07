@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 interface HologramElement {
   id: string;
@@ -10,19 +10,43 @@ interface HologramElement {
 }
 
 export const HolographicInterface: React.FC<{ title?: string }> = ({
-  title = 'Holographic Control Panel',
+  title = "Holographic Control Panel",
 }) => {
   const [glitch, setGlitch] = useState(false);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [scanlines, setScanlines] = useState(false);
 
   const elements: HologramElement[] = [
-    { id: 'energy', label: 'Energy', icon: '⚡', color: '#00ff00', angle: 0 },
-    { id: 'quantum', label: 'Quantum', icon: '⚛️', color: '#ff00ff', angle: 60 },
-    { id: 'materials', label: 'Materials', icon: '💎', color: '#00ffff', angle: 120 },
-    { id: 'network', label: 'Network', icon: '🌐', color: '#ffff00', angle: 180 },
-    { id: 'security', label: 'Security', icon: '🔐', color: '#ff0080', angle: 240 },
-    { id: 'ai', label: 'AI', icon: '🤖', color: '#00ff80', angle: 300 },
+    { id: "energy", label: "Energy", icon: "⚡", color: "#00ff00", angle: 0 },
+    {
+      id: "quantum",
+      label: "Quantum",
+      icon: "⚛️",
+      color: "#ff00ff",
+      angle: 60,
+    },
+    {
+      id: "materials",
+      label: "Materials",
+      icon: "💎",
+      color: "#00ffff",
+      angle: 120,
+    },
+    {
+      id: "network",
+      label: "Network",
+      icon: "🌐",
+      color: "#ffff00",
+      angle: 180,
+    },
+    {
+      id: "security",
+      label: "Security",
+      icon: "🔐",
+      color: "#ff0080",
+      angle: 240,
+    },
+    { id: "ai", label: "AI", icon: "🤖", color: "#00ff80", angle: 300 },
   ];
 
   // Trigger glitch effect
@@ -39,8 +63,9 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
           <div
             className="w-full h-full"
             style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,255,0,0.03) 0px, rgba(0,255,0,0.03) 1px, transparent 1px, transparent 2px)',
-              animation: 'scanlines 8s linear infinite',
+              backgroundImage:
+                "repeating-linear-gradient(0deg, rgba(0,255,0,0.03) 0px, rgba(0,255,0,0.03) 1px, transparent 1px, transparent 2px)",
+              animation: "scanlines 8s linear infinite",
             }}
           />
         </div>
@@ -50,7 +75,8 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
       <motion.div
         className="relative w-full aspect-square rounded-lg border-2 border-cyan-400/50 bg-black/50 overflow-hidden"
         style={{
-          boxShadow: '0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0, 255, 255, 0.1)',
+          boxShadow:
+            "0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0, 255, 255, 0.1)",
         }}
         animate={glitch ? { x: [0, -5, 5, -5, 0] } : {}}
         transition={{ duration: 0.2 }}
@@ -59,7 +85,7 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         >
           <div className="relative w-24 h-24">
             {/* Core glow */}
@@ -68,7 +94,8 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
               style={{
-                boxShadow: '0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.3)',
+                boxShadow:
+                  "0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.3)",
               }}
             />
 
@@ -79,7 +106,7 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
                 animate={{ scale: [1, 1.5, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
                 style={{
-                  boxShadow: '0 0 15px rgba(0, 255, 255, 0.8)',
+                  boxShadow: "0 0 15px rgba(0, 255, 255, 0.8)",
                 }}
               />
             </div>
@@ -98,8 +125,8 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
               key={element.id}
               className="absolute w-16 h-16 rounded-lg border-2 flex flex-col items-center justify-center text-xs font-bold transition-all"
               style={{
-                left: '50%',
-                top: '50%',
+                left: "50%",
+                top: "50%",
                 marginLeft: -32,
                 marginTop: -32,
                 borderColor: element.color,
@@ -114,13 +141,17 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
                     ? `0 0 30px ${element.color}, inset 0 0 15px ${element.color}`
                     : `0 0 10px ${element.color}80`,
               }}
-              transition={{ type: 'spring', stiffness: 100 }}
+              transition={{ type: "spring", stiffness: 100 }}
               onClick={() => {
-                setSelectedElement(selectedElement === element.id ? null : element.id);
+                setSelectedElement(
+                  selectedElement === element.id ? null : element.id
+                );
                 triggerGlitch();
                 setScanlines(!scanlines);
               }}
-              whileHover={{ scale: selectedElement === element.id ? 1.3 : 1.15 }}
+              whileHover={{
+                scale: selectedElement === element.id ? 1.3 : 1.15,
+              }}
               whileTap={{ scale: 0.95 }}
             >
               <div className="text-2xl mb-1">{element.icon}</div>
@@ -132,8 +163,18 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
         {/* Grid overlay */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
           <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0, 255, 255, 0.1)" strokeWidth="0.5" />
+            <pattern
+              id="grid"
+              width="40"
+              height="40"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 40 0 L 0 0 0 40"
+                fill="none"
+                stroke="rgba(0, 255, 255, 0.1)"
+                strokeWidth="0.5"
+              />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
@@ -162,7 +203,7 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
             animate={{ opacity: 1 }}
             className="text-sm text-gold-400"
           >
-            {elements.find((e) => e.id === selectedElement)?.label} System Active
+            {elements.find(e => e.id === selectedElement)?.label} System Active
           </motion.p>
         )}
       </motion.div>
@@ -183,7 +224,7 @@ export const HolographicInterface: React.FC<{ title?: string }> = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          {scanlines ? 'Disable' : 'Enable'} Scanlines
+          {scanlines ? "Disable" : "Enable"} Scanlines
         </motion.button>
       </div>
 

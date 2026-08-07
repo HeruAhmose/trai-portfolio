@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
+import React, { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
 const THREE_ANY = THREE as any;
 
 interface CosmicWebGLBackgroundProps {
   className?: string;
-  intensity?: 'low' | 'medium' | 'high';
+  intensity?: "low" | "medium" | "high";
   colors?: string[];
 }
 
 export const CosmicWebGLBackground: React.FC<CosmicWebGLBackgroundProps> = ({
-  className = '',
-  intensity = 'high',
-  colors = ['#DAA520', '#228B22', '#1E3A8A', '#FF0080', '#00D9FF'],
+  className = "",
+  intensity = "high",
+  colors = ["#DAA520", "#228B22", "#1E3A8A", "#FF0080", "#00D9FF"],
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<any>(null);
@@ -34,14 +34,18 @@ export const CosmicWebGLBackground: React.FC<CosmicWebGLBackgroundProps> = ({
     );
     camera.position.z = 5;
 
-    const renderer = new THREE_ANY.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE_ANY.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 0.1);
     rendererRef.current = renderer;
     containerRef.current.appendChild(renderer.domElement);
 
     // Create particle system
-    const particleCount = intensity === 'high' ? 5000 : intensity === 'medium' ? 3000 : 1000;
+    const particleCount =
+      intensity === "high" ? 5000 : intensity === "medium" ? 3000 : 1000;
     const geometry = new THREE_ANY.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const velocities = new Float32Array(particleCount * 3);
@@ -74,9 +78,18 @@ export const CosmicWebGLBackground: React.FC<CosmicWebGLBackgroundProps> = ({
       colors_array[i + 2] = rgbColors[colorIndex][2];
     }
 
-    geometry.setAttribute('position', new THREE_ANY.BufferAttribute(positions, 3));
-    geometry.setAttribute('velocity', new THREE_ANY.BufferAttribute(velocities, 3));
-    geometry.setAttribute('color', new THREE_ANY.BufferAttribute(colors_array, 3));
+    geometry.setAttribute(
+      "position",
+      new THREE_ANY.BufferAttribute(positions, 3)
+    );
+    geometry.setAttribute(
+      "velocity",
+      new THREE_ANY.BufferAttribute(velocities, 3)
+    );
+    geometry.setAttribute(
+      "color",
+      new THREE_ANY.BufferAttribute(colors_array, 3)
+    );
 
     const material = new THREE_ANY.PointsMaterial({
       size: 0.1,
@@ -91,21 +104,24 @@ export const CosmicWebGLBackground: React.FC<CosmicWebGLBackgroundProps> = ({
     particlesRef.current = particles;
 
     // Add nebula-like gradient background
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = 512;
     canvas.height = 512;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (ctx) {
       const gradient = ctx.createRadialGradient(256, 256, 0, 256, 256, 512);
-      gradient.addColorStop(0, 'rgba(218, 165, 32, 0.3)');
-      gradient.addColorStop(0.5, 'rgba(34, 139, 34, 0.2)');
-      gradient.addColorStop(1, 'rgba(30, 58, 138, 0.1)');
+      gradient.addColorStop(0, "rgba(218, 165, 32, 0.3)");
+      gradient.addColorStop(0.5, "rgba(34, 139, 34, 0.2)");
+      gradient.addColorStop(1, "rgba(30, 58, 138, 0.1)");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, 512, 512);
     }
     const texture = new THREE_ANY.CanvasTexture(canvas);
     const bgGeometry = new THREE_ANY.SphereGeometry(50, 32, 32);
-    const bgMaterial = new THREE_ANY.MeshBasicMaterial({ map: texture, side: THREE_ANY.BackSide });
+    const bgMaterial = new THREE_ANY.MeshBasicMaterial({
+      map: texture,
+      side: THREE_ANY.BackSide,
+    });
     const background = new THREE_ANY.Mesh(bgGeometry, bgMaterial);
     scene.add(background);
 
@@ -116,8 +132,8 @@ export const CosmicWebGLBackground: React.FC<CosmicWebGLBackgroundProps> = ({
       time += 0.001;
 
       // Update particles
-      const positionAttribute = geometry.getAttribute('position') as any;
-      const velocityAttribute = geometry.getAttribute('velocity') as any;
+      const positionAttribute = geometry.getAttribute("position") as any;
+      const velocityAttribute = geometry.getAttribute("velocity") as any;
       const positions = positionAttribute.array as Float32Array;
       const velocities = velocityAttribute.array as Float32Array;
 
@@ -159,14 +175,17 @@ export const CosmicWebGLBackground: React.FC<CosmicWebGLBackgroundProps> = ({
       renderer.setSize(width, height);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      if (containerRef.current && renderer.domElement.parentNode === containerRef.current) {
+      if (
+        containerRef.current &&
+        renderer.domElement.parentNode === containerRef.current
+      ) {
         containerRef.current.removeChild(renderer.domElement);
       }
       geometry.dispose();
@@ -181,7 +200,7 @@ export const CosmicWebGLBackground: React.FC<CosmicWebGLBackgroundProps> = ({
     <div
       ref={containerRef}
       className={`fixed inset-0 -z-10 ${className}`}
-      style={{ width: '100%', height: '100%' }}
+      style={{ width: "100%", height: "100%" }}
     />
   );
 };

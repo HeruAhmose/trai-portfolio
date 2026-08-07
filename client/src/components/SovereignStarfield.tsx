@@ -1,12 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
-export const SovereignStarfield: React.FC<{ className?: string }> = ({ className = '' }) => {
+export const SovereignStarfield: React.FC<{ className?: string }> = ({
+  className = "",
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let animId: number;
@@ -49,11 +51,11 @@ export const SovereignStarfield: React.FC<{ className?: string }> = ({ className
       canvas.width = w;
       canvas.height = h;
     };
-    window.addEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 

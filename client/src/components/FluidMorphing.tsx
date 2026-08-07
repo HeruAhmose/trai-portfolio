@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 interface FluidMorphingProps {
   children?: React.ReactNode;
@@ -14,17 +14,17 @@ interface FluidMorphingProps {
  */
 export const FluidMorphingShape: React.FC<FluidMorphingProps> = ({
   children,
-  className = '',
+  className = "",
   duration = 8,
-  colors = ['#DAA520', '#228B22', '#1E3A8A', '#FF0080', '#00D9FF'],
+  colors = ["#DAA520", "#228B22", "#1E3A8A", "#FF0080", "#00D9FF"],
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   const paths = [
-    'M150,0 Q75,0 75,75 Q75,150 150,150 Q225,150 225,75 Q225,0 150,0',
-    'M150,0 Q50,50 75,150 Q150,200 225,150 Q250,50 150,0',
-    'M150,0 Q100,0 50,75 Q0,150 100,200 Q150,220 200,200 Q250,150 200,75 Q150,0 150,0',
-    'M150,0 Q75,25 50,100 Q25,175 75,225 Q150,250 225,225 Q250,175 225,100 Q200,25 150,0',
+    "M150,0 Q75,0 75,75 Q75,150 150,150 Q225,150 225,75 Q225,0 150,0",
+    "M150,0 Q50,50 75,150 Q150,200 225,150 Q250,50 150,0",
+    "M150,0 Q100,0 50,75 Q0,150 100,200 Q150,220 200,200 Q250,150 200,75 Q150,0 150,0",
+    "M150,0 Q75,25 50,100 Q25,175 75,225 Q150,250 225,225 Q250,175 225,100 Q200,25 150,0",
   ];
 
   const colorVariants = {
@@ -33,7 +33,7 @@ export const FluidMorphingShape: React.FC<FluidMorphingProps> = ({
       transition: {
         duration: duration,
         repeat: Infinity,
-        repeatType: 'reverse' as const,
+        repeatType: "reverse" as const,
       },
     },
   };
@@ -44,11 +44,16 @@ export const FluidMorphingShape: React.FC<FluidMorphingProps> = ({
         ref={svgRef}
         viewBox="0 0 300 300"
         className="w-full h-full"
-        style={{ filter: 'drop-shadow(0 0 20px rgba(0, 217, 255, 0.5))' }}
+        style={{ filter: "drop-shadow(0 0 20px rgba(0, 217, 255, 0.5))" }}
       >
         <defs>
           <filter id="morphFilter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" />
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.02"
+              numOctaves="3"
+              result="noise"
+            />
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" />
           </filter>
         </defs>
@@ -65,27 +70,36 @@ export const FluidMorphingShape: React.FC<FluidMorphingProps> = ({
             d: {
               duration: duration,
               repeat: Infinity,
-              repeatType: 'reverse',
+              repeatType: "reverse",
             },
             opacity: {
               duration: duration,
               repeat: Infinity,
-              repeatType: 'reverse',
+              repeatType: "reverse",
             },
           }}
         />
 
         <defs>
-          <linearGradient id="morphGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient
+            id="morphGradient"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <motion.stop
               offset="0%"
               stopColor={colors[0]}
-             animate={{ opacity: [0.3, 0.8, 0.3] }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              } as any}        />
+              animate={{ opacity: [0.3, 0.8, 0.3] }}
+              transition={
+                {
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                } as any
+              }
+            />
             <motion.stop
               offset="100%"
               stopColor={colors[colors.length - 1]}
@@ -93,14 +107,18 @@ export const FluidMorphingShape: React.FC<FluidMorphingProps> = ({
               transition={{
                 duration: duration,
                 repeat: Infinity,
-                repeatType: 'reverse',
+                repeatType: "reverse",
               }}
             />
           </linearGradient>
         </defs>
       </svg>
 
-      {children && <div className="absolute inset-0 flex items-center justify-center">{children}</div>}
+      {children && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          {children}
+        </div>
+      )}
     </div>
   );
 };
@@ -113,47 +131,47 @@ interface LiquidSwipeProps {
   children: React.ReactNode;
   className?: string;
   color?: string;
-  direction?: 'left' | 'right' | 'up' | 'down';
+  direction?: "left" | "right" | "up" | "down";
 }
 
 export const LiquidSwipeTransition: React.FC<LiquidSwipeProps> = ({
   children,
-  className = '',
-  color = '#00D9FF',
-  direction = 'right',
+  className = "",
+  color = "#00D9FF",
+  direction = "right",
 }) => {
   const getTransformOrigin = () => {
     switch (direction) {
-      case 'left':
-        return 'right center';
-      case 'right':
-        return 'left center';
-      case 'up':
-        return 'center bottom';
-      case 'down':
-        return 'center top';
+      case "left":
+        return "right center";
+      case "right":
+        return "left center";
+      case "up":
+        return "center bottom";
+      case "down":
+        return "center top";
       default:
-        return 'center center';
+        return "center center";
     }
   };
 
   const getInitialClipPath = () => {
     switch (direction) {
-      case 'left':
-        return 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)';
-      case 'right':
-        return 'polygon(0 0, 0 0, 0 100%, 0 100%)';
-      case 'up':
-        return 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)';
-      case 'down':
-        return 'polygon(0 0, 100% 0, 100% 0, 0 0)';
+      case "left":
+        return "polygon(100% 0, 100% 0, 100% 100%, 100% 100%)";
+      case "right":
+        return "polygon(0 0, 0 0, 0 100%, 0 100%)";
+      case "up":
+        return "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)";
+      case "down":
+        return "polygon(0 0, 100% 0, 100% 0, 0 0)";
       default:
-        return 'polygon(0 0, 100% 0, 100% 100%, 0 100%)';
+        return "polygon(0 0, 100% 0, 100% 100%, 0 100%)";
     }
   };
 
   const getFinalClipPath = () => {
-    return 'polygon(0 0, 100% 0, 100% 100%, 0 100%)';
+    return "polygon(0 0, 100% 0, 100% 100%, 0 100%)";
   };
 
   return (
@@ -187,7 +205,7 @@ interface MeshDeformationProps {
 
 export const MeshDeformation: React.FC<MeshDeformationProps> = ({
   children,
-  className = '',
+  className = "",
   intensity = 1,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -196,7 +214,7 @@ export const MeshDeformation: React.FC<MeshDeformationProps> = ({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = 300;
@@ -216,7 +234,7 @@ export const MeshDeformation: React.FC<MeshDeformationProps> = ({
       const cols = Math.ceil(canvas.width / gridSize) + 1;
       const rows = Math.ceil(canvas.height / gridSize) + 1;
 
-      ctx.strokeStyle = 'rgba(0, 217, 255, 0.3)';
+      ctx.strokeStyle = "rgba(0, 217, 255, 0.3)";
       ctx.lineWidth = 1;
 
       for (let i = 0; i < cols; i++) {
@@ -232,14 +250,16 @@ export const MeshDeformation: React.FC<MeshDeformationProps> = ({
           const y1 = y + dy;
 
           // Draw point
-          ctx.fillStyle = 'rgba(0, 217, 255, 0.6)';
+          ctx.fillStyle = "rgba(0, 217, 255, 0.6)";
           ctx.beginPath();
           ctx.arc(x1, y1, 2, 0, Math.PI * 2);
           ctx.fill();
 
           // Draw horizontal line
           if (i < cols - 1) {
-            const x2 = (i + 1) * gridSize + Math.sin(time + (i + 1) * gridSize * 0.01) * 5 * intensity;
+            const x2 =
+              (i + 1) * gridSize +
+              Math.sin(time + (i + 1) * gridSize * 0.01) * 5 * intensity;
             const y2 = y + Math.cos(time + y * 0.01) * 5 * intensity;
             ctx.beginPath();
             ctx.moveTo(x1, y1);
@@ -250,7 +270,9 @@ export const MeshDeformation: React.FC<MeshDeformationProps> = ({
           // Draw vertical line
           if (j < rows - 1) {
             const x2 = x + Math.sin(time + x * 0.01) * 5 * intensity;
-            const y2 = (j + 1) * gridSize + Math.cos(time + (j + 1) * gridSize * 0.01) * 5 * intensity;
+            const y2 =
+              (j + 1) * gridSize +
+              Math.cos(time + (j + 1) * gridSize * 0.01) * 5 * intensity;
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
@@ -272,7 +294,7 @@ export const MeshDeformation: React.FC<MeshDeformationProps> = ({
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ filter: 'blur(0.5px)' }}
+        style={{ filter: "blur(0.5px)" }}
       />
       <div className="relative z-10">{children}</div>
     </div>
@@ -292,7 +314,7 @@ interface OrganicWaveProps {
 
 export const OrganicWave: React.FC<OrganicWaveProps> = ({
   children,
-  className = '',
+  className = "",
   waveCount = 3,
   amplitude = 10,
 }) => {
@@ -304,12 +326,14 @@ export const OrganicWave: React.FC<OrganicWaveProps> = ({
       animate={{
         y: [0, amplitude, -amplitude, 0],
       }}
-      transition={{
-        duration: 4,
-        repeat: Infinity,
-        repeatType: 'reverse',
-        ease: 'easeInOut',
-      } as any}
+      transition={
+        {
+          duration: 4,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "easeInOut",
+        } as any
+      }
     >
       {children}
     </motion.div>

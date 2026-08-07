@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface ShaderConfig {
   vertexShader?: string;
@@ -108,7 +108,7 @@ export const AdvancedShaderEffects: React.FC<{
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext('webgl');
+    const gl = canvas.getContext("webgl");
     if (!gl) return;
 
     // Compile shader
@@ -117,7 +117,7 @@ export const AdvancedShaderEffects: React.FC<{
       if (!shader) return null;
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
-      
+
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         console.error(gl.getShaderInfoLog(shader));
         return null;
@@ -126,7 +126,10 @@ export const AdvancedShaderEffects: React.FC<{
     };
 
     const vertexShader = compileShader(MORPH_VERTEX_SHADER, gl.VERTEX_SHADER);
-    const fragmentShader = compileShader(CHROMATIC_FRAGMENT_SHADER, gl.FRAGMENT_SHADER);
+    const fragmentShader = compileShader(
+      CHROMATIC_FRAGMENT_SHADER,
+      gl.FRAGMENT_SHADER
+    );
 
     if (!vertexShader || !fragmentShader) return;
 
@@ -145,9 +148,12 @@ export const AdvancedShaderEffects: React.FC<{
     gl.useProgram(program);
 
     // Set up uniforms
-    const uTimeLocation = gl.getUniformLocation(program, 'uTime');
-    const uIntensityLocation = gl.getUniformLocation(program, 'uIntensity');
-    const uChromaticLocation = gl.getUniformLocation(program, 'uChromaticAmount');
+    const uTimeLocation = gl.getUniformLocation(program, "uTime");
+    const uIntensityLocation = gl.getUniformLocation(program, "uIntensity");
+    const uChromaticLocation = gl.getUniformLocation(
+      program,
+      "uChromaticAmount"
+    );
 
     // Animation loop
     const animate = () => {
@@ -177,7 +183,10 @@ export const AdvancedShaderEffects: React.FC<{
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ background: 'radial-gradient(circle, rgba(0,200,255,0.1) 0%, rgba(0,0,0,0.9) 100%)' }}
+        style={{
+          background:
+            "radial-gradient(circle, rgba(0,200,255,0.1) 0%, rgba(0,0,0,0.9) 100%)",
+        }}
       />
       <div className="relative z-10">{children}</div>
     </div>

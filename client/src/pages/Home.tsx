@@ -1,6 +1,14 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Zap, Brain, Layers, Sparkles, Gauge, Infinity } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Zap,
+  Brain,
+  Layers,
+  Sparkles,
+  Gauge,
+  Infinity,
+} from "lucide-react";
 import {
   AfroTechCard,
   AfroButton,
@@ -10,7 +18,7 @@ import {
   AfroGridItem,
   FloatingAfro,
   AfroRadiance,
-} from '@/components/AfrofuturisticTech';
+} from "@/components/AfrofuturisticTech";
 import {
   Card3DFlip,
   ParallaxSection,
@@ -22,9 +30,9 @@ import {
   HoverLift,
   TextReveal,
   FloatingBubble,
-} from '@/components/AdvancedVisualEffects';
-import { useAudioSystem } from '@/hooks/useAudioSystem';
-import { useEffect, useState } from 'react';
+} from "@/components/AdvancedVisualEffects";
+import { useAudioSystem } from "@/hooks/useAudioSystem";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const { playClickSound, playHoverSound, playSuccessSound } = useAudioSystem();
@@ -56,57 +64,70 @@ export default function Home() {
   };
 
   const metricsData = [
-    { label: 'Cybersecurity Excellence', value: 95, max: 100 },
-    { label: 'Material Science Innovation', value: 87, max: 100 },
-    { label: 'Community Impact', value: 92, max: 100 },
-    { label: 'Research Advancement', value: 88, max: 100 },
+    { label: "Cybersecurity Excellence", value: 95, max: 100 },
+    { label: "Material Science Innovation", value: 87, max: 100 },
+    { label: "Community Impact", value: 92, max: 100 },
+    { label: "Research Advancement", value: 88, max: 100 },
   ];
 
-  const researchData: Array<{ icon: typeof Sparkles; title: string; year: string; status: string; description: string }> = [
+  const researchData: Array<{
+    icon: typeof Sparkles;
+    title: string;
+    year: string;
+    status: string;
+    description: string;
+  }> = [
     {
       icon: Sparkles,
-      title: 'Architecture-Driven Emergent Behavior in Multi-Component Composites',
-      year: '2026',
-      status: 'PREPRINT',
-      description: 'Exploring system-level multi-modal transduction through engineered composite coupling.',
+      title:
+        "Architecture-Driven Emergent Behavior in Multi-Component Composites",
+      year: "2026",
+      status: "PREPRINT",
+      description:
+        "Exploring system-level multi-modal transduction through engineered composite coupling.",
     },
     {
       icon: Gauge,
-      title: 'TechBridge Collective: Digital Access & Community Resilience',
-      year: '2025',
-      status: 'ACTIVE',
-      description: 'Bridging the digital divide across North Carolina with H.K. AI and human navigators.',
+      title: "TechBridge Collective: Digital Access & Community Resilience",
+      year: "2025",
+      status: "ACTIVE",
+      description:
+        "Bridging the digital divide across North Carolina with H.K. AI and human navigators.",
     },
     {
       icon: Infinity,
-      title: 'Sovereign Intelligence: Quantum-Ready Cybersecurity Architecture',
-      year: '2024',
-      status: 'ONGOING',
-      description: 'Developing next-generation security frameworks for sovereign digital infrastructure.',
+      title: "Sovereign Intelligence: Quantum-Ready Cybersecurity Architecture",
+      year: "2024",
+      status: "ONGOING",
+      description:
+        "Developing next-generation security frameworks for sovereign digital infrastructure.",
     },
   ];
 
   const heroSections = [
     {
       icon: <Zap className="w-10 h-10" />,
-      title: 'Cybersecurity',
-      description: 'Advanced threat detection, quantum-ready encryption, and sovereign security architecture.',
+      title: "Cybersecurity",
+      description:
+        "Advanced threat detection, quantum-ready encryption, and sovereign security architecture.",
       delay: 0,
-      url: 'https://queencalifia-cyberai.web.app/',
+      url: "https://queencalifia-cyberai.web.app/",
     },
     {
       icon: <Layers className="w-10 h-10" />,
-      title: 'Material Science',
-      description: 'Multi-modal composite transduction with 25 patent claims and experimental validation.',
+      title: "Material Science",
+      description:
+        "Multi-modal composite transduction with 25 patent claims and experimental validation.",
       delay: 0.1,
-      url: 'https://tamerian-materials.com/',
+      url: "https://tamerian-materials.com/",
     },
     {
       icon: <Brain className="w-10 h-10" />,
-      title: 'Community Impact',
-      description: 'TechBridge Collective: Bridging digital divides with innovative solutions and human-centered tech.',
+      title: "Community Impact",
+      description:
+        "TechBridge Collective: Bridging digital divides with innovative solutions and human-centered tech.",
       delay: 0.2,
-      url: 'https://techbridge-collective.org/',
+      url: "https://techbridge-collective.org/",
     },
   ];
 
@@ -121,11 +142,26 @@ export default function Home() {
       >
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <AnimatedGradientBg colors={['#DAA520', '#228B22', '#1E3A8A']} className="opacity-20" />
-          
-          <FloatingBubble size={300} duration={8} className="top-10 left-10 opacity-30" />
-          <FloatingBubble size={200} duration={10} className="bottom-20 right-10 opacity-20" />
-          <FloatingBubble size={150} duration={12} className="top-1/2 left-1/4 opacity-25" />
+          <AnimatedGradientBg
+            colors={["#DAA520", "#228B22", "#1E3A8A"]}
+            className="opacity-20"
+          />
+
+          <FloatingBubble
+            size={300}
+            duration={8}
+            className="top-10 left-10 opacity-30"
+          />
+          <FloatingBubble
+            size={200}
+            duration={10}
+            className="bottom-20 right-10 opacity-20"
+          />
+          <FloatingBubble
+            size={150}
+            duration={12}
+            className="top-1/2 left-1/4 opacity-25"
+          />
 
           <MorphingShape className="w-96 h-96 top-20 left-10 bg-gradient-to-r from-afro-gold to-afro-emerald opacity-10" />
           <MorphingShape className="w-96 h-96 bottom-20 right-10 bg-gradient-to-r from-afro-sapphire to-afro-terracotta opacity-10" />
@@ -145,7 +181,8 @@ export default function Home() {
               animate={{ opacity: [0.6, 1, 0.6] }}
               transition={{ duration: 3, repeat: Infinity } as any}
             >
-              Sovereign Tech Architect | Cybersecurity Innovator | Material Science Pioneer
+              Sovereign Tech Architect | Cybersecurity Innovator | Material
+              Science Pioneer
             </motion.p>
           </motion.div>
 
@@ -157,18 +194,24 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              Pioneering next-generation technologies that empower communities, secure digital sovereignty, 
-              and advance scientific innovation through Afrofuturistic design and cutting-edge engineering.
+              Pioneering next-generation technologies that empower communities,
+              secure digital sovereignty, and advance scientific innovation
+              through Afrofuturistic design and cutting-edge engineering.
             </motion.p>
           </motion.div>
 
           {/* CTA Buttons with Ripple Effect */}
-          <motion.div variants={itemVariants} className="flex gap-4 justify-center flex-wrap">
+          <motion.div
+            variants={itemVariants}
+            className="flex gap-4 justify-center flex-wrap"
+          >
             <RippleButton
               className="afro-button"
               onClick={() => {
                 playClickSound();
-                document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' });
+                document
+                  .getElementById("portfolio")
+                  ?.scrollIntoView({ behavior: "smooth" });
               }}
             >
               Explore Portfolio <ArrowRight className="ml-2 w-5 h-5 inline" />
@@ -177,7 +220,9 @@ export default function Home() {
               className="afro-button bg-afro-emerald border-afro-emerald"
               onClick={() => {
                 playClickSound();
-                document.getElementById('research')?.scrollIntoView({ behavior: 'smooth' });
+                document
+                  .getElementById("research")
+                  ?.scrollIntoView({ behavior: "smooth" });
               }}
             >
               View Research
@@ -193,8 +238,18 @@ export default function Home() {
         >
           <div className="text-afro-gold text-center">
             <p className="text-sm mb-2">Scroll to explore</p>
-            <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            <svg
+              className="w-6 h-6 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
             </svg>
           </div>
         </motion.div>
@@ -227,7 +282,7 @@ export default function Home() {
                     <div
                       onClick={() => {
                         playClickSound();
-                        window.open(section.url, '_blank');
+                        window.open(section.url, "_blank");
                       }}
                       className="cursor-pointer h-full"
                     >
@@ -237,7 +292,9 @@ export default function Home() {
                             <motion.div
                               className="text-5xl text-afro-gold mb-4"
                               animate={{ scale: [1, 1.1, 1] }}
-                              transition={{ duration: 2, repeat: Infinity } as any}
+                              transition={
+                                { duration: 2, repeat: Infinity } as any
+                              }
                             >
                               {section.icon}
                             </motion.div>
@@ -256,7 +313,8 @@ export default function Home() {
                             className="flex items-center text-afro-emerald font-semibold hover:text-afro-gold transition-colors"
                             whileHover={{ x: 5 }}
                           >
-                            Visit Project <ArrowRight className="ml-2 w-4 h-4" />
+                            Visit Project{" "}
+                            <ArrowRight className="ml-2 w-4 h-4" />
                           </motion.div>
                         </div>
                       </AfroTechCard>
@@ -294,7 +352,8 @@ export default function Home() {
               RESEARCH & INNOVATION
             </AfroGradientText>
             <p className="text-foreground/70 text-lg">
-              Advancing the frontier of sovereign technology and community resilience
+              Advancing the frontier of sovereign technology and community
+              resilience
             </p>
           </motion.div>
 
@@ -309,7 +368,9 @@ export default function Home() {
                         <AfroRadiance intensity="high">
                           <motion.div
                             animate={{ rotate: [0, 10, -10, 0] }}
-                            transition={{ duration: 4, repeat: Infinity } as any}
+                            transition={
+                              { duration: 4, repeat: Infinity } as any
+                            }
                           >
                             <Icon className="w-12 h-12 text-afro-gold" />
                           </motion.div>
@@ -324,7 +385,9 @@ export default function Home() {
                           <motion.span
                             className="text-xs font-bold text-afro-emerald bg-afro-emerald/20 px-3 py-1 rounded"
                             animate={{ scale: [1, 1.05, 1] }}
-                            transition={{ duration: 2, repeat: Infinity } as any}
+                            transition={
+                              { duration: 2, repeat: Infinity } as any
+                            }
                           >
                             {item.status}
                           </motion.span>
@@ -427,7 +490,10 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="flex gap-4 justify-center flex-wrap">
+          <motion.div
+            variants={itemVariants}
+            className="flex gap-4 justify-center flex-wrap"
+          >
             <RippleButton
               className="afro-button"
               onClick={() => playClickSound()}

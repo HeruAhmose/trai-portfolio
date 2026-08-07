@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface CinematicIntroProps {
   title: string;
@@ -45,10 +45,10 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
             style={{
               backgroundImage: `linear-gradient(0deg, transparent 24%, ${color}40 25%, ${color}40 26%, transparent 27%, transparent 74%, ${color}40 75%, ${color}40 76%, transparent 77%, transparent),
                                 linear-gradient(90deg, transparent 24%, ${color}40 25%, ${color}40 26%, transparent 27%, transparent 74%, ${color}40 75%, ${color}40 76%, transparent 77%, transparent)`,
-              backgroundSize: '50px 50px',
+              backgroundSize: "50px 50px",
             }}
-            animate={{ backgroundPosition: ['0 0', '50px 50px'] }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+            animate={{ backgroundPosition: ["0 0", "50px 50px"] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           />
 
           {/* Center content */}
@@ -57,7 +57,7 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
               className="text-8xl mb-8"
             >
               {icon}
@@ -71,9 +71,9 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
               className="text-5xl font-bold mb-4"
               style={{
                 backgroundImage: `linear-gradient(135deg, ${color}, ${color}80)`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
               }}
             >
               {title}
@@ -99,8 +99,8 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
                 className="h-full"
                 style={{ backgroundColor: color }}
                 initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ duration, ease: 'easeInOut' }}
+                animate={{ width: "100%" }}
+                transition={{ duration, ease: "easeInOut" }}
               />
             </motion.div>
 
@@ -111,8 +111,8 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
                 className="absolute w-2 h-2 rounded-full"
                 style={{
                   backgroundColor: color,
-                  left: '50%',
-                  top: '50%',
+                  left: "50%",
+                  top: "50%",
                 }}
                 animate={{
                   x: Math.cos((i / 6) * Math.PI * 2) * 200,
@@ -121,7 +121,7 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
                 }}
                 transition={{
                   duration,
-                  ease: 'easeOut',
+                  ease: "easeOut",
                 }}
               />
             ))}

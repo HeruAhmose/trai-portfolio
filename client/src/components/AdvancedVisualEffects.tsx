@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 /**
  * 3D Card Flip Component
@@ -8,7 +8,7 @@ export const Card3DFlip: React.FC<{
   front: React.ReactNode;
   back: React.ReactNode;
   className?: string;
-}> = ({ front, back, className = '' }) => {
+}> = ({ front, back, className = "" }) => {
   const [isFlipped, setIsFlipped] = React.useState(false);
 
   return (
@@ -16,27 +16,25 @@ export const Card3DFlip: React.FC<{
       className={`relative w-full h-full cursor-pointer perspective ${className}`}
       onHoverStart={() => setIsFlipped(true)}
       onHoverEnd={() => setIsFlipped(false)}
-      style={{ perspective: '1000px' }}
+      style={{ perspective: "1000px" }}
     >
       <motion.div
         style={{
           rotateY: isFlipped ? 180 : 0,
-          transformStyle: 'preserve-3d',
+          transformStyle: "preserve-3d",
         }}
         transition={{ duration: 0.6 }}
       >
-        <div style={{ backfaceVisibility: 'hidden' }}>
-          {front}
-        </div>
+        <div style={{ backfaceVisibility: "hidden" }}>{front}</div>
         <div
           style={{
-            backfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            position: 'absolute',
+            backfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+            position: "absolute",
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
+            width: "100%",
+            height: "100%",
           }}
         >
           {back}
@@ -53,7 +51,7 @@ export const ParallaxSection: React.FC<{
   children: React.ReactNode;
   offset?: number;
   className?: string;
-}> = ({ children, offset = 50, className = '' }) => {
+}> = ({ children, offset = 50, className = "" }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = React.useState(0);
 
@@ -66,16 +64,12 @@ export const ParallaxSection: React.FC<{
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <motion.div
-      ref={ref}
-      className={className}
-      style={{ y: scrollY }}
-    >
+    <motion.div ref={ref} className={className} style={{ y: scrollY }}>
       {children}
     </motion.div>
   );
@@ -87,12 +81,17 @@ export const ParallaxSection: React.FC<{
 export const MorphingShape: React.FC<{
   className?: string;
   duration?: number;
-}> = ({ className = '', duration = 4 }) => {
+}> = ({ className = "", duration = 4 }) => {
   return (
     <motion.div
       className={`absolute inset-0 ${className}`}
       animate={{
-        borderRadius: ['30% 70% 70% 30% / 30% 30% 70% 70%', '70% 30% 46% 66% / 33% 66% 33% 67%', '100% 60% 60% 100% / 100% 100% 60% 60%', '30% 70% 70% 30% / 30% 30% 70% 70%'],
+        borderRadius: [
+          "30% 70% 70% 30% / 30% 30% 70% 70%",
+          "70% 30% 46% 66% / 33% 66% 33% 67%",
+          "100% 60% 60% 100% / 100% 100% 60% 60%",
+          "30% 70% 70% 30% / 30% 30% 70% 70%",
+        ],
       }}
       transition={{ duration, repeat: Infinity }}
     />
@@ -105,7 +104,7 @@ export const MorphingShape: React.FC<{
 export const AnimatedGradientBg: React.FC<{
   colors?: string[];
   className?: string;
-}> = ({ colors = ['#DAA520', '#228B22', '#1E3A8A'], className = '' }) => {
+}> = ({ colors = ["#DAA520", "#228B22", "#1E3A8A"], className = "" }) => {
   return (
     <motion.div
       className={`absolute inset-0 ${className}`}
@@ -129,7 +128,7 @@ export const ParticleBurst: React.FC<{
   isActive: boolean;
   particleCount?: number;
   color?: string;
-}> = ({ isActive, particleCount = 20, color = '#DAA520' }) => {
+}> = ({ isActive, particleCount = 20, color = "#DAA520" }) => {
   const particles = Array.from({ length: particleCount });
 
   return (
@@ -140,15 +139,19 @@ export const ParticleBurst: React.FC<{
           className="absolute w-2 h-2 rounded-full"
           style={{
             background: color,
-            left: '50%',
-            top: '50%',
+            left: "50%",
+            top: "50%",
           }}
-          animate={isActive ? {
-            x: Math.cos((i / particleCount) * Math.PI * 2) * 200,
-            y: Math.sin((i / particleCount) * Math.PI * 2) * 200,
-            opacity: [1, 0],
-          } : {}}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          animate={
+            isActive
+              ? {
+                  x: Math.cos((i / particleCount) * Math.PI * 2) * 200,
+                  y: Math.sin((i / particleCount) * Math.PI * 2) * 200,
+                  opacity: [1, 0],
+                }
+              : {}
+          }
+          transition={{ duration: 0.8, ease: "easeOut" }}
         />
       ))}
     </div>
@@ -161,13 +164,13 @@ export const ParticleBurst: React.FC<{
 export const LiquidSwipe: React.FC<{
   children: React.ReactNode;
   className?: string;
-}> = ({ children, className = '' }) => {
+}> = ({ children, className = "" }) => {
   return (
     <motion.div
       className={className}
-      initial={{ clipPath: 'polygon(0 0, 0 0, 0 100%, 0 100%)' }}
-      animate={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }}
-      transition={{ duration: 0.8, ease: 'easeInOut' }}
+      initial={{ clipPath: "polygon(0 0, 0 0, 0 100%, 0 100%)" }}
+      animate={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
     >
       {children}
     </motion.div>
@@ -181,7 +184,7 @@ export const GlitchEffect: React.FC<{
   children: React.ReactNode;
   className?: string;
   intensity?: number;
-}> = ({ children, className = '', intensity = 2 }) => {
+}> = ({ children, className = "", intensity = 2 }) => {
   return (
     <motion.div
       className={className}
@@ -203,13 +206,13 @@ export const ScrollReveal: React.FC<{
   children: React.ReactNode;
   className?: string;
   delay?: number;
-}> = ({ children, className = '', delay = 0 }) => {
+}> = ({ children, className = "", delay = 0 }) => {
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
+      viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, delay }}
     >
       {children}
@@ -224,7 +227,7 @@ export const StaggeredReveal: React.FC<{
   children: React.ReactNode[];
   className?: string;
   staggerDelay?: number;
-}> = ({ children, className = '', staggerDelay = 0.1 }) => {
+}> = ({ children, className = "", staggerDelay = 0.1 }) => {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -268,8 +271,10 @@ export const RippleButton: React.FC<
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
     children: React.ReactNode;
   }
-> = ({ children, className = '', ...props }) => {
-  const [ripples, setRipples] = React.useState<Array<{ x: number; y: number; id: number }>>([]);
+> = ({ children, className = "", ...props }) => {
+  const [ripples, setRipples] = React.useState<
+    Array<{ x: number; y: number; id: number }>
+  >([]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -319,7 +324,7 @@ export const RippleButton: React.FC<
  */
 export const LoadingAnimation: React.FC<{
   className?: string;
-}> = ({ className = '' }) => {
+}> = ({ className = "" }) => {
   return (
     <div className={`flex items-center justify-center gap-2 ${className}`}>
       {[0, 1, 2].map(i => (
@@ -343,7 +348,7 @@ export const LoadingAnimation: React.FC<{
  */
 export const SuccessCheckmark: React.FC<{
   className?: string;
-}> = ({ className = '' }) => {
+}> = ({ className = "" }) => {
   return (
     <motion.svg
       className={`w-12 h-12 text-afro-emerald ${className}`}
@@ -375,13 +380,13 @@ export const HoverLift: React.FC<{
   children: React.ReactNode;
   className?: string;
   liftAmount?: number;
-}> = ({ children, className = '', liftAmount = 20 }) => {
+}> = ({ children, className = "", liftAmount = 20 }) => {
   return (
     <motion.div
       className={className}
       whileHover={{
         y: -liftAmount,
-        boxShadow: '0 20px 40px rgba(218, 165, 32, 0.3)',
+        boxShadow: "0 20px 40px rgba(218, 165, 32, 0.3)",
       }}
       transition={{ duration: 0.3 }}
     >
@@ -397,7 +402,7 @@ export const TextReveal: React.FC<{
   text: string;
   className?: string;
   delay?: number;
-}> = ({ text, className = '', delay = 0 }) => {
+}> = ({ text, className = "", delay = 0 }) => {
   return (
     <motion.div
       className={className}
@@ -406,7 +411,7 @@ export const TextReveal: React.FC<{
       viewport={{ once: true }}
       transition={{ duration: 0.8, delay }}
     >
-      {text.split('').map((char, i) => (
+      {text.split("").map((char, i) => (
         <motion.span
           key={i}
           initial={{ opacity: 0, y: 10 }}
@@ -428,14 +433,15 @@ export const FloatingBubble: React.FC<{
   className?: string;
   duration?: number;
   size?: number;
-}> = ({ className = '', duration = 6, size = 100 }) => {
+}> = ({ className = "", duration = 6, size = 100 }) => {
   return (
     <motion.div
       className={`rounded-full absolute ${className}`}
       style={{
         width: size,
         height: size,
-        background: 'radial-gradient(circle at 30% 30%, rgba(218, 165, 32, 0.3), rgba(34, 139, 34, 0.1))',
+        background:
+          "radial-gradient(circle at 30% 30%, rgba(218, 165, 32, 0.3), rgba(34, 139, 34, 0.1))",
       }}
       animate={{
         y: [0, -50, 0],
@@ -445,7 +451,7 @@ export const FloatingBubble: React.FC<{
       transition={{
         duration,
         repeat: Infinity,
-        ease: 'easeInOut',
+        ease: "easeInOut",
       }}
     />
   );

@@ -26,7 +26,10 @@
   var SELF = (script && script.dataset.property) || 'trai';
   // An empty data-base is meaningful (root-relative), so test for presence
   // rather than truthiness — '' || '/shared' would silently mis-resolve.
-  var BASE = (script && script.dataset.base !== undefined) ? script.dataset.base : '/shared';
+  var configuredBase = (script && script.dataset.base !== undefined)
+    ? script.dataset.base
+    : '/shared';
+  var BASE = configuredBase.replace(/\/+$/, '');
 
   var CSS = [
     '.trai-eco{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;',

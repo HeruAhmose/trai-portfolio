@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import '../styles/premiumDesign.css';
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import "../styles/premiumDesign.css";
 
 interface TraiCinematicEffectsProps {
   children?: React.ReactNode;
@@ -28,13 +28,18 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const stars: Array<{ x: number; y: number; radius: number; opacity: number }> = [];
+    const stars: Array<{
+      x: number;
+      y: number;
+      radius: number;
+      opacity: number;
+    }> = [];
     const starCount = Math.floor((canvas.width * canvas.height) / 8000);
 
     for (let i = 0; i < starCount; i++) {
@@ -53,11 +58,11 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
       time += 0.005;
 
       // Fade effect
-      ctx.fillStyle = 'rgba(10, 14, 39, 0.02)';
+      ctx.fillStyle = "rgba(10, 14, 39, 0.02)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw stars
-      stars.forEach((star) => {
+      stars.forEach(star => {
         ctx.fillStyle = `rgba(240, 207, 123, ${star.opacity})`;
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
@@ -78,11 +83,11 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
       canvas.height = window.innerHeight;
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -92,8 +97,8 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
       setScrollY(window.scrollY);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -111,7 +116,8 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
           <motion.div
             className="fixed top-0 left-0 w-full h-full pointer-events-none"
             style={{
-              background: 'radial-gradient(circle at 30% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 40%)',
+              background:
+                "radial-gradient(circle at 30% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 40%)",
               zIndex: 1,
             }}
             animate={{ opacity: [0.5, 0.8, 0.5] }}
@@ -121,7 +127,8 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
           <motion.div
             className="fixed top-0 right-0 w-full h-full pointer-events-none"
             style={{
-              background: 'radial-gradient(circle at 70% 30%, rgba(0, 217, 255, 0.06) 0%, transparent 50%)',
+              background:
+                "radial-gradient(circle at 70% 30%, rgba(0, 217, 255, 0.06) 0%, transparent 50%)",
               zIndex: 1,
             }}
             animate={{ opacity: [0.3, 0.6, 0.3] }}
@@ -134,7 +141,7 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
       {showOrbital && (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 pointer-events-none z-2">
           {/* Orbit Rings */}
-          {[1, 2, 3].map((orbit) => (
+          {[1, 2, 3].map(orbit => (
             <motion.div
               key={`orbit-${orbit}`}
               className="absolute inset-0 border border-accent-gold/20 rounded-full"
@@ -143,19 +150,19 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
                 height: `${100 + orbit * 60}px`,
                 left: `50%`,
                 top: `50%`,
-                transform: 'translate(-50%, -50%)',
+                transform: "translate(-50%, -50%)",
               }}
               animate={{ rotate: 360 }}
               transition={{
                 duration: 20 + orbit * 5,
                 repeat: Infinity,
-                ease: 'linear',
+                ease: "linear",
               }}
             />
           ))}
 
           {/* Orbit Nodes */}
-          {[0, 90, 180, 270].map((angle) => (
+          {[0, 90, 180, 270].map(angle => (
             <motion.div
               key={`node-${angle}`}
               className="absolute w-3 h-3 bg-accent-cyan rounded-full shadow-lg"
@@ -170,7 +177,7 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
               transition={{
                 duration: 20,
                 repeat: Infinity,
-                ease: 'linear',
+                ease: "linear",
               }}
             />
           ))}
@@ -181,14 +188,14 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
             style={{
               left: `50%`,
               top: `50%`,
-              transform: 'translate(-50%, -50%)',
+              transform: "translate(-50%, -50%)",
             }}
             animate={{
               scale: [1, 1.2, 1],
               boxShadow: [
-                '0 0 20px rgba(212, 175, 55, 0.5)',
-                '0 0 40px rgba(212, 175, 55, 0.8)',
-                '0 0 20px rgba(212, 175, 55, 0.5)',
+                "0 0 20px rgba(212, 175, 55, 0.5)",
+                "0 0 40px rgba(212, 175, 55, 0.8)",
+                "0 0 20px rgba(212, 175, 55, 0.5)",
               ],
             }}
             transition={{
@@ -203,9 +210,9 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
       {showTelemetry && (
         <div className="fixed top-20 right-8 z-10 space-y-4 pointer-events-none">
           {[
-            { label: 'SYS / 07', delay: 0 },
-            { label: 'RETURN LOOP / ACTIVE', delay: 0.2 },
-            { label: 'MEMORY FIELD / LOCKED', delay: 0.4 },
+            { label: "SYS / 07", delay: 0 },
+            { label: "RETURN LOOP / ACTIVE", delay: 0.2 },
+            { label: "MEMORY FIELD / LOCKED", delay: 0.4 },
           ].map((item, idx) => (
             <motion.div
               key={idx}
@@ -224,22 +231,29 @@ export const TraiCinematicEffects: React.FC<TraiCinematicEffectsProps> = ({
       <motion.div
         className="fixed pointer-events-none z-2"
         style={{
-          width: '400px',
-          height: '400px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(43, 111, 159, 0.05), transparent 70%)',
-          pointerEvents: 'none',
+          width: "400px",
+          height: "400px",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, rgba(43, 111, 159, 0.05), transparent 70%)",
+          pointerEvents: "none",
         }}
         animate={{
-          x: 'var(--pointer-x, 50vw)',
-          y: 'var(--pointer-y, 40vh)',
+          x: "var(--pointer-x, 50vw)",
+          y: "var(--pointer-y, 40vh)",
         }}
-        transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-        onMouseMove={(e) => {
+        transition={{ type: "spring", damping: 30, stiffness: 200 }}
+        onMouseMove={e => {
           const x = e.clientX;
           const y = e.clientY;
-          (e.currentTarget as HTMLElement).style.setProperty('--pointer-x', `${x - 200}px`);
-          (e.currentTarget as HTMLElement).style.setProperty('--pointer-y', `${y - 200}px`);
+          (e.currentTarget as HTMLElement).style.setProperty(
+            "--pointer-x",
+            `${x - 200}px`
+          );
+          (e.currentTarget as HTMLElement).style.setProperty(
+            "--pointer-y",
+            `${y - 200}px`
+          );
         }}
       />
 

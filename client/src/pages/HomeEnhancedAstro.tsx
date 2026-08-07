@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Zap, Layers, Brain } from 'lucide-react';
-import { AstronomicalEffects } from '@/components/AstronomicalEffects';
-import { ExtremeNeonLighting, VolumetricLightRays, BloomEffect } from '@/components/ExtremeNeonLighting';
-import { AdvancedRadarChart, AnimatedBarChart } from '@/components/AdvancedDataViz';
-import { useAudioSystem } from '@/hooks/useAudioSystem';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, Zap, Layers, Brain } from "lucide-react";
+import { AstronomicalEffects } from "@/components/AstronomicalEffects";
+import {
+  ExtremeNeonLighting,
+  VolumetricLightRays,
+  BloomEffect,
+} from "@/components/ExtremeNeonLighting";
+import {
+  AdvancedRadarChart,
+  AnimatedBarChart,
+} from "@/components/AdvancedDataViz";
+import { useAudioSystem } from "@/hooks/useAudioSystem";
 
 /**
  * State-of-the-art enhanced home page with astronomical GUI
@@ -26,17 +33,17 @@ export default function HomeEnhancedAstro() {
   }, []);
 
   const metricsData = [
-    { label: 'Cybersecurity', value: 95, max: 100, color: '#FF0080' },
-    { label: 'Innovation', value: 92, max: 100, color: '#00D9FF' },
-    { label: 'Impact', value: 88, max: 100, color: '#DAA520' },
-    { label: 'Research', value: 90, max: 100, color: '#228B22' },
+    { label: "Cybersecurity", value: 95, max: 100, color: "#FF0080" },
+    { label: "Innovation", value: 92, max: 100, color: "#00D9FF" },
+    { label: "Impact", value: 88, max: 100, color: "#DAA520" },
+    { label: "Research", value: 90, max: 100, color: "#228B22" },
   ];
 
   const skillsData = [
-    { label: 'Cybersecurity', value: 95, max: 100, color: '#FF0080' },
-    { label: 'Material Science', value: 87, max: 100, color: '#DAA520' },
-    { label: 'AI/ML Systems', value: 92, max: 100, color: '#00D9FF' },
-    { label: 'Community Impact', value: 90, max: 100, color: '#228B22' },
+    { label: "Cybersecurity", value: 95, max: 100, color: "#FF0080" },
+    { label: "Material Science", value: 87, max: 100, color: "#DAA520" },
+    { label: "AI/ML Systems", value: 92, max: 100, color: "#00D9FF" },
+    { label: "Community Impact", value: 90, max: 100, color: "#228B22" },
   ];
 
   const containerVariants = {
@@ -74,7 +81,11 @@ export default function HomeEnhancedAstro() {
 
         <motion.div className="relative z-10 max-w-5xl mx-auto text-center space-y-8">
           <motion.div variants={itemVariants}>
-            <ExtremeNeonLighting glowColor="#00D9FF" intensity="extreme" animated>
+            <ExtremeNeonLighting
+              glowColor="#00D9FF"
+              intensity="extreme"
+              animated
+            >
               <h1 className="text-7xl md:text-8xl font-bold tracking-wider mb-4 bg-gradient-to-r from-afro-gold via-afro-sapphire to-afro-emerald bg-clip-text text-transparent">
                 JONATHAN PEOPLES
               </h1>
@@ -84,20 +95,26 @@ export default function HomeEnhancedAstro() {
               animate={{ opacity: [0.6, 1, 0.6] }}
               transition={{ duration: 3, repeat: Infinity } as any}
             >
-              Sovereign Tech Architect | Cybersecurity Innovator | Material Science Pioneer
+              Sovereign Tech Architect | Cybersecurity Innovator | Material
+              Science Pioneer
             </motion.p>
           </motion.div>
 
           <motion.div variants={itemVariants} className="space-y-4">
             <BloomEffect color="#DAA520" intensity="high">
               <p className="text-lg text-foreground/70 max-w-3xl mx-auto leading-relaxed">
-                Pioneering next-generation technologies that empower communities, secure digital sovereignty,
-                and advance scientific innovation through Afrofuturistic design and cutting-edge engineering.
+                Pioneering next-generation technologies that empower
+                communities, secure digital sovereignty, and advance scientific
+                innovation through Afrofuturistic design and cutting-edge
+                engineering.
               </p>
             </BloomEffect>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="flex gap-4 justify-center flex-wrap pt-8">
+          <motion.div
+            variants={itemVariants}
+            className="flex gap-4 justify-center flex-wrap pt-8"
+          >
             <ExtremeNeonLighting glowColor="#FF0080" intensity="high" animated>
               <motion.button
                 className="px-8 py-4 bg-gradient-to-r from-afro-gold to-afro-emerald text-black font-bold rounded-lg hover:scale-105 transition-transform"
@@ -129,8 +146,18 @@ export default function HomeEnhancedAstro() {
         >
           <div className="text-afro-gold text-center">
             <p className="text-sm mb-2">Scroll to explore</p>
-            <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            <svg
+              className="w-6 h-6 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
             </svg>
           </div>
         </motion.div>
@@ -157,21 +184,23 @@ export default function HomeEnhancedAstro() {
             {[
               {
                 icon: <Zap className="w-12 h-12" />,
-                title: 'Cybersecurity',
-                description: 'Quantum-ready encryption and sovereign security architecture',
-                color: '#FF0080',
+                title: "Cybersecurity",
+                description:
+                  "Quantum-ready encryption and sovereign security architecture",
+                color: "#FF0080",
               },
               {
                 icon: <Layers className="w-12 h-12" />,
-                title: 'Material Science',
-                description: 'Multi-modal composite transduction with 25+ patent claims',
-                color: '#DAA520',
+                title: "Material Science",
+                description:
+                  "Multi-modal composite transduction with 25+ patent claims",
+                color: "#DAA520",
               },
               {
                 icon: <Brain className="w-12 h-12" />,
-                title: 'Community Impact',
-                description: 'TechBridge Collective bridging digital divides',
-                color: '#00D9FF',
+                title: "Community Impact",
+                description: "TechBridge Collective bridging digital divides",
+                color: "#00D9FF",
               },
             ].map((item, index) => (
               <motion.div
@@ -180,12 +209,22 @@ export default function HomeEnhancedAstro() {
                 whileHover={{ scale: 1.05 }}
                 onMouseEnter={() => playHoverSound()}
               >
-                <ExtremeNeonLighting glowColor={item.color} intensity="high" animated>
+                <ExtremeNeonLighting
+                  glowColor={item.color}
+                  intensity="high"
+                  animated
+                >
                   <div className="p-8 bg-background/50 rounded-lg border border-foreground/20 backdrop-blur-sm h-full">
-                    <div className="text-5xl mb-4" style={{ color: item.color }}>
+                    <div
+                      className="text-5xl mb-4"
+                      style={{ color: item.color }}
+                    >
                       {item.icon}
                     </div>
-                    <h3 className="text-2xl font-bold mb-3" style={{ color: item.color }}>
+                    <h3
+                      className="text-2xl font-bold mb-3"
+                      style={{ color: item.color }}
+                    >
                       {item.title}
                     </h3>
                     <p className="text-foreground/80">{item.description}</p>
@@ -217,9 +256,15 @@ export default function HomeEnhancedAstro() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1 }}
               >
-                <ExtremeNeonLighting glowColor="#00D9FF" intensity="medium" animated>
+                <ExtremeNeonLighting
+                  glowColor="#00D9FF"
+                  intensity="medium"
+                  animated
+                >
                   <div className="p-8 bg-background/50 rounded-lg border border-foreground/20 backdrop-blur-sm">
-                    <h3 className="text-xl font-bold mb-6 text-center text-afro-gold">Capability Matrix</h3>
+                    <h3 className="text-xl font-bold mb-6 text-center text-afro-gold">
+                      Capability Matrix
+                    </h3>
                     <AdvancedRadarChart data={metricsData} animated />
                   </div>
                 </ExtremeNeonLighting>
@@ -230,9 +275,15 @@ export default function HomeEnhancedAstro() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.2 }}
               >
-                <ExtremeNeonLighting glowColor="#FF0080" intensity="medium" animated>
+                <ExtremeNeonLighting
+                  glowColor="#FF0080"
+                  intensity="medium"
+                  animated
+                >
                   <div className="p-8 bg-background/50 rounded-lg border border-foreground/20 backdrop-blur-sm">
-                    <h3 className="text-xl font-bold mb-6 text-center text-afro-gold">Technical Proficiency</h3>
+                    <h3 className="text-xl font-bold mb-6 text-center text-afro-gold">
+                      Technical Proficiency
+                    </h3>
                     <AnimatedBarChart data={skillsData} />
                   </div>
                 </ExtremeNeonLighting>

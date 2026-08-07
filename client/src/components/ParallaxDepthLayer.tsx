@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 /**
  * 3D Parallax with Depth and Atmospheric Effects
@@ -13,7 +13,9 @@ interface ParallaxLayer {
   blur: number;
 }
 
-export const ParallaxDepthLayer: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+export const ParallaxDepthLayer: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
@@ -37,12 +39,12 @@ export const ParallaxDepthLayer: React.FC<{ children?: React.ReactNode }> = ({ c
       setScrollY(window.scrollY);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -57,7 +59,7 @@ export const ParallaxDepthLayer: React.FC<{ children?: React.ReactNode }> = ({ c
             zIndex: i,
             opacity: layer.opacity,
             filter: `blur(${layer.blur}px)`,
-            perspective: '1000px',
+            perspective: "1000px",
           }}
           animate={{
             x: mousePosition.x * (layer.depth * 10),
@@ -65,7 +67,7 @@ export const ParallaxDepthLayer: React.FC<{ children?: React.ReactNode }> = ({ c
             scale: layer.scale + scrollY * 0.0001,
           }}
           transition={{
-            type: 'spring',
+            type: "spring",
             stiffness: 100 - layer.depth * 20,
             damping: 30,
           }}
@@ -102,9 +104,18 @@ export const ParallaxDepthLayer: React.FC<{ children?: React.ReactNode }> = ({ c
       />
 
       {/* Atmospheric perspective lines */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ zIndex: 1 }}
+      >
         <defs>
-          <linearGradient id="perspectiveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient
+            id="perspectiveGradient"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <stop offset="0%" stopColor="#00d9ff" stopOpacity="0.3" />
             <stop offset="50%" stopColor="#d4af37" stopOpacity="0.15" />
             <stop offset="100%" stopColor="#00d9ff" stopOpacity="0" />
@@ -127,7 +138,7 @@ export const ParallaxDepthLayer: React.FC<{ children?: React.ReactNode }> = ({ c
               animate={{
                 y2: `calc(100% + ${scrollY * 0.5}px)`,
               }}
-              transition={{ type: 'spring', stiffness: 50 }}
+              transition={{ type: "spring", stiffness: 50 }}
             />
           );
         })}

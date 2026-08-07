@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 /**
  * Visual Storytelling Framework
@@ -11,33 +11,33 @@ interface StorySection {
   title: string;
   subtitle: string;
   story: string;
-  visualTheme: 'quantum' | 'materials' | 'community';
+  visualTheme: "quantum" | "materials" | "community";
   depth: number;
 }
 
 const storySections: StorySection[] = [
   {
-    id: 'quantum',
-    title: 'Quantum Frontiers',
-    subtitle: 'Exploring the boundaries of computation',
-    story: 'Where classical physics meets quantum possibility',
-    visualTheme: 'quantum',
+    id: "quantum",
+    title: "Quantum Frontiers",
+    subtitle: "Exploring the boundaries of computation",
+    story: "Where classical physics meets quantum possibility",
+    visualTheme: "quantum",
     depth: 3,
   },
   {
-    id: 'materials',
-    title: 'Material Innovation',
-    subtitle: 'Engineering the future at the atomic scale',
-    story: 'Transforming atoms into solutions',
-    visualTheme: 'materials',
+    id: "materials",
+    title: "Material Innovation",
+    subtitle: "Engineering the future at the atomic scale",
+    story: "Transforming atoms into solutions",
+    visualTheme: "materials",
     depth: 2,
   },
   {
-    id: 'community',
-    title: 'Community Impact',
-    subtitle: 'Building technology for humanity',
-    story: 'Technology that serves people',
-    visualTheme: 'community',
+    id: "community",
+    title: "Community Impact",
+    subtitle: "Building technology for humanity",
+    story: "Technology that serves people",
+    visualTheme: "community",
     depth: 1,
   },
 ];
@@ -71,13 +71,19 @@ const QuantumVisuals: React.FC = () => (
             delay: i * 0.2,
             duration: 2,
             repeat: Infinity,
-            repeatType: 'reverse',
+            repeatType: "reverse",
           }}
         />
       ))}
 
       <defs>
-        <linearGradient id="quantumGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient
+          id="quantumGradient"
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
+        >
           <stop offset="0%" stopColor="#00d9ff" />
           <stop offset="50%" stopColor="#d4af37" />
           <stop offset="100%" stopColor="#ff006e" />
@@ -181,7 +187,7 @@ const CommunityVisuals: React.FC = () => (
               delay: i * 0.05,
               duration: 1.5,
               repeat: Infinity,
-              repeatType: 'reverse',
+              repeatType: "reverse",
             }}
           />
         );
@@ -198,11 +204,11 @@ export const VisualStorytellingFramework: React.FC = () => {
 
   const getVisuals = (theme: string) => {
     switch (theme) {
-      case 'quantum':
+      case "quantum":
         return <QuantumVisuals />;
-      case 'materials':
+      case "materials":
         return <MaterialsVisuals />;
-      case 'community':
+      case "community":
         return <CommunityVisuals />;
       default:
         return null;
@@ -210,7 +216,10 @@ export const VisualStorytellingFramework: React.FC = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full min-h-screen overflow-hidden bg-background">
+    <div
+      ref={containerRef}
+      className="relative w-full min-h-screen overflow-hidden bg-background"
+    >
       {/* Background visuals */}
       <motion.div
         className="absolute inset-0"
@@ -284,7 +293,9 @@ export const VisualStorytellingFramework: React.FC = () => {
                 key={`nav-${i}`}
                 onClick={() => setActiveSection(i)}
                 className={`w-3 h-3 rounded-full transition-all ${
-                  i === activeSection ? 'bg-accent-cyan w-8' : 'bg-accent-gold/50'
+                  i === activeSection
+                    ? "bg-accent-cyan w-8"
+                    : "bg-accent-gold/50"
                 }`}
               />
             ))}

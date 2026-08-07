@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 interface AstronomicalEffectsProps {
   className?: string;
-  intensity?: 'low' | 'medium' | 'high';
+  intensity?: "low" | "medium" | "high";
 }
 
 /**
@@ -16,8 +16,8 @@ interface AstronomicalEffectsProps {
  * - Bloom and glow effects
  */
 export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
-  className = '',
-  intensity = 'high',
+  className = "",
+  intensity = "high",
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -32,14 +32,14 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
     maxLife: number;
     size: number;
     color: string;
-    type: 'star' | 'nebula' | 'ray';
+    type: "star" | "nebula" | "ray";
   }
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     // Set canvas size
@@ -51,18 +51,19 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
 
     // Color palette
     const colors = {
-      gold: '#DAA520',
-      emerald: '#228B22',
-      sapphire: '#1E3A8A',
-      hotPink: '#FF0080',
-      cyan: '#00D9FF',
-      purple: '#9D4EDD',
+      gold: "#DAA520",
+      emerald: "#228B22",
+      sapphire: "#1E3A8A",
+      hotPink: "#FF0080",
+      cyan: "#00D9FF",
+      purple: "#9D4EDD",
     };
 
     const colorArray = Object.values(colors);
 
     // Initialize particles
-    const particleCount = intensity === 'high' ? 200 : intensity === 'medium' ? 100 : 50;
+    const particleCount =
+      intensity === "high" ? 200 : intensity === "medium" ? 100 : 50;
     particlesRef.current = [];
 
     for (let i = 0; i < particleCount; i++) {
@@ -75,17 +76,30 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
         maxLife: 1,
         size: Math.random() * 3 + 0.5,
         color: colorArray[Math.floor(Math.random() * colorArray.length)],
-        type: (['star', 'nebula', 'ray'] as const)[Math.floor(Math.random() * 3)],
+        type: (["star", "nebula", "ray"] as const)[
+          Math.floor(Math.random() * 3)
+        ],
       });
     }
 
     let time = 0;
 
     // Draw functions
-    const drawNebula = (x: number, y: number, size: number, color: string, opacity: number) => {
+    const drawNebula = (
+      x: number,
+      y: number,
+      size: number,
+      color: string,
+      opacity: number
+    ) => {
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
       gradient.addColorStop(0, `rgba(255, 255, 255, ${opacity * 0.8})`);
-      gradient.addColorStop(0.5, `${color}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`);
+      gradient.addColorStop(
+        0.5,
+        `${color}${Math.floor(opacity * 255)
+          .toString(16)
+          .padStart(2, "0")}`
+      );
       gradient.addColorStop(1, `rgba(0, 0, 0, 0)`);
 
       ctx.fillStyle = gradient;
@@ -94,8 +108,16 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
       ctx.fill();
     };
 
-    const drawStar = (x: number, y: number, size: number, color: string, opacity: number) => {
-      ctx.fillStyle = `${color}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`;
+    const drawStar = (
+      x: number,
+      y: number,
+      size: number,
+      color: string,
+      opacity: number
+    ) => {
+      ctx.fillStyle = `${color}${Math.floor(opacity * 255)
+        .toString(16)
+        .padStart(2, "0")}`;
       ctx.shadowColor = color;
       ctx.shadowBlur = size * 3;
       ctx.beginPath();
@@ -104,15 +126,24 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
       ctx.shadowBlur = 0;
     };
 
-    const drawLightRay = (x: number, y: number, length: number, angle: number, color: string, opacity: number) => {
-      ctx.strokeStyle = `${color}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`;
+    const drawLightRay = (
+      x: number,
+      y: number,
+      length: number,
+      angle: number,
+      color: string,
+      opacity: number
+    ) => {
+      ctx.strokeStyle = `${color}${Math.floor(opacity * 255)
+        .toString(16)
+        .padStart(2, "0")}`;
       ctx.lineWidth = 2;
-      ctx.globalCompositeOperation = 'screen';
+      ctx.globalCompositeOperation = "screen";
       ctx.beginPath();
       ctx.moveTo(x, y);
       ctx.lineTo(x + Math.cos(angle) * length, y + Math.sin(angle) * length);
       ctx.stroke();
-      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalCompositeOperation = "source-over";
     };
 
     const animate = () => {
@@ -120,15 +151,27 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
       time += 0.016; // ~60fps
 
       // Clear with fade effect
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw background nebula
       const nebulaCenterX = canvas.width / 2 + Math.sin(time * 0.3) * 100;
       const nebulaCenterY = canvas.height / 2 + Math.cos(time * 0.2) * 100;
       drawNebula(nebulaCenterX, nebulaCenterY, 300, colors.gold, 0.15);
-      drawNebula(nebulaCenterX + 200, nebulaCenterY - 150, 250, colors.sapphire, 0.1);
-      drawNebula(nebulaCenterX - 200, nebulaCenterY + 150, 280, colors.hotPink, 0.12);
+      drawNebula(
+        nebulaCenterX + 200,
+        nebulaCenterY - 150,
+        250,
+        colors.sapphire,
+        0.1
+      );
+      drawNebula(
+        nebulaCenterX - 200,
+        nebulaCenterY + 150,
+        280,
+        colors.hotPink,
+        0.12
+      );
 
       // Update and draw particles
       for (let i = particlesRef.current.length - 1; i >= 0; i--) {
@@ -150,10 +193,22 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
         // Draw based on type
         const opacity = Math.max(0, particle.life / particle.maxLife);
 
-        if (particle.type === 'star') {
-          drawStar(particle.x, particle.y, particle.size, particle.color, opacity);
-        } else if (particle.type === 'nebula') {
-          drawNebula(particle.x, particle.y, particle.size * 5, particle.color, opacity * 0.3);
+        if (particle.type === "star") {
+          drawStar(
+            particle.x,
+            particle.y,
+            particle.size,
+            particle.color,
+            opacity
+          );
+        } else if (particle.type === "nebula") {
+          drawNebula(
+            particle.x,
+            particle.y,
+            particle.size * 5,
+            particle.color,
+            opacity * 0.3
+          );
         } else {
           drawLightRay(
             particle.x,
@@ -172,8 +227,11 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
           particle.vx = (Math.random() - 0.5) * 0.5;
           particle.vy = (Math.random() - 0.5) * 0.5;
           particle.life = 1;
-          particle.color = colorArray[Math.floor(Math.random() * colorArray.length)];
-          particle.type = (['star', 'nebula', 'ray'] as const)[Math.floor(Math.random() * 3)];
+          particle.color =
+            colorArray[Math.floor(Math.random() * colorArray.length)];
+          particle.type = (["star", "nebula", "ray"] as const)[
+            Math.floor(Math.random() * 3)
+          ];
         }
       }
 
@@ -187,9 +245,9 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
         canvas.height / 2,
         coreSize
       );
-      coreGradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+      coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.3)");
       coreGradient.addColorStop(0.5, `${colors.cyan}40`);
-      coreGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      coreGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
 
       ctx.fillStyle = coreGradient;
       ctx.beginPath();
@@ -204,10 +262,10 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
       updateCanvasSize();
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -221,7 +279,7 @@ export const AstronomicalEffects: React.FC<AstronomicalEffectsProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 } as any}
-      style={{ width: '100%', height: '100%' }}
+      style={{ width: "100%", height: "100%" }}
     />
   );
 };

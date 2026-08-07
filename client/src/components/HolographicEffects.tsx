@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 interface HolographicEffectsProps {
   children: React.ReactNode;
@@ -16,14 +16,14 @@ export const HolographicEffects: React.FC<HolographicEffectsProps> = ({
   glitchEnabled = true,
   scanLinesEnabled = true,
   chromaticAberrationEnabled = true,
-  className = '',
+  className = "",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       @keyframes holographic-glitch {
         0% {
@@ -161,26 +161,26 @@ export const HolographicEffects: React.FC<HolographicEffectsProps> = ({
 
     const particleCount = 8;
     for (let i = 0; i < particleCount; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle particle-burst';
-      
+      const particle = document.createElement("div");
+      particle.className = "particle particle-burst";
+
       const angle = (i / particleCount) * Math.PI * 2;
       const distance = 100;
       const tx = Math.cos(angle) * distance;
       const ty = Math.sin(angle) * distance;
-      
-      particle.style.setProperty('--tx', `${tx}px`);
-      particle.style.setProperty('--ty', `${ty}px`);
+
+      particle.style.setProperty("--tx", `${tx}px`);
+      particle.style.setProperty("--ty", `${ty}px`);
       particle.style.left = `${e.clientX}px`;
       particle.style.top = `${e.clientY}px`;
-      particle.style.width = '8px';
-      particle.style.height = '8px';
+      particle.style.width = "8px";
+      particle.style.height = "8px";
       particle.style.background = `hsl(${Math.random() * 60 + 180}, 100%, 50%)`;
-      particle.style.borderRadius = '50%';
+      particle.style.borderRadius = "50%";
       particle.style.boxShadow = `0 0 10px currentColor`;
-      
+
       document.body.appendChild(particle);
-      
+
       setTimeout(() => particle.remove(), 600);
     }
   };
@@ -189,22 +189,20 @@ export const HolographicEffects: React.FC<HolographicEffectsProps> = ({
     <div
       ref={containerRef}
       className={`holographic-container ${className}`}
-      onClick={(e) => createParticleBurst(e as any)}
+      onClick={e => createParticleBurst(e as any)}
     >
       <motion.div
         className={`
-          ${glitchEnabled ? 'holographic-glitch' : ''}
-          ${chromaticAberrationEnabled ? 'holographic-chromatic' : ''}
-          ${scanLinesEnabled ? 'holographic-neon' : ''}
+          ${glitchEnabled ? "holographic-glitch" : ""}
+          ${chromaticAberrationEnabled ? "holographic-chromatic" : ""}
+          ${scanLinesEnabled ? "holographic-neon" : ""}
         `}
         style={{ opacity: intensity }}
       >
         {children}
       </motion.div>
-      
-      {scanLinesEnabled && (
-        <div className="holographic-scanlines" />
-      )}
+
+      {scanLinesEnabled && <div className="holographic-scanlines" />}
     </div>
   );
 };
