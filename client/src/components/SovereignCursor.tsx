@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 /**
  * SovereignCursor — custom gold cursor that tracks mouse position
@@ -18,21 +18,25 @@ export function SovereignCursor() {
 
     const onEnter = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.closest('button, a, [role="button"], input, textarea, select, [tabindex]')) {
-        el.classList.add('hovering');
+      if (
+        target.closest(
+          'button, a, [role="button"], input, textarea, select, [tabindex]'
+        )
+      ) {
+        el.classList.add("hovering");
       }
     };
 
-    const onLeave = () => el.classList.remove('hovering');
+    const onLeave = () => el.classList.remove("hovering");
 
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseover', onEnter);
-    document.addEventListener('mouseout', onLeave);
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseover", onEnter);
+    document.addEventListener("mouseout", onLeave);
 
     return () => {
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseover', onEnter);
-      document.removeEventListener('mouseout', onLeave);
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseover", onEnter);
+      document.removeEventListener("mouseout", onLeave);
     };
   }, []);
 

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { CinematicOpening } from '../components/CinematicOpening';
-import { VisualStorytellingFramework } from '../components/VisualStorytellingFramework';
-import { ParallaxDepthLayer } from '../components/ParallaxDepthLayer';
-import { AdvancedTimeline } from '../components/AdvancedTimeline';
-import { ImmersiveProjectShowcase } from './ImmersiveProjectShowcase';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { CinematicOpening } from "../components/CinematicOpening";
+import { VisualStorytellingFramework } from "../components/VisualStorytellingFramework";
+import { ParallaxDepthLayer } from "../components/ParallaxDepthLayer";
+import { AdvancedTimeline } from "../components/AdvancedTimeline";
+import { ImmersiveProjectShowcase } from "./ImmersiveProjectShowcase";
 
 /**
  * Cinematic Home Page
@@ -17,7 +17,7 @@ export const HomeCinematic: React.FC = () => {
 
   useEffect(() => {
     // Check if user has seen opening before
-    const seen = localStorage.getItem('cinematicOpening');
+    const seen = localStorage.getItem("cinematicOpening");
     if (seen) {
       setShowOpening(false);
       setHasSeenOpening(true);
@@ -26,7 +26,7 @@ export const HomeCinematic: React.FC = () => {
 
   const handleOpeningComplete = () => {
     setShowOpening(false);
-    localStorage.setItem('cinematicOpening', 'true');
+    localStorage.setItem("cinematicOpening", "true");
   };
 
   if (showOpening && !hasSeenOpening) {
@@ -42,7 +42,12 @@ export const HomeCinematic: React.FC = () => {
           <div className="absolute inset-0">
             <svg className="w-full h-full" viewBox="0 0 1920 1080">
               <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <pattern
+                  id="grid"
+                  width="40"
+                  height="40"
+                  patternUnits="userSpaceOnUse"
+                >
                   <path
                     d="M 40 0 L 0 0 0 40"
                     fill="none"
@@ -50,7 +55,13 @@ export const HomeCinematic: React.FC = () => {
                     strokeWidth="0.5"
                   />
                 </pattern>
-                <linearGradient id="gridGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient
+                  id="gridGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
                   <stop offset="0%" stopColor="#00d9ff" stopOpacity="0.1" />
                   <stop offset="100%" stopColor="#d4af37" stopOpacity="0.1" />
                 </linearGradient>
@@ -90,7 +101,8 @@ export const HomeCinematic: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 1.3, duration: 0.8 }}
             >
-              Exploring quantum frontiers, advancing materials science, and building technology for humanity
+              Exploring quantum frontiers, advancing materials science, and
+              building technology for humanity
             </motion.p>
 
             {/* CTA Buttons */}
@@ -124,7 +136,9 @@ export const HomeCinematic: React.FC = () => {
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <div className="text-accent-cyan text-sm font-mono mb-2">SCROLL TO EXPLORE</div>
+            <div className="text-accent-cyan text-sm font-mono mb-2">
+              SCROLL TO EXPLORE
+            </div>
             <div className="w-6 h-10 border-2 border-accent-cyan rounded-full flex items-start justify-center p-2">
               <motion.div
                 className="w-1 h-2 bg-accent-cyan rounded-full"
@@ -159,7 +173,8 @@ export const HomeCinematic: React.FC = () => {
           </h2>
 
           <p className="text-xl text-gray-400 mb-12">
-            Let's explore how we can work together to create something extraordinary
+            Let's explore how we can work together to create something
+            extraordinary
           </p>
 
           <motion.button

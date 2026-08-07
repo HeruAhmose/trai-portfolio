@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 /**
  * SovereignNebulaGL — a true WebGL fragment shader nebula.
@@ -106,19 +106,32 @@ void main() {
   fragColor = vec4(col, 1.0);
 }`;
 
-type NebulaVariant = 'default' | 'cyber' | 'saffron' | 'emerald' | 'violet' | 'copper' | 'crimson';
+type NebulaVariant =
+  | "default"
+  | "cyber"
+  | "saffron"
+  | "emerald"
+  | "violet"
+  | "copper"
+  | "crimson";
 
 const TINT_MAP: Record<NebulaVariant, [number, number, number]> = {
-  default:  [0.035, 0.065, 0.145],  // lapis blue (TRAI home)
-  cyber:    [0.020, 0.080, 0.200],  // deep cyber blue (QueenCalifia)
-  saffron:  [0.200, 0.100, 0.020],  // saffron-red (True Melange Φ)
-  emerald:  [0.020, 0.120, 0.070],  // forest emerald (TechBridge)
-  violet:   [0.090, 0.020, 0.180],  // sovereign violet (MeLaNiNa)
-  copper:   [0.180, 0.080, 0.020],  // copper-bronze (Tamerian Materials)
-  crimson:  [0.180, 0.020, 0.040],  // crimson (Mela Nation)
+  default: [0.035, 0.065, 0.145], // lapis blue (TRAI home)
+  cyber: [0.02, 0.08, 0.2], // deep cyber blue (QueenCalifia)
+  saffron: [0.2, 0.1, 0.02], // saffron-red (True Melange Φ)
+  emerald: [0.02, 0.12, 0.07], // forest emerald (TechBridge)
+  violet: [0.09, 0.02, 0.18], // sovereign violet (MeLaNiNa)
+  copper: [0.18, 0.08, 0.02], // copper-bronze (Tamerian Materials)
+  crimson: [0.18, 0.02, 0.04], // crimson (Mela Nation)
 };
 
-export function SovereignNebulaGL({ className = '', variant = 'default' }: { className?: string; variant?: NebulaVariant }) {
+export function SovereignNebulaGL({
+  className = "",
+  variant = "default",
+}: {
+  className?: string;
+  variant?: NebulaVariant;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
 
@@ -126,7 +139,10 @@ export function SovereignNebulaGL({ className = '', variant = 'default' }: { cla
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext('webgl2', { antialias: false, powerPreference: 'low-power' });
+    const gl = canvas.getContext("webgl2", {
+      antialias: false,
+      powerPreference: "low-power",
+    });
     if (!gl) {
       // Graceful fallback — just leave the dark background
       return;
@@ -138,7 +154,7 @@ export function SovereignNebulaGL({ className = '', variant = 'default' }: { cla
       gl.shaderSource(s, src);
       gl.compileShader(s);
       if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-        console.warn('[NebulaGL] shader error:', gl.getShaderInfoLog(s));
+        console.warn("[NebulaGL] shader error:", gl.getShaderInfoLog(s));
         gl.deleteShader(s);
         return null;
       }
@@ -154,7 +170,7 @@ export function SovereignNebulaGL({ className = '', variant = 'default' }: { cla
     gl.attachShader(prog, frag);
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.warn('[NebulaGL] link error:', gl.getProgramInfoLog(prog));
+      console.warn("[NebulaGL] link error:", gl.getProgramInfoLog(prog));
       return;
     }
     gl.useProgram(prog);
@@ -162,14 +178,18 @@ export function SovereignNebulaGL({ className = '', variant = 'default' }: { cla
     // Full-screen quad
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
-    const posLoc = gl.getAttribLocation(prog, 'a_position');
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
+      gl.STATIC_DRAW
+    );
+    const posLoc = gl.getAttribLocation(prog, "a_position");
     gl.enableVertexAttribArray(posLoc);
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
-    const uTime = gl.getUniformLocation(prog, 'u_time');
-    const uRes = gl.getUniformLocation(prog, 'u_resolution');
-    const uTint = gl.getUniformLocation(prog, 'u_tint');
+    const uTime = gl.getUniformLocation(prog, "u_time");
+    const uRes = gl.getUniformLocation(prog, "u_resolution");
+    const uTint = gl.getUniformLocation(prog, "u_tint");
     const tint = TINT_MAP[variant] ?? TINT_MAP.default;
 
     const resize = () => {
@@ -179,7 +199,7 @@ export function SovereignNebulaGL({ className = '', variant = 'default' }: { cla
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
     resize();
-    window.addEventListener('resize', resize);
+    window.addEventListener("resize", resize);
 
     let startTime = 0;
     const render = (ts: number) => {
@@ -195,7 +215,7 @@ export function SovereignNebulaGL({ className = '', variant = 'default' }: { cla
 
     return () => {
       cancelAnimationFrame(rafRef.current);
-      window.removeEventListener('resize', resize);
+      window.removeEventListener("resize", resize);
       gl.deleteProgram(prog);
     };
   }, [variant]);
@@ -204,7 +224,7 @@ export function SovereignNebulaGL({ className = '', variant = 'default' }: { cla
     <canvas
       ref={canvasRef}
       className={`absolute inset-0 w-full h-full pointer-events-none ${className}`}
-      style={{ imageRendering: 'auto' }}
+      style={{ imageRendering: "auto" }}
     />
   );
 }

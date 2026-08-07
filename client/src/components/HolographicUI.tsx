@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 
 interface HolographicProps {
   children: React.ReactNode;
@@ -10,7 +10,7 @@ interface HolographicProps {
 
 export const HolographicPanel: React.FC<HolographicProps> = ({
   children,
-  className = '',
+  className = "",
   intensity = 1,
   scanlines = true,
 }) => {
@@ -32,7 +32,8 @@ export const HolographicPanel: React.FC<HolographicProps> = ({
           <div
             className="absolute inset-0 pointer-events-none opacity-10"
             style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.3) 2px, rgba(0,255,255,0.3) 4px)',
+              backgroundImage:
+                "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.3) 2px, rgba(0,255,255,0.3) 4px)",
             }}
           />
         )}
@@ -47,10 +48,11 @@ export const HolographicPanel: React.FC<HolographicProps> = ({
           transition={{
             duration: 2,
             repeat: Infinity,
-            repeatType: 'loop',
+            repeatType: "loop",
           }}
           style={{
-            backgroundImage: 'linear-gradient(90deg, rgba(255,0,255,0.1) 0%, transparent 50%, rgba(0,255,255,0.1) 100%)',
+            backgroundImage:
+              "linear-gradient(90deg, rgba(255,0,255,0.1) 0%, transparent 50%, rgba(0,255,255,0.1) 100%)",
           }}
         />
 
@@ -65,7 +67,7 @@ export const FloatingHologram: React.FC<{
   children: React.ReactNode;
   delay?: number;
   className?: string;
-}> = ({ children, delay = 0, className = '' }) => {
+}> = ({ children, delay = 0, className = "" }) => {
   return (
     <motion.div
       className={`relative ${className}`}
@@ -78,7 +80,7 @@ export const FloatingHologram: React.FC<{
         duration: 4,
         repeat: Infinity,
         delay,
-        ease: 'easeInOut',
+        ease: "easeInOut",
       }}
     >
       <div className="relative">
@@ -86,7 +88,8 @@ export const FloatingHologram: React.FC<{
         <div
           className="absolute inset-0 rounded-lg blur-xl"
           style={{
-            background: 'radial-gradient(circle, rgba(0,255,255,0.3) 0%, transparent 70%)',
+            background:
+              "radial-gradient(circle, rgba(0,255,255,0.3) 0%, transparent 70%)",
           }}
         />
 
@@ -116,7 +119,7 @@ export const GlitchText: React.FC<{
       transition={{
         duration: 0.3,
         repeat: Infinity,
-        repeatType: 'loop',
+        repeatType: "loop",
       }}
     >
       {children}
@@ -128,7 +131,7 @@ export const HolographicGrid: React.FC<{
   className?: string;
   cellSize?: number;
   opacity?: number;
-}> = ({ className = '', cellSize = 50, opacity = 0.1 }) => {
+}> = ({ className = "", cellSize = 50, opacity = 0.1 }) => {
   return (
     <div
       className={`absolute inset-0 pointer-events-none ${className}`}
@@ -146,7 +149,7 @@ export const HolographicGrid: React.FC<{
 export const HolographicBorder: React.FC<{
   children: React.ReactNode;
   className?: string;
-}> = ({ children, className = '' }) => {
+}> = ({ children, className = "" }) => {
   return (
     <motion.div
       className={`relative ${className}`}
@@ -169,25 +172,34 @@ export const HolographicBorder: React.FC<{
   );
 };
 
-export const RadarScan: React.FC<{ className?: string }> = ({ className = '' }) => {
+export const RadarScan: React.FC<{ className?: string }> = ({
+  className = "",
+}) => {
   return (
     <motion.div
       className={`relative w-32 h-32 rounded-full border border-cyan-400/50 ${className}`}
       animate={{ rotate: 360 }}
-      transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
     >
       {/* Radar circles */}
-      <div className="absolute inset-0 rounded-full border border-cyan-400/30" style={{ inset: '25%' }} />
-      <div className="absolute inset-0 rounded-full border border-cyan-400/20" style={{ inset: '50%' }} />
+      <div
+        className="absolute inset-0 rounded-full border border-cyan-400/30"
+        style={{ inset: "25%" }}
+      />
+      <div
+        className="absolute inset-0 rounded-full border border-cyan-400/20"
+        style={{ inset: "50%" }}
+      />
 
       {/* Radar sweep */}
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'conic-gradient(from 0deg, rgba(0,255,255,0.3) 0deg, transparent 90deg)',
+          background:
+            "conic-gradient(from 0deg, rgba(0,255,255,0.3) 0deg, transparent 90deg)",
         }}
         animate={{ rotate: 360 }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
       />
 
       {/* Center dot */}

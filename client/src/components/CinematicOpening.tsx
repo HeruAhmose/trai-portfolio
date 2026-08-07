@@ -1,11 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 /**
  * Cinematic Opening Sequence
  * Multi-stage narrative animation that unfolds the portfolio story
  */
-export const CinematicOpening: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+export const CinematicOpening: React.FC<{ onComplete: () => void }> = ({
+  onComplete,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [stage, setStage] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -17,7 +19,7 @@ export const CinematicOpening: React.FC<{ onComplete: () => void }> = ({ onCompl
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = window.innerWidth;
@@ -30,13 +32,16 @@ export const CinematicOpening: React.FC<{ onComplete: () => void }> = ({ onCompl
       time += 0.01;
 
       // Dark void background
-      ctx.fillStyle = '#0a0e27';
+      ctx.fillStyle = "#0a0e27";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Cosmic dust particles
       for (let i = 0; i < 200; i++) {
-        const x = (Math.sin(time * 0.3 + i) * canvas.width) / 2 + canvas.width / 2;
-        const y = (Math.cos(time * 0.2 + i * 0.5) * canvas.height) / 2 + canvas.height / 2;
+        const x =
+          (Math.sin(time * 0.3 + i) * canvas.width) / 2 + canvas.width / 2;
+        const y =
+          (Math.cos(time * 0.2 + i * 0.5) * canvas.height) / 2 +
+          canvas.height / 2;
         const size = Math.max(0.5, Math.sin(time + i) * 2 + 1);
         const opacity = Math.sin(time * 0.5 + i) * 0.5 + 0.5;
 
@@ -52,10 +57,23 @@ export const CinematicOpening: React.FC<{ onComplete: () => void }> = ({ onCompl
       const coreSize = Math.max(50, Math.sin(time * 0.5) * 50 + 100);
 
       if (coreSize > 0) {
-        const gradient = ctx.createRadialGradient(coreX, coreY, 0, coreX, coreY, coreSize);
-        gradient.addColorStop(0, `rgba(212, 175, 55, ${Math.sin(time) * 0.3 + 0.3})`);
-        gradient.addColorStop(0.5, `rgba(0, 217, 255, ${Math.sin(time * 0.7) * 0.2})`);
-        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        const gradient = ctx.createRadialGradient(
+          coreX,
+          coreY,
+          0,
+          coreX,
+          coreY,
+          coreSize
+        );
+        gradient.addColorStop(
+          0,
+          `rgba(212, 175, 55, ${Math.sin(time) * 0.3 + 0.3})`
+        );
+        gradient.addColorStop(
+          0.5,
+          `rgba(0, 217, 255, ${Math.sin(time * 0.7) * 0.2})`
+        );
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
 
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -111,7 +129,10 @@ export const CinematicOpening: React.FC<{ onComplete: () => void }> = ({ onCompl
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 1 }}
         >
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1920 1080">
+          <svg
+            className="absolute inset-0 w-full h-full"
+            viewBox="0 0 1920 1080"
+          >
             {/* Animated hex grid */}
             {Array.from({ length: 12 }).map((_, row) =>
               Array.from({ length: 16 }).map((_, col) => {
@@ -132,7 +153,7 @@ export const CinematicOpening: React.FC<{ onComplete: () => void }> = ({ onCompl
                     transition={{
                       delay,
                       duration: 0.6,
-                      ease: 'easeOut',
+                      ease: "easeOut",
                     }}
                   />
                 );
@@ -140,7 +161,13 @@ export const CinematicOpening: React.FC<{ onComplete: () => void }> = ({ onCompl
             )}
 
             <defs>
-              <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient
+                id="hexGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
                 <stop offset="0%" stopColor="#d4af37" stopOpacity="0.8" />
                 <stop offset="100%" stopColor="#00d9ff" stopOpacity="0.8" />
               </linearGradient>

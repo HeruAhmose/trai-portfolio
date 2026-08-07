@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 /**
  * Immersive Project Showcase
@@ -18,30 +18,31 @@ interface Project {
 
 const projects: Project[] = [
   {
-    id: 'quantum',
-    title: 'Quantum Computing Research',
-    description: 'Advanced quantum algorithms for cryptography and optimization',
-    technologies: ['Quantum Computing', 'Python', 'Qiskit'],
-    impact: 'Published in Nature Quantum Information',
-    color: '#00d9ff',
+    id: "quantum",
+    title: "Quantum Computing Research",
+    description:
+      "Advanced quantum algorithms for cryptography and optimization",
+    technologies: ["Quantum Computing", "Python", "Qiskit"],
+    impact: "Published in Nature Quantum Information",
+    color: "#00d9ff",
     depth: 3,
   },
   {
-    id: 'materials',
-    title: 'Materials Science Innovation',
-    description: 'Novel materials for sustainable energy storage',
-    technologies: ['Materials Science', 'Python', 'VASP'],
-    impact: '15+ patents filed',
-    color: '#d4af37',
+    id: "materials",
+    title: "Materials Science Innovation",
+    description: "Novel materials for sustainable energy storage",
+    technologies: ["Materials Science", "Python", "VASP"],
+    impact: "15+ patents filed",
+    color: "#d4af37",
     depth: 2,
   },
   {
-    id: 'community',
-    title: 'Community Tech Platform',
-    description: 'Open-source platform for community engagement',
-    technologies: ['React', 'Node.js', 'PostgreSQL'],
-    impact: '50K+ users',
-    color: '#ff006e',
+    id: "community",
+    title: "Community Tech Platform",
+    description: "Open-source platform for community engagement",
+    technologies: ["React", "Node.js", "PostgreSQL"],
+    impact: "50K+ users",
+    color: "#ff006e",
     depth: 1,
   },
 ];
@@ -69,12 +70,15 @@ export const ImmersiveProjectShowcase: React.FC = () => {
       });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full min-h-screen bg-background overflow-hidden">
+    <div
+      ref={containerRef}
+      className="relative w-full min-h-screen bg-background overflow-hidden"
+    >
       {/* Background gradient with project color */}
       <motion.div
         className="absolute inset-0"
@@ -85,7 +89,7 @@ export const ImmersiveProjectShowcase: React.FC = () => {
             transparent 50%
           )`,
         }}
-        transition={{ type: 'spring', stiffness: 100 }}
+        transition={{ type: "spring", stiffness: 100 }}
       />
 
       {/* 3D Project Card Container */}
@@ -97,13 +101,13 @@ export const ImmersiveProjectShowcase: React.FC = () => {
             rotateY: rotation.y,
           }}
           transition={{
-            type: 'spring',
+            type: "spring",
             stiffness: 100,
             damping: 30,
           }}
           style={{
-            perspective: '1000px',
-            transformStyle: 'preserve-3d',
+            perspective: "1000px",
+            transformStyle: "preserve-3d",
           }}
         >
           {/* Main project card */}
@@ -156,7 +160,9 @@ export const ImmersiveProjectShowcase: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.6 }}
             >
-              <p className="text-sm font-mono text-accent-gold mb-3">TECHNOLOGIES</p>
+              <p className="text-sm font-mono text-accent-gold mb-3">
+                TECHNOLOGIES
+              </p>
               <div className="flex flex-wrap gap-2">
                 {currentProject.technologies.map((tech, i) => (
                   <motion.span
@@ -210,14 +216,15 @@ export const ImmersiveProjectShowcase: React.FC = () => {
             className="relative px-6 py-3 rounded-lg font-mono text-sm transition-all"
             style={{
               borderColor: project.color,
-              color: activeProject === i ? '#000' : project.color,
-              backgroundColor: activeProject === i ? project.color : 'transparent',
+              color: activeProject === i ? "#000" : project.color,
+              backgroundColor:
+                activeProject === i ? project.color : "transparent",
               border: `2px solid ${project.color}`,
             }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {project.title.split(' ')[0]}
+            {project.title.split(" ")[0]}
           </motion.button>
         ))}
       </motion.div>
@@ -243,7 +250,8 @@ export const ImmersiveProjectShowcase: React.FC = () => {
               key={i}
               className="w-2 h-2 rounded-full"
               style={{
-                backgroundColor: i < currentProject.depth ? currentProject.color : '#ffffff20',
+                backgroundColor:
+                  i < currentProject.depth ? currentProject.color : "#ffffff20",
               }}
             />
           ))}
@@ -257,12 +265,12 @@ export const ImmersiveProjectShowcase: React.FC = () => {
           x: mousePos.x * 20 - 10,
           y: mousePos.y * 20 - 10,
         }}
-        transition={{ type: 'spring', stiffness: 500, damping: 28 }}
+        transition={{ type: "spring", stiffness: 500, damping: 28 }}
         style={{
-          width: '20px',
-          height: '20px',
+          width: "20px",
+          height: "20px",
           border: `2px solid ${currentProject.color}`,
-          borderRadius: '50%',
+          borderRadius: "50%",
           zIndex: 1000,
         }}
       />
