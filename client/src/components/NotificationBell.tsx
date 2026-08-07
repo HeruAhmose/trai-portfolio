@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, X, Check, CheckCheck } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
+const hasExternalApi =
+  Boolean(import.meta.env.VITE_API_BASE_URL?.trim());
+
 interface NotificationBellProps {
   sessionId: string;
 }
@@ -12,11 +15,18 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ sessionId })
 
   const { data, refetch } = trpc.notifications.getAll.useQuery(
     { sessionId, limit: 20 },
-    { refetchInterval: 30000 } // Poll every 30s
+    {
+      enabled: hasExternalApi && Boolean(sessionId),
+      refetchInterval: hasExternalApi ? 30000 : false,
+    }
   );
 
   const markRead = trpc.notifications.markRead.useMutation({ onSuccess: () => refetch() });
   const markAllRead = trpc.notifications.markAllRead.useMutation({ onSuccess: () => refetch() });
+
+  if (!hasExternalApi) {
+    return null;
+  }
 
   const notifications = data?.notifications ?? [];
   const unreadCount = data?.unreadCount ?? 0;
