@@ -40,28 +40,29 @@ jobs:
           if [ -z "$VITE_SITE_URL" ]; then
             echo "::warning::SITE_URL variable not set; building with the default domain."
           fi
+
           BASE_PATH="/"
-        if [ "${{ github.event_name }}" = "push" ] || [ "${{ inputs.target }}" = "pages" ]; then
-          BASE_PATH="/trai-portfolio/"
-        fi
-
-        echo "Building with Vite base: $BASE_PATH"
-        npx vite build --base "$BASE_PATH"
-
-        if [ "$BASE_PATH" = "/trai-portfolio/" ]; then
-          cp dist/public/index.html dist/public/404.html
-          touch dist/public/.nojekyll
-
-          if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-cinematic\.js)' dist/public/index.html; then
-            echo "::error::GitHub Pages build contains root-relative asset references."
-            exit 1
+          if [ "${{ github.event_name }}" = "push" ] || [ "${{ inputs.target }}" = "pages" ]; then
+            BASE_PATH="/trai-portfolio/"
           fi
 
-          grep -q '/trai-portfolio/assets/' dist/public/index.html
-          grep -q '/trai-portfolio/manifest.json' dist/public/index.html
-          grep -q '/trai-portfolio/trai-ecosystem.js' dist/public/index.html
-          grep -q '/trai-portfolio/trai-cinematic.js' dist/public/index.html
-        fi
+          echo "Building with Vite base: $BASE_PATH"
+          npx vite build --base "$BASE_PATH"
+
+          if [ "$BASE_PATH" = "/trai-portfolio/" ]; then
+            cp dist/public/index.html dist/public/404.html
+            touch dist/public/.nojekyll
+
+            if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-cinematic\.js)' dist/public/index.html; then
+              echo "::error::GitHub Pages build contains root-relative asset references."
+              exit 1
+            fi
+
+            grep -q '/trai-portfolio/assets/' dist/public/index.html
+            grep -q '/trai-portfolio/manifest.json' dist/public/index.html
+            grep -q '/trai-portfolio/trai-ecosystem.js' dist/public/index.html
+            grep -q '/trai-portfolio/trai-cinematic.js' dist/public/index.html
+          fi
       - uses: actions/upload-artifact@v4
         with: { name: dist, path: dist/public/ }
 
