@@ -53,14 +53,16 @@ jobs:
             cp dist/public/index.html dist/public/404.html
             touch dist/public/.nojekyll
 
-            if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-cinematic\.js)' dist/public/index.html; then
+            if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-organism-v5\.js|trai-cinematic\.js)' dist/public/index.html; then
               echo "::error::GitHub Pages build contains root-relative asset references."
               exit 1
             fi
 
             grep -q '/trai-portfolio/assets/' dist/public/index.html
             grep -q '/trai-portfolio/manifest.json' dist/public/index.html
-            grep -q '/trai-portfolio/trai-ecosystem.js' dist/public/index.html
+            test -f dist/public/trai-organism-v5.js
+            test -f dist/public/trai-organism-v5.json
+            grep -q '/trai-portfolio/trai-organism-v5.js' dist/public/index.html
             grep -q '/trai-portfolio/trai-cinematic.js' dist/public/index.html
           fi
       - uses: actions/upload-artifact@v4
