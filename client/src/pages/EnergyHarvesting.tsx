@@ -1,18 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { AudioSystem } from '../components/AudioSystem';
 import { CinematicIntro } from '../components/CinematicIntro';
 import { InteractiveButton } from '../components/InteractiveButton';
-import { useSoundEffects } from '@/hooks/useSoundEffects';
-
 export const EnergyHarvesting: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [energyLevel, setEnergyLevel] = useState(1);
   const [particles, setParticles] = useState<Array<{ x: number; y: number; vx: number; vy: number; life: number }>>([]);
   const [showIntro, setShowIntro] = useState(false);
-  const { playSuccess, playTransition } = useSoundEffects(true);
-
-  // Cinematic intro animation
+// Cinematic intro animation
   useEffect(() => {
     const timer = setTimeout(() => {
       setEnergyLevel(1);
@@ -93,14 +88,7 @@ export const EnergyHarvesting: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#050607] via-[#0a1628] to-[#050607] pt-20 pb-20">
-      <AudioSystem
-        soundscapeUrl="https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/UgWHTjVZwvkJrG87DtM3NE/energy-harvesting-soundscape_e2489e7d.wav"
-        volume={0.3}
-        autoPlay={true}
-        loop={true}
-      />
-
-      {showIntro && (
+{showIntro && (
         <CinematicIntro
           title="Energy Harvesting"
           subtitle="Thermoelectric & Piezoelectric Power Generation"

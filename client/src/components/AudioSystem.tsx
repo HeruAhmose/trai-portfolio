@@ -22,6 +22,8 @@ export const AudioSystem: React.FC<{
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentVolume, setCurrentVolume] = useState(volume);
+  const audioSystemEnabled =
+    import.meta.env.VITE_ENABLE_AUDIO_SYSTEM === "true";
 
   // Initialize audio
   useEffect(() => {
@@ -31,14 +33,14 @@ export const AudioSystem: React.FC<{
     audio.volume = currentVolume;
     audio.loop = loop;
 
-    if (autoPlay && soundscapeUrl) {
+    if (audioSystemEnabled && autoPlay && soundscapeUrl) {
       audio.play().catch((err) => console.log('Audio autoplay prevented:', err));
     }
 
     return () => {
       audio.pause();
     };
-  }, [soundscapeUrl, autoPlay, loop]);
+  }, [soundscapeUrl, autoPlay, loop, audioSystemEnabled]);
 
   // Handle volume changes
   useEffect(() => {
@@ -64,7 +66,7 @@ export const AudioSystem: React.FC<{
     <>
       <audio
         ref={audioRef}
-        src={soundscapeUrl}
+        src={audioSystemEnabled ? soundscapeUrl : undefined}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onEnded={() => {

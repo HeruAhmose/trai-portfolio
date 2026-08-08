@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { InteractiveBlochSphere } from '@/components/InteractiveBlochSphere';
 import {
@@ -9,32 +9,8 @@ import {
   HolographicBorder,
   RadarScan,
 } from '@/components/HolographicUI';
-import { useHumanVoice } from '@/hooks/useHumanVoice';
-import { Volume2, VolumeX } from 'lucide-react';
-
 export default function QuantumResearchEnhanced() {
-  const { speak, speakConversational, speakDivine, stop, isPlaying } = useHumanVoice();
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
-  const [showIntro, setShowIntro] = useState(true);
-
-  useEffect(() => {
-    if (voiceEnabled && showIntro) {
-      speakDivine(
-        'Welcome to the Quantum Research section. Explore the AMC hypothesis for room-temperature quantum sensing.'
-      );
-    }
-  }, [voiceEnabled, showIntro, speakDivine]);
-
-  const handleVoiceToggle = () => {
-    if (voiceEnabled) {
-      stop();
-      setVoiceEnabled(false);
-    } else {
-      setVoiceEnabled(true);
-      speakDivine('Voice guidance enabled. The AMC hypothesis proposes room-temperature quantum coherence through rare-earth dopants.');
-    }
-  };
-
+const [showIntro, setShowIntro] = useState(true);
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
       {/* Holographic grid background */}
@@ -63,20 +39,6 @@ export default function QuantumResearchEnhanced() {
                 <p className="text-xl text-cyan-300">Room Temperature Quantum States</p>
               </GlitchText>
             </div>
-
-            {/* Voice control */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleVoiceToggle}
-              className={`p-4 rounded-lg border-2 transition-all ${
-                voiceEnabled
-                  ? 'border-cyan-400 bg-cyan-500/20 text-cyan-300'
-                  : 'border-cyan-400/50 bg-black/40 text-cyan-400/50 hover:border-cyan-400 hover:bg-cyan-500/10'
-              }`}
-            >
-              {voiceEnabled ? <Volume2 className="w-6 h-6" /> : <VolumeX className="w-6 h-6" />}
-            </motion.button>
           </div>
 
           {/* Intro text */}

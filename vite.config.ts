@@ -149,7 +149,17 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+const isOrganismProductionBuild =
+  process.env.NODE_ENV === "production" ||
+  process.env.TRAI_ORGANISM_STATIC === "true";
+
+const plugins = [
+  react(),
+  tailwindcss(),
+  ...(isOrganismProductionBuild
+    ? []
+    : [vitePluginManusRuntime(), vitePluginManusDebugCollector()]),
+];
 
 function manualChunks(id: string): string | undefined {
   const normalizedId = id.replace(/\\/g, "/");

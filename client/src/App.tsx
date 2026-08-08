@@ -203,6 +203,11 @@ function App() {
       'melanina': '/melanina',
     };
     const route = routeMap[tabId] || '/';
+    const transition = (window as any).TRAIOrganismV5?.transitionInternal;
+    if (typeof transition === 'function') {
+      void transition(() => setLocation(route), { label: tabId });
+      return;
+    }
     setLocation(route);
   };
 
