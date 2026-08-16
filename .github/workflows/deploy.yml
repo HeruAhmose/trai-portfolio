@@ -4,13 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      target:
-        description: Where to deploy
-        required: true
-        default: pages
-        type: choice
-        options: [pages, netlify, vercel]
 
 permissions:
   contents: read
@@ -27,13 +20,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: npm }
-      - run: npm ci --prefer-offline --no-audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependency graph
+        run: npm ci --prefer-offline --ignore-scripts
+      - name: Dependency audit through low
+        run: npm audit --audit-level=low
       - name: Verified-facts guard
-        run: node scripts/check-facts.mjs
-      - name: Build
+        run: npm run check:facts
+      - name: Build GitHub Pages artifact
         env:
           VITE_SITE_URL: ${{ vars.SITE_URL }}
         run: |
@@ -41,71 +39,44 @@ jobs:
             echo "::warning::SITE_URL variable not set; building with the default domain."
           fi
 
-          BASE_PATH="/"
-          if [ "${{ github.event_name }}" = "push" ] || [ "${{ inputs.target }}" = "pages" ]; then
-            BASE_PATH="/trai-portfolio/"
-          fi
-
+          BASE_PATH="/trai-portfolio/"
           echo "Building with Vite base: $BASE_PATH"
-          npx vite build --base "$BASE_PATH"
+          npm exec -- vite build --base "$BASE_PATH"
 
-          if [ "$BASE_PATH" = "/trai-portfolio/" ]; then
-            cp dist/public/index.html dist/public/404.html
-            touch dist/public/.nojekyll
+          cp dist/public/index.html dist/public/404.html
+          touch dist/public/.nojekyll
 
-            if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-organism-v5\.js|trai-cinematic\.js)' dist/public/index.html; then
-              echo "::error::GitHub Pages build contains root-relative asset references."
-              exit 1
-            fi
-
-            grep -q '/trai-portfolio/assets/' dist/public/index.html
-            grep -q '/trai-portfolio/manifest.json' dist/public/index.html
-            test -f dist/public/trai-organism-v5.js
-            test -f dist/public/trai-organism-v5.json
-            grep -q '/trai-portfolio/trai-organism-v5.js' dist/public/index.html
-            grep -q '/trai-portfolio/trai-cinematic.js' dist/public/index.html
+          if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-organism-v5\.js|trai-cinematic\.js)' dist/public/index.html; then
+            echo "::error::GitHub Pages build contains root-relative asset references."
+            exit 1
           fi
-      - uses: actions/upload-artifact@v4
-        with: { name: dist, path: dist/public/ }
+
+          grep -q '/trai-portfolio/assets/' dist/public/index.html
+          grep -q '/trai-portfolio/manifest.json' dist/public/index.html
+          test -f dist/public/trai-organism-v5.js
+          test -f dist/public/trai-organism-v5.json
+          grep -q '/trai-portfolio/trai-organism-v5.js' dist/public/index.html
+          grep -q '/trai-portfolio/trai-cinematic.js' dist/public/index.html
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist
+          path: dist/public/
 
   pages:
     name: GitHub Pages
-    if: github.event_name == 'push' || inputs.target == 'pages'
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/download-artifact@v4
-        with: { name: dist, path: dist }
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: dist }
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist
+          path: dist
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
       - id: deploy
-        uses: actions/deploy-pages@v4
-
-  netlify:
-    name: Netlify
-    if: inputs.target == 'netlify'
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with: { name: dist, path: dist }
-      - env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx --yes netlify-cli@17 deploy --dir=dist --prod
-
-  vercel:
-    name: Vercel
-    if: inputs.target == 'vercel'
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with: { name: dist, path: dist }
-      - env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: npx --yes vercel@latest deploy dist --prod --yes --token "$VERCEL_TOKEN"
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
