@@ -47,7 +47,10 @@ class AnalyticsService {
   }
 
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    if (!globalThis.crypto?.randomUUID) {
+      throw new Error("Secure UUID generation is unavailable");
+    }
+    return `session_${globalThis.crypto.randomUUID()}`;
   }
 
   private initializeAutoFlush(): void {
