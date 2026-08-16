@@ -1,0 +1,33 @@
+name: Temporary Branch Protection Parser
+
+on:
+  push:
+    branches:
+      - agent/dependency-zero-audit-20260816
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  parse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Parse PowerShell 7 script
+        shell: pwsh
+        run: |
+          $path = '.tmp/Set-HeruAhmose-GitHub-Branch-Protection.ps1'
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path $path),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | Format-List Message, Extent
+            throw 'BRANCH PROTECTION SCRIPT PARSER FAILED'
+          }
+          Write-Host 'BRANCH PROTECTION SCRIPT PARSER PASSED'
