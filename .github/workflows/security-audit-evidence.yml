@@ -1,0 +1,45 @@
+name: Security Audit Evidence
+
+on:
+  push:
+    branches:
+      - agent/dependency-audit-20260816
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Install authoritative npm graph
+        run: npm ci --ignore-scripts
+      - name: Capture low-severity audit baseline
+        shell: bash
+        run: |
+          set +e
+          npm audit --audit-level=low --json > audit.json
+          audit_rc=$?
+          set -e
+          node <<'NODE'
+          const fs = require('fs');
+          const a = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
+          const m = a.metadata?.vulnerabilities || {};
+          console.log(`AUDIT_TOTALS critical=${m.critical||0} high=${m.high||0} moderate=${m.moderate||0} low=${m.low||0} total=${m.total||0}`);
+          const rows = Object.entries(a.vulnerabilities || {}).map(([name,v]) => ({
+            name,
+            severity: v.severity,
+            direct: !!v.isDirect,
+            range: v.range,
+            fix: v.fixAvailable === true ? 'available' : v.fixAvailable === false ? 'none' : JSON.stringify(v.fixAvailable),
+            via: Array.isArray(v.via) ? v.via.map(x => typeof x === 'string' ? x : `${x.title} [${x.range}]`).join(' | ') : String(v.via)
+          })).sort((x,y) => ['critical','high','moderate','low'].indexOf(x.severity)-['critical','high','moderate','low'].indexOf(y.severity) || x.name.localeCompare(y.name));
+          for (const r of rows) console.log(`AUDIT_PACKAGE ${r.name}\tseverity=${r.severity}\tdirect=${r.direct}\trange=${r.range}\tfix=${r.fix}\tvia=${r.via}`);
+          NODE
+          echo "npm_audit_exit_code=$audit_rc"
