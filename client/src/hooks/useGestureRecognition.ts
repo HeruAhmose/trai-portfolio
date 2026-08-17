@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 
+const MEDIAPIPE_TASKS_VISION_WASM_URL =
+  'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.0/wasm';
+const HAND_LANDMARKER_MODEL_URL =
+  'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
+
 export type GestureType =
   | 'swipe_left'
   | 'swipe_right'
@@ -43,18 +48,14 @@ export const useGestureRecognition = () => {
     timestamp: 0,
   });
 
-  // Initialize MediaPipe HandLandmarker
+  // Initialize MediaPipe HandLandmarker using the stable Tasks Vision 1.x resolver API.
   const initializeHandLandmarker = useCallback(async () => {
     try {
-      const vision = await (FilesetResolver as any).forVisionOnWeb({
-        locateFileSync: (filename: string) => {
-          return `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.34/wasm/${filename}`;
-        },
-      });
+      const vision = await FilesetResolver.forVisionTasks(MEDIAPIPE_TASKS_VISION_WASM_URL);
 
       const landmarker = await HandLandmarker.createFromOptions(vision, {
         baseOptions: {
-          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker.task`,
+          modelAssetPath: HAND_LANDMARKER_MODEL_URL,
           delegate: 'GPU',
         },
         runningMode: 'VIDEO',
@@ -111,6 +112,8 @@ export const useGestureRecognition = () => {
     const middleTip = landmarks[12];
     const ringTip = landmarks[16];
     const pinkyTip = landmarks[20];
+
+    void palmCenter;
 
     // Thumbs Up - thumb pointing up, other fingers closed
     const thumbUp =
@@ -260,6 +263,8 @@ export const useGestureRecognition = () => {
   useEffect(() => {
     return () => {
       stop();
+      handLandmarkerRef.current?.close();
+      handLandmarkerRef.current = null;
       if (videoRef.current?.srcObject) {
         const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
         tracks.forEach((track) => track.stop());
