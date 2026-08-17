@@ -32,6 +32,21 @@ jobs:
       - name: Dependency audit through low
         run: npm audit --audit-level=low
 
+      - name: Legacy vendor exclusion guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          legacy_vendor="$(printf '\155\141\156\165\163')"
+          legacy_pkg="vite-plugin-${legacy_vendor}-runtime"
+          if git grep -niE "$legacy_vendor" -- .; then
+            echo "::error::legacy vendor reference re-entered tracked source/config"
+            exit 1
+          fi
+          if npm ls "$legacy_pkg" >/dev/null 2>&1; then
+            echo "::error::legacy vendor runtime package re-entered dependency graph"
+            exit 1
+          fi
+
       # Runs before anything is built. A fabricated validation, an implied
       # credential, or a coherence figure that has lost its hypothesis label
       # stops the pipeline here.
@@ -60,6 +75,10 @@ jobs:
           test -f dist/public/index.html || { echo "::error::index.html missing"; exit 1; }
           test -d dist/public/media     || { echo "::error::media/ missing"; exit 1; }
           test -f dist/public/og.png    || { echo "::error::og.png missing"; exit 1; }
+          if grep -RniE '__trai_dev__|__TRAI_DEV_OBSERVER__|trai-dev-observer|\.trai-dev-logs' dist/public; then
+            echo "::error::development observability leaked into production artifacts"
+            exit 1
+          fi
           echo "build output verified"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
