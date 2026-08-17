@@ -1,0 +1,22 @@
+name: Manus inventory
+
+on:
+  push:
+    branches:
+      - build/vite8-trai-observer-20260817
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Inventory tracked Manus references
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== tracked Manus references ==='
+          git grep -niE 'manus' -- . ':!package-lock.json' || true
