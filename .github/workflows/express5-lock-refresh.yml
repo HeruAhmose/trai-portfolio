@@ -1,0 +1,39 @@
+name: Express 5 lockfile refresh
+
+on:
+  push:
+    branches: [security/express-5-20260817]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lock:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: security/express-5-20260817
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Refresh lockfile from package.json only
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Ensure resolver did not rewrite package.json
+        run: git diff --exit-code -- package.json
+
+      - name: Commit resolved lockfile and remove one-shot workflow
+        run: |
+          set -euo pipefail
+          rm .github/workflows/express5-lock-refresh.yml
+          git add package-lock.json .github/workflows/express5-lock-refresh.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build: refresh lockfile for Express 5"
+          git push origin HEAD:security/express-5-20260817
