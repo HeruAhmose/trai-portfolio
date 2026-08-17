@@ -3,145 +3,139 @@ import react from "@vitejs/plugin-react";
 import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
-import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
-
-// =============================================================================
-// Manus Debug Collector - Vite Plugin
-// Writes browser logs directly to files, trimmed when exceeding size limit
-// =============================================================================
 
 const PROJECT_ROOT = import.meta.dirname;
-const LOG_DIR = path.join(PROJECT_ROOT, ".manus-logs");
-const MAX_LOG_SIZE_BYTES = 1 * 1024 * 1024; // 1MB per log file
-const TRIM_TARGET_BYTES = Math.floor(MAX_LOG_SIZE_BYTES * 0.6); // Trim to 60% to avoid constant re-trimming
+const OBSERVER_PATH = path.join(
+  PROJECT_ROOT,
+  "tooling",
+  "trai-dev-observer.js"
+);
+const LOG_DIR = path.join(PROJECT_ROOT, ".trai-dev-logs");
+const MAX_REQUEST_BYTES = 128 * 1024;
+const MAX_LOG_BYTES = 1 * 1024 * 1024;
+const SENSITIVE_KEY =
+  /password|passcode|token|secret|authorization|cookie|session|api.?key|credential/i;
+type TelemetryBucket = "console" | "network" | "ui";
 
-type LogSource = "browserConsole" | "networkRequests" | "sessionReplay";
+function sanitizeTelemetry(value: unknown, depth = 0): unknown {
+  if (depth > 4) return "[max-depth]";
+  if (value === null || typeof value === "boolean" || typeof value === "number")
+    return value;
+  if (typeof value === "string")
+    return value.length > 500 ? `${value.slice(0, 500)}…` : value;
+  if (Array.isArray(value))
+    return value.slice(0, 100).map(item => sanitizeTelemetry(item, depth + 1));
+  if (typeof value === "object") {
+    const output: Record<string, unknown> = {};
+    for (const [key, item] of Object.entries(
+      value as Record<string, unknown>
+    ).slice(0, 100)) {
+      output[key] = SENSITIVE_KEY.test(key)
+        ? "[redacted]"
+        : sanitizeTelemetry(item, depth + 1);
+    }
+    return output;
+  }
+  return String(value).slice(0, 500);
+}
 
-function ensureLogDir() {
-  if (!fs.existsSync(LOG_DIR)) {
-    fs.mkdirSync(LOG_DIR, { recursive: true });
+function appendTelemetry(bucket: TelemetryBucket, entries: unknown[]) {
+  if (!entries.length) return;
+  fs.mkdirSync(LOG_DIR, { recursive: true });
+  const logPath = path.join(LOG_DIR, `${bucket}.log`);
+  const lines = entries
+    .slice(0, 100)
+    .map(entry =>
+      JSON.stringify({
+        at: new Date().toISOString(),
+        event: sanitizeTelemetry(entry),
+      })
+    );
+  fs.appendFileSync(logPath, `${lines.join("\n")}\n`, "utf8");
+  if (fs.statSync(logPath).size > MAX_LOG_BYTES) {
+    const data = fs.readFileSync(logPath);
+    fs.writeFileSync(logPath, data.subarray(Math.floor(data.length * 0.5)));
   }
 }
 
-function trimLogFile(logPath: string, maxSize: number) {
-  try {
-    if (!fs.existsSync(logPath) || fs.statSync(logPath).size <= maxSize) {
-      return;
-    }
-
-    const lines = fs.readFileSync(logPath, "utf-8").split("\n");
-    const keptLines: string[] = [];
-    let keptBytes = 0;
-
-    // Keep newest lines (from end) that fit within 60% of maxSize
-    const targetSize = TRIM_TARGET_BYTES;
-    for (let i = lines.length - 1; i >= 0; i--) {
-      const lineBytes = Buffer.byteLength(`${lines[i]}\n`, "utf-8");
-      if (keptBytes + lineBytes > targetSize) break;
-      keptLines.unshift(lines[i]);
-      keptBytes += lineBytes;
-    }
-
-    fs.writeFileSync(logPath, keptLines.join("\n"), "utf-8");
-  } catch {
-    /* ignore trim errors */
-  }
-}
-
-function writeToLogFile(source: LogSource, entries: unknown[]) {
-  if (entries.length === 0) return;
-
-  ensureLogDir();
-  const logPath = path.join(LOG_DIR, `${source}.log`);
-
-  // Format entries with timestamps
-  const lines = entries.map((entry) => {
-    const ts = new Date().toISOString();
-    return `[${ts}] ${JSON.stringify(entry)}`;
-  });
-
-  // Append to log file
-  fs.appendFileSync(logPath, `${lines.join("\n")}\n`, "utf-8");
-
-  // Trim if exceeds max size
-  trimLogFile(logPath, MAX_LOG_SIZE_BYTES);
-}
-
-/**
- * Vite plugin to collect browser debug logs
- * - POST /__manus__/logs: Browser sends logs, written directly to files
- * - Files: browserConsole.log, networkRequests.log, sessionReplay.log
- * - Auto-trimmed when exceeding 1MB (keeps newest entries)
- */
-function vitePluginManusDebugCollector(): Plugin {
+function vitePluginTraiDevObservatory(): Plugin {
   return {
-    name: "manus-debug-collector",
-
+    name: "trai-dev-observatory",
+    apply: "serve",
     transformIndexHtml(html) {
-      if (process.env.NODE_ENV === "production") {
-        return html;
-      }
       return {
         html,
         tags: [
           {
             tag: "script",
-            attrs: {
-              src: "/__manus__/debug-collector.js",
-              defer: true,
-            },
+            attrs: { src: "/__trai_dev__/observer.js", defer: true },
             injectTo: "head",
           },
         ],
       };
     },
-
     configureServer(server: ViteDevServer) {
-      // POST /__manus__/logs: Browser sends logs (written directly to files)
-      server.middlewares.use("/__manus__/logs", (req, res, next) => {
-        if (req.method !== "POST") {
-          return next();
-        }
-
-        const handlePayload = (payload: any) => {
-          // Write logs directly to files
-          if (payload.consoleLogs?.length > 0) {
-            writeToLogFile("browserConsole", payload.consoleLogs);
-          }
-          if (payload.networkRequests?.length > 0) {
-            writeToLogFile("networkRequests", payload.networkRequests);
-          }
-          if (payload.sessionEvents?.length > 0) {
-            writeToLogFile("sessionReplay", payload.sessionEvents);
-          }
-
-          res.writeHead(200, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ success: true }));
-        };
-
-        const reqBody = (req as { body?: unknown }).body;
-        if (reqBody && typeof reqBody === "object") {
-          try {
-            handlePayload(reqBody);
-          } catch (e) {
-            res.writeHead(400, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ success: false, error: String(e) }));
-          }
+      server.middlewares.use("/__trai_dev__/observer.js", (req, res, next) => {
+        if (req.method !== "GET") return next();
+        res.writeHead(200, {
+          "Content-Type": "text/javascript; charset=utf-8",
+          "Cache-Control": "no-store",
+        });
+        res.end(fs.readFileSync(OBSERVER_PATH, "utf8"));
+      });
+      server.middlewares.use("/__trai_dev__/telemetry", (req, res, next) => {
+        if (req.method !== "POST") return next();
+        const contentType = String(req.headers["content-type"] || "")
+          .split(";", 1)[0]
+          .trim()
+          .toLowerCase();
+        if (contentType !== "application/json") {
+          res.writeHead(415, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: false, error: "json-required" }));
           return;
         }
-
-        let body = "";
-        req.on("data", (chunk) => {
-          body += chunk.toString();
-        });
-
-        req.on("end", () => {
+        const host = req.headers.host;
+        const origin = req.headers.origin;
+        if (origin && host) {
           try {
-            const payload = JSON.parse(body);
-            handlePayload(payload);
-          } catch (e) {
+            if (new URL(origin).host !== host)
+              throw new Error("origin-mismatch");
+          } catch {
+            res.writeHead(403, { "Content-Type": "application/json" });
+            res.end(
+              JSON.stringify({ ok: false, error: "same-origin-required" })
+            );
+            return;
+          }
+        }
+        let body = "";
+        let bytes = 0;
+        let rejected = false;
+        req.on("data", (chunk: Buffer) => {
+          if (rejected) return;
+          bytes += chunk.length;
+          if (bytes > MAX_REQUEST_BYTES) {
+            rejected = true;
+            res.writeHead(413, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ ok: false, error: "payload-too-large" }));
+            req.destroy();
+            return;
+          }
+          body += chunk.toString("utf8");
+        });
+        req.on("end", () => {
+          if (rejected) return;
+          try {
+            const payload = JSON.parse(body || "{}") as Record<string, unknown>;
+            for (const bucket of ["console", "network", "ui"] as const) {
+              const entries = payload[bucket];
+              if (Array.isArray(entries)) appendTelemetry(bucket, entries);
+            }
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ ok: true }));
+          } catch {
             res.writeHead(400, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ success: false, error: String(e) }));
+            res.end(JSON.stringify({ ok: false, error: "invalid-json" }));
           }
         });
       });
@@ -149,61 +143,38 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const isOrganismProductionBuild =
-  process.env.NODE_ENV === "production" ||
-  process.env.TRAI_ORGANISM_STATIC === "true";
-
-const plugins = [
-  react(),
-  tailwindcss(),
-  ...(isOrganismProductionBuild
-    ? []
-    : [vitePluginManusRuntime(), vitePluginManusDebugCollector()]),
-];
-
 function manualChunks(id: string): string | undefined {
   const normalizedId = id.replace(/\\/g, "/");
-
-  if (!normalizedId.includes("/node_modules/")) {
-    return undefined;
-  }
-
+  if (!normalizedId.includes("/node_modules/")) return undefined;
   if (
     normalizedId.includes("/node_modules/react/") ||
     normalizedId.includes("/node_modules/react-dom/") ||
     normalizedId.includes("/node_modules/scheduler/")
-  ) {
+  )
     return "vendor-react";
-  }
-
-  if (normalizedId.includes("/node_modules/framer-motion/")) {
+  if (normalizedId.includes("/node_modules/framer-motion/"))
     return "vendor-motion";
-  }
-
   if (
     normalizedId.includes("/node_modules/@tanstack/") ||
     normalizedId.includes("/node_modules/@trpc/") ||
     normalizedId.includes("/node_modules/superjson/")
-  ) {
+  )
     return "vendor-data";
-  }
-
-  if (normalizedId.includes("/node_modules/@react-three/")) {
+  if (normalizedId.includes("/node_modules/@react-three/"))
     return "vendor-react-three";
-  }
-
-  if (normalizedId.includes("/node_modules/three/examples/")) {
+  if (normalizedId.includes("/node_modules/three/examples/"))
     return "vendor-three-addons";
-  }
-
-  if (normalizedId.includes("/node_modules/three/")) {
-    return "vendor-three-core";
-  }
-
+  if (normalizedId.includes("/node_modules/three/")) return "vendor-three-core";
   return undefined;
 }
+
+const extraAllowedHosts = (process.env.TRAI_VITE_ALLOWED_HOSTS || "")
+  .split(",")
+  .map(host => host.trim())
+  .filter(Boolean);
+
 export default defineConfig({
-  plugins,
+  plugins: [react(), tailwindcss(), vitePluginTraiDevObservatory()],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -217,26 +188,11 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
-    rollupOptions: {
-      output: {
-        manualChunks,
-      },
-    },
+    rollupOptions: { output: { manualChunks } },
   },
   server: {
     host: true,
-    allowedHosts: [
-      ".manuspre.computer",
-      ".manus.computer",
-      ".manus-asia.computer",
-      ".manuscomputer.ai",
-      ".manusvm.computer",
-      "localhost",
-      "127.0.0.1",
-    ],
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
-    },
+    allowedHosts: ["localhost", "127.0.0.1", ...extraAllowedHosts],
+    fs: { strict: true, deny: ["**/.*"] },
   },
 });

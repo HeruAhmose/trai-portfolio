@@ -143,7 +143,7 @@ would have blocked every deploy.
 
 ## Eight more broken images
 
-v10 had reintroduced `/manus-storage/` paths that do not exist in the
+v10 had reintroduced legacy remote storage paths that do not exist in the
 repository — including the founder headshot, which renders in the navigation on
 every page. All eight repointed to real processed assets across
 `PremiumNavigation`, `CommunityImpact`, `MaterialsScience` and `FounderPage`.

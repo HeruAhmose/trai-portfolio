@@ -9,3 +9,5 @@ lighthouse/
 .netlify/
 .vercel/
 *.tsbuildinfo
+
+.trai-dev-logs/

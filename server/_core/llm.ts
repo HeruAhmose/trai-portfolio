@@ -214,7 +214,10 @@ const normalizeToolChoice = (
 };
 
 const resolveApiUrl = () => {
-  const configured = ENV.forgeApiUrl?.trim() || "https://forge.manus.im";
+  const configured = ENV.forgeApiUrl?.trim();
+  if (!configured) {
+    throw new Error("BUILT_IN_FORGE_API_URL is not configured");
+  }
   const origin = resolveTrustedForgeOrigin(configured);
   return `${origin}/v1/chat/completions`;
 };
