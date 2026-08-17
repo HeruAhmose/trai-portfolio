@@ -18,7 +18,7 @@ jobs:
   verify:
     name: Verify
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -40,6 +40,15 @@ jobs:
 
       - name: Typecheck
         run: npm exec -- tsc --noEmit
+
+      # Protect the portfolio's advanced interactions and server integrations
+      # before dependency migrations are allowed to merge. Synthetic values
+      # exercise key-format/distinctness tests without exposing real secrets.
+      - name: Advanced feature regression suite
+        env:
+          CLAUDE_API_KEY_HL: sk-ant-api03-ci-hl-0000000000000000000000000000000000000000
+          CLAUDE_API_KEY_QC: sk-ant-api03-ci-qc-1111111111111111111111111111111111111111
+        run: npm exec -- vitest run
 
       - name: Build
         env:
