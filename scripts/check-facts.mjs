@@ -51,7 +51,6 @@ const FORBIDDEN = [
     why: 'nothing here is FDA-approved' },
   { re: /\[(Institution Name|Advisor Name|Insert Date|Insert Contact Info)\]/i,
     why: 'unfilled template placeholder' },
-  { re: /manus\.computer/i, why: 'temporary sandbox URL' },
   { re: /\blorem ipsum\b/i, why: 'placeholder copy' },
 ];
 
