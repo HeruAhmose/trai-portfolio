@@ -14,6 +14,15 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["server/**/*.test.ts", "server/**/*.spec.ts"],
+    include: [
+      "server/**/*.test.ts",
+      "server/**/*.spec.ts",
+      // Only this data test, not the wider client/** suite -- the other
+      // client-side *.test.ts files are pre-existing, dormant, and
+      // untriaged (some may need a jsdom environment). Widening this
+      // pattern is a separate decision from fixing the fabricated data
+      // this test guards against.
+      "client/src/components/__tests__/SearchablePatentClaims.test.ts",
+    ],
   },
 });
