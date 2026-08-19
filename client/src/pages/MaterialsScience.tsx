@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import AMCVisualization from '@/components/AMCVisualization';
-import PatentClaimsExplorer from '@/components/PatentClaimsExplorer';
+import { EnhancedPatentExplorer } from '@/components/EnhancedPatentExplorer';
 import ManufacturingProcess from '@/components/ManufacturingProcess';
 import { InteractiveButton } from '@/components/InteractiveButton';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
@@ -141,7 +141,7 @@ export default function MaterialsScience() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.6 }}
           >
-            <PatentClaimsExplorer />
+            <EnhancedPatentExplorer />
           </motion.div>
         )}
 
