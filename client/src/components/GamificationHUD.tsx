@@ -23,7 +23,7 @@ export const GamificationHUD: React.FC<GamificationHUDProps> = ({ sessionId }) =
   const progressPercent = (progressToNext / 100) * 100;
 
   return (
-    <div className="fixed bottom-20 right-4 z-40">
+    <div className="fixed bottom-20 left-4 z-40">
       {/* Compact HUD */}
       <motion.button
         onClick={() => setIsExpanded(!isExpanded)}
@@ -52,7 +52,7 @@ export const GamificationHUD: React.FC<GamificationHUDProps> = ({ sessionId }) =
             initial={{ opacity: 0, scale: 0.9, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 10 }}
-            className="absolute bottom-full right-0 mb-2 w-72 bg-[#0a0d10]/95 border border-[#d6a33a]/20 rounded-xl shadow-2xl overflow-hidden backdrop-blur-md"
+            className="absolute bottom-full left-0 mb-2 w-72 bg-[#0a0d10]/95 border border-[#d6a33a]/20 rounded-xl shadow-2xl overflow-hidden backdrop-blur-md"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-[#d6a33a]/10">
