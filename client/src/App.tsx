@@ -298,6 +298,9 @@ function App() {
                   />
                 </Suspense>
               )}
+
+              {/* Explorer points / badges / level HUD */}
+              <GamificationHUD sessionId={sessionId} />
             </>
           </TooltipProvider>
             </ThemeProvider>
