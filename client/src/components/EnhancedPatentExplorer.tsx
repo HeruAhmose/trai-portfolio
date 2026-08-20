@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Zap } from 'lucide-react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, Zap } from "lucide-react";
 
 interface Claim {
   number: number;
   title: string;
-  category: 'composition' | 'manufacturing' | 'device';
+  category: "composition" | "manufacturing" | "device";
   summary: string;
   details: string[];
   specifications?: Record<string, string>;
@@ -21,335 +21,357 @@ const PATENT_CLAIMS: Claim[] = [
   // Composition & Material Claims (1–15)
   {
     number: 1,
-    title: 'Hemp-Carbon Matrix Pyrolysis',
-    category: 'composition',
-    summary: 'Pyrolysis at 700–1400°C with conductivity 10²–10⁶ S/m.',
+    title: "Hemp-Carbon Matrix Pyrolysis",
+    category: "composition",
+    summary: "Pyrolysis at 700–1400°C with conductivity 10²–10⁶ S/m.",
     details: [
-      'Pyrolysis temperature: 700–1400°C',
-      'Conductivity: 10²–10⁶ S/m',
-      'Fiber diameter: 5–50 μm',
-      'Aspect ratio: >100:1',
+      "Pyrolysis temperature: 700–1400°C",
+      "Conductivity: 10²–10⁶ S/m",
+      "Fiber diameter: 5–50 μm",
+      "Aspect ratio: >100:1",
     ],
     specifications: {
-      'Temperature Range': '700–1400°C',
-      'Conductivity': '10²–10⁶ S/m',
-      'Fiber Diameter': '5–50 μm',
-      'Aspect Ratio': '>100:1',
+      "Temperature Range": "700–1400°C",
+      Conductivity: "10²–10⁶ S/m",
+      "Fiber Diameter": "5–50 μm",
+      "Aspect Ratio": ">100:1",
     },
   },
   {
     number: 2,
-    title: 'Crystalline Phase Integration',
-    category: 'composition',
-    summary: 'Quartz, tourmaline, magnetite, and rare-earth phases at claimed compositions.',
+    title: "Crystalline Phase Integration",
+    category: "composition",
+    summary:
+      "Quartz, tourmaline, magnetite, and rare-earth phases at claimed compositions.",
     details: [
-      'Quartz SiO₂: 15–45%',
-      'Tourmaline: 3–25%',
-      'Magnetite Fe₃O₄: 2–20%',
-      'Rare-earth elements: 0.3–10%',
+      "Quartz SiO₂: 15–45%",
+      "Tourmaline: 3–25%",
+      "Magnetite Fe₃O₄: 2–20%",
+      "Rare-earth elements: 0.3–10%",
     ],
     specifications: {
-      'Quartz': '15–45%',
-      'Tourmaline': '3–25%',
-      'Magnetite': '2–20%',
-      'Rare-Earth': '0.3–10%',
+      Quartz: "15–45%",
+      Tourmaline: "3–25%",
+      Magnetite: "2–20%",
+      "Rare-Earth": "0.3–10%",
     },
   },
   {
     number: 3,
-    title: 'Multi-Modal Harvesting',
-    category: 'composition',
-    summary: 'Simultaneous piezoelectric, thermoelectric, and spin-Seebeck transduction.',
+    title: "Multi-Modal Harvesting",
+    category: "composition",
+    summary:
+      "Simultaneous piezoelectric, thermoelectric, and spin-Seebeck transduction.",
     details: [
-      'Simultaneous piezoelectric, thermoelectric, and spin-Seebeck transduction',
-      'Combined output at 250–350 K',
+      "Simultaneous piezoelectric, thermoelectric, and spin-Seebeck transduction",
+      "Combined output at 250–350 K",
     ],
     specifications: {
-      'Operating Range': '250–350 K',
+      "Operating Range": "250–350 K",
     },
   },
   {
     number: 4,
-    title: 'Quantum Sensing',
-    category: 'composition',
-    summary: 'Eu, Nd, Er, Yb, Ce dopants in a quartz host for self-powered sensing.',
+    title: "Quantum Sensing",
+    category: "composition",
+    summary:
+      "Eu, Nd, Er, Yb, Ce dopants in a quartz host for self-powered sensing.",
     details: [
-      'Lanthanide dopants: Eu, Nd, Er, Yb, Ce in quartz host',
-      'Self-powered quantum sensors at room temperature',
+      "Lanthanide dopants: Eu, Nd, Er, Yb, Ce in quartz host",
+      "Self-powered quantum sensors at room temperature",
     ],
   },
   {
     number: 5,
-    title: 'Polymer Binder Architecture',
-    category: 'composition',
-    summary: 'PDMS or PVDF matrix controlling spatial distribution and stress transfer.',
+    title: "Polymer Binder Architecture",
+    category: "composition",
+    summary:
+      "PDMS or PVDF matrix controlling spatial distribution and stress transfer.",
     details: [
-      'PDMS or PVDF matrix',
-      'Controls spatial distribution of constituents',
-      'Mediates mechanical stress transfer',
+      "PDMS or PVDF matrix",
+      "Controls spatial distribution of constituents",
+      "Mediates mechanical stress transfer",
     ],
   },
   {
     number: 6,
-    title: 'Piezoelectric Coupling',
-    category: 'composition',
-    summary: 'Quartz and tourmaline dual-mode piezoelectric response with optimized orientation.',
+    title: "Piezoelectric Coupling",
+    category: "composition",
+    summary:
+      "Quartz and tourmaline dual-mode piezoelectric response with optimized orientation.",
     details: [
-      'Quartz and tourmaline dual-mode piezoelectric response',
-      'Orientation optimized for coupling efficiency',
+      "Quartz and tourmaline dual-mode piezoelectric response",
+      "Orientation optimized for coupling efficiency",
     ],
   },
   {
     number: 7,
-    title: 'Pyroelectric Response',
-    category: 'composition',
-    summary: 'Tourmaline-enabled thermal gradient detection with integrated signal conditioning.',
+    title: "Pyroelectric Response",
+    category: "composition",
+    summary:
+      "Tourmaline-enabled thermal gradient detection with integrated signal conditioning.",
     details: [
-      'Tourmaline enables thermal gradient detection',
-      'Integrated signal conditioning',
+      "Tourmaline enables thermal gradient detection",
+      "Integrated signal conditioning",
     ],
   },
   {
     number: 8,
-    title: 'Ferrimagnetic Interaction',
-    category: 'composition',
-    summary: 'Magnetite constituent enabling magnetic field coupling.',
+    title: "Ferrimagnetic Interaction",
+    category: "composition",
+    summary: "Magnetite constituent enabling magnetic field coupling.",
     details: [
-      'Magnetite Fe₃O₄ constituent',
-      'Curie temperature T_C ≈ 850–860 K',
-      'Enables magnetic field coupling',
+      "Magnetite Fe₃O₄ constituent",
+      "Curie temperature T_C ≈ 850–860 K",
+      "Enables magnetic field coupling",
     ],
     specifications: {
-      'Curie Temperature': '850–860 K',
+      "Curie Temperature": "850–860 K",
     },
   },
   {
     number: 9,
-    title: 'Rare-Earth Dopant Embedding',
-    category: 'composition',
-    summary: 'Lanthanide ions in crystalline hosts with optimized crystal field splitting.',
+    title: "Rare-Earth Dopant Embedding",
+    category: "composition",
+    summary:
+      "Lanthanide ions in crystalline hosts with optimized crystal field splitting.",
     details: [
-      'Lanthanide ions embedded in crystalline hosts',
-      'Optimized crystal field splitting',
+      "Lanthanide ions embedded in crystalline hosts",
+      "Optimized crystal field splitting",
     ],
   },
   {
     number: 10,
-    title: 'Electrical Conductivity Control',
-    category: 'composition',
-    summary: 'Tunable sp²/sp³ bonding in the hemp-derived carbon matrix.',
+    title: "Electrical Conductivity Control",
+    category: "composition",
+    summary: "Tunable sp²/sp³ bonding in the hemp-derived carbon matrix.",
     details: [
-      'Hemp-derived carbon matrix',
-      'Tunable sp²/sp³ bonding',
-      'Enables electron delocalization',
+      "Hemp-derived carbon matrix",
+      "Tunable sp²/sp³ bonding",
+      "Enables electron delocalization",
     ],
   },
   {
     number: 11,
-    title: 'Thermal Stability',
-    category: 'composition',
-    summary: 'Structural integrity and transduction efficiency across -40°C to +85°C.',
+    title: "Thermal Stability",
+    category: "composition",
+    summary:
+      "Structural integrity and transduction efficiency across -40°C to +85°C.",
     details: [
-      'Maintains structural integrity across -40°C to +85°C',
-      'Transduction efficiency preserved across range',
+      "Maintains structural integrity across -40°C to +85°C",
+      "Transduction efficiency preserved across range",
     ],
     specifications: {
-      'Operating Range': '-40°C to +85°C',
+      "Operating Range": "-40°C to +85°C",
     },
   },
   {
     number: 12,
-    title: 'Mechanical Fatigue Resistance',
-    category: 'composition',
-    summary: 'High mechanical quality factor tolerant to cyclic stress beyond 10⁶ cycles.',
+    title: "Mechanical Fatigue Resistance",
+    category: "composition",
+    summary:
+      "High mechanical quality factor tolerant to cyclic stress beyond 10⁶ cycles.",
     details: [
-      'High mechanical quality factor',
-      'Tolerant to cyclic stress beyond 10⁶ cycles',
+      "High mechanical quality factor",
+      "Tolerant to cyclic stress beyond 10⁶ cycles",
     ],
     specifications: {
-      'Cyclic Stress Tolerance': '>10⁶ cycles',
+      "Cyclic Stress Tolerance": ">10⁶ cycles",
     },
   },
   {
     number: 13,
-    title: 'Surface Area Optimization',
-    category: 'composition',
-    summary: 'Hemp-derived activated carbon with >1500 m²/g surface area.',
+    title: "Surface Area Optimization",
+    category: "composition",
+    summary: "Hemp-derived activated carbon with >1500 m²/g surface area.",
     details: [
-      'Hemp-derived activated carbon',
-      'Surface area >1500 m²/g',
-      'Enhances transduction',
+      "Hemp-derived activated carbon",
+      "Surface area >1500 m²/g",
+      "Enhances transduction",
     ],
     specifications: {
-      'Surface Area': '>1500 m²/g',
+      "Surface Area": ">1500 m²/g",
     },
   },
   {
     number: 14,
-    title: 'Biocompatibility',
-    category: 'composition',
-    summary: 'Hemp-derived carbon and mineral constituents suitable for biomedical applications.',
+    title: "Biocompatibility",
+    category: "composition",
+    summary:
+      "Hemp-derived carbon and mineral constituents suitable for biomedical applications.",
     details: [
-      'Hemp-derived carbon and mineral constituents',
-      'Suitable for biomedical applications',
+      "Hemp-derived carbon and mineral constituents",
+      "Suitable for biomedical applications",
     ],
   },
   {
     number: 15,
-    title: 'Scalability',
-    category: 'composition',
-    summary: 'Domestically available hemp feedstock for cost-effective large-scale manufacturing.',
+    title: "Scalability",
+    category: "composition",
+    summary:
+      "Domestically available hemp feedstock for cost-effective large-scale manufacturing.",
     details: [
-      'Domestically available hemp feedstock',
-      'Enables cost-effective large-scale manufacturing',
+      "Domestically available hemp feedstock",
+      "Enables cost-effective large-scale manufacturing",
     ],
   },
   // Manufacturing Method Claims (16–18)
   {
     number: 16,
-    title: 'Fiber Preparation Method',
-    category: 'manufacturing',
-    summary: 'Source, clean, and cut industrial hemp bast fibers; pre-condition for pyrolysis.',
+    title: "Fiber Preparation Method",
+    category: "manufacturing",
+    summary:
+      "Source, clean, and cut industrial hemp bast fibers; pre-condition for pyrolysis.",
     details: [
-      'Source industrial hemp bast fibers',
-      'Clean and cut fibers',
-      'Pre-condition for optimal pyrolysis',
+      "Source industrial hemp bast fibers",
+      "Clean and cut fibers",
+      "Pre-condition for optimal pyrolysis",
     ],
   },
   {
     number: 17,
-    title: 'Pyrolysis Process',
-    category: 'manufacturing',
-    summary: 'Controlled heating at 700–1400°C in an inert atmosphere.',
+    title: "Pyrolysis Process",
+    category: "manufacturing",
+    summary: "Controlled heating at 700–1400°C in an inert atmosphere.",
     details: [
-      'Controlled heating at 700–1400°C',
-      'Inert atmosphere',
-      'Temperature and duration optimize carbon yield',
+      "Controlled heating at 700–1400°C",
+      "Inert atmosphere",
+      "Temperature and duration optimize carbon yield",
     ],
     specifications: {
-      'Temperature Range': '700–1400°C',
+      "Temperature Range": "700–1400°C",
     },
   },
   {
     number: 18,
-    title: 'Crystal Synthesis Integration',
-    category: 'manufacturing',
-    summary: 'Quartz, tourmaline, magnetite, and rare-earth particles dispersed in polymer binder.',
+    title: "Crystal Synthesis Integration",
+    category: "manufacturing",
+    summary:
+      "Quartz, tourmaline, magnetite, and rare-earth particles dispersed in polymer binder.",
     details: [
-      'Quartz, tourmaline, magnetite, and rare-earth particles synthesized',
-      'Dispersed in polymer binder',
+      "Quartz, tourmaline, magnetite, and rare-earth particles synthesized",
+      "Dispersed in polymer binder",
     ],
   },
   // Device & System Claims (19–25)
   {
     number: 19,
-    title: 'Multi-Modal Transduction Device',
-    category: 'device',
-    summary: 'Composite configured as sensor or energy harvester with integrated electrodes.',
+    title: "Multi-Modal Transduction Device",
+    category: "device",
+    summary:
+      "Composite configured as sensor or energy harvester with integrated electrodes.",
     details: [
-      'Configured as sensor or energy harvester',
-      'Integrated electrodes',
+      "Configured as sensor or energy harvester",
+      "Integrated electrodes",
     ],
   },
   {
     number: 20,
-    title: 'Mechanical Vibration Harvester',
-    category: 'device',
-    summary: 'Piezoelectric mode activated by vibration, output >100 mV under 1g acceleration.',
+    title: "Mechanical Vibration Harvester",
+    category: "device",
+    summary:
+      "Piezoelectric mode activated by vibration, output >100 mV under 1g acceleration.",
     details: [
-      'Piezoelectric mode activated by vibration',
-      'Output >100 mV under 1g acceleration',
+      "Piezoelectric mode activated by vibration",
+      "Output >100 mV under 1g acceleration",
     ],
     specifications: {
-      'Output Voltage': '>100 mV at 1g',
+      "Output Voltage": ">100 mV at 1g",
     },
   },
   {
     number: 21,
-    title: 'Thermal Energy Harvester',
-    category: 'device',
-    summary: 'Pyroelectric mode activated by thermal gradient, output >50 mV across a 10°C/min ramp.',
+    title: "Thermal Energy Harvester",
+    category: "device",
+    summary:
+      "Pyroelectric mode activated by thermal gradient, output >50 mV across a 10°C/min ramp.",
     details: [
-      'Pyroelectric mode activated by thermal gradient',
-      'Output >50 mV across 10°C/min ramp',
+      "Pyroelectric mode activated by thermal gradient",
+      "Output >50 mV across 10°C/min ramp",
     ],
     specifications: {
-      'Output Voltage': '>50 mV at 10°C/min',
+      "Output Voltage": ">50 mV at 10°C/min",
     },
   },
   {
     number: 22,
-    title: 'Magnetic Field Sensor',
-    category: 'device',
-    summary: 'Magnetite-enabled sensing of external magnetic fields, sensitivity >10 mV/mT.',
+    title: "Magnetic Field Sensor",
+    category: "device",
+    summary:
+      "Magnetite-enabled sensing of external magnetic fields, sensitivity >10 mV/mT.",
     details: [
-      'Magnetite-enabled sensing of external magnetic fields',
-      'Sensitivity >10 mV/mT',
+      "Magnetite-enabled sensing of external magnetic fields",
+      "Sensitivity >10 mV/mT",
     ],
     specifications: {
-      'Sensitivity': '>10 mV/mT',
+      Sensitivity: ">10 mV/mT",
     },
   },
   {
     number: 23,
-    title: 'Quantum Sensing Array',
-    category: 'device',
-    summary: 'Rare-earth dopants enabling simultaneous detection of multiple physical parameters.',
+    title: "Quantum Sensing Array",
+    category: "device",
+    summary:
+      "Rare-earth dopants enabling simultaneous detection of multiple physical parameters.",
     details: [
-      'Rare-earth dopants',
-      'Simultaneous detection of multiple physical parameters',
+      "Rare-earth dopants",
+      "Simultaneous detection of multiple physical parameters",
     ],
   },
   {
     number: 24,
-    title: 'Integrated Signal Conditioning',
-    category: 'device',
-    summary: 'On-board electronics for amplification, filtering, and digital output.',
+    title: "Integrated Signal Conditioning",
+    category: "device",
+    summary:
+      "On-board electronics for amplification, filtering, and digital output.",
     details: [
-      'On-board electronics',
-      'Signal amplification and filtering',
-      'Digital output',
+      "On-board electronics",
+      "Signal amplification and filtering",
+      "Digital output",
     ],
   },
   {
     number: 25,
-    title: 'System-Level Performance Validation',
-    category: 'device',
-    summary: 'End-to-end transduction with measured sensitivity, repeatability, and manufacturability.',
+    title: "System-Level Performance Validation",
+    category: "device",
+    summary:
+      "End-to-end transduction with measured sensitivity, repeatability, and manufacturability.",
     details: [
-      'End-to-end transduction',
-      'Measured sensitivity, repeatability, and manufacturability',
+      "End-to-end transduction",
+      "Measured sensitivity, repeatability, and manufacturability",
     ],
   },
 ];
 
 const CATEGORY_INFO = {
   composition: {
-    label: 'Composition & Material Claims',
-    color: 'from-primary to-primary/50',
-    icon: '⚗️',
+    label: "Composition & Material Claims",
+    color: "from-primary to-primary/50",
+    icon: "⚗️",
     count: 15,
   },
   manufacturing: {
-    label: 'Manufacturing Method Claims',
-    color: 'from-cyan-400 to-cyan-400/50',
-    icon: '🏭',
+    label: "Manufacturing Method Claims",
+    color: "from-cyan-400 to-cyan-400/50",
+    icon: "🏭",
     count: 3,
   },
   device: {
-    label: 'Device & System Claims',
-    color: 'from-yellow-400 to-yellow-400/50',
-    icon: '⚙️',
+    label: "Device & System Claims",
+    color: "from-yellow-400 to-yellow-400/50",
+    icon: "⚙️",
     count: 7,
   },
 };
 
 export const EnhancedPatentExplorer: React.FC = () => {
   const [expandedClaim, setExpandedClaim] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<'composition' | 'manufacturing' | 'device' | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<
+    "composition" | "manufacturing" | "device" | null
+  >(null);
 
   const filteredClaims = selectedCategory
-    ? PATENT_CLAIMS.filter((claim) => claim.category === selectedCategory)
+    ? PATENT_CLAIMS.filter(claim => claim.category === selectedCategory)
     : PATENT_CLAIMS;
 
   const containerVariants = {
@@ -388,7 +410,8 @@ export const EnhancedPatentExplorer: React.FC = () => {
             <span className="text-cyan-400">25 Total Claims</span>
           </h2>
           <p className="text-foreground/70 text-lg max-w-2xl mx-auto">
-            Multi-modal energy harvesting composite from hemp-derived carbon. USPTO Filed Application No. 63/934,269
+            Multi-modal energy harvesting composite from hemp-derived carbon.
+            USPTO Filed Application No. 63/934,269
           </p>
         </motion.div>
 
@@ -399,29 +422,35 @@ export const EnhancedPatentExplorer: React.FC = () => {
           transition={{ delay: 0.1, duration: 0.6 }}
           className="grid md:grid-cols-3 gap-4 mb-12"
         >
-          {(Object.entries(CATEGORY_INFO) as Array<[keyof typeof CATEGORY_INFO, typeof CATEGORY_INFO[keyof typeof CATEGORY_INFO]]>).map(
-            ([category, info]) => (
-              <motion.button
-                key={category}
-                onClick={() =>
-                  setSelectedCategory(
-                    selectedCategory === category ? null : (category as any)
-                  )
-                }
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${
-                  selectedCategory === category
-                    ? `border-primary bg-gradient-to-r ${info.color} shadow-lg`
-                    : 'border-primary/30 bg-background/50 hover:border-primary/60'
-                }`}
-              >
-                <div className="text-4xl mb-2">{info.icon}</div>
-                <h3 className="font-bold text-foreground mb-1">{info.label}</h3>
-                <p className="text-2xl font-bold text-primary">{info.count}</p>
-              </motion.button>
-            )
-          )}
+          {(
+            Object.entries(CATEGORY_INFO) as Array<
+              [
+                keyof typeof CATEGORY_INFO,
+                (typeof CATEGORY_INFO)[keyof typeof CATEGORY_INFO],
+              ]
+            >
+          ).map(([category, info]) => (
+            <motion.button
+              key={category}
+              onClick={() =>
+                setSelectedCategory(
+                  selectedCategory === category ? null : (category as any)
+                )
+              }
+              aria-pressed={selectedCategory === category}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${
+                selectedCategory === category
+                  ? `border-primary bg-gradient-to-r ${info.color} shadow-lg`
+                  : "border-primary/30 bg-background/50 hover:border-primary/60"
+              }`}
+            >
+              <div className="text-4xl mb-2">{info.icon}</div>
+              <h3 className="font-bold text-foreground mb-1">{info.label}</h3>
+              <p className="text-2xl font-bold text-primary">{info.count}</p>
+            </motion.button>
+          ))}
         </motion.div>
 
         {/* Claims Grid */}
@@ -433,7 +462,7 @@ export const EnhancedPatentExplorer: React.FC = () => {
           className="grid md:grid-cols-2 gap-4"
         >
           <AnimatePresence mode="wait">
-            {filteredClaims.map((claim) => (
+            {filteredClaims.map(claim => (
               <motion.div
                 key={claim.number}
                 variants={claimVariants}
@@ -446,16 +475,18 @@ export const EnhancedPatentExplorer: React.FC = () => {
                       expandedClaim === claim.number ? null : claim.number
                     )
                   }
+                  aria-expanded={expandedClaim === claim.number}
+                  aria-controls={`patent-claim-detail-${claim.number}`}
                   className={`w-full text-left p-6 rounded-xl border-2 transition-all duration-300 ${
                     expandedClaim === claim.number
-                      ? 'border-primary bg-primary/10 shadow-lg shadow-primary/30'
-                      : 'border-primary/30 bg-background/50 hover:border-primary/60 hover:bg-background/70'
+                      ? "border-primary bg-primary/10 shadow-lg shadow-primary/30"
+                      : "border-primary/30 bg-background/50 hover:border-primary/60 hover:bg-background/70"
                   }`}
                   style={{
                     boxShadow:
                       expandedClaim === claim.number
-                        ? '0 0 30px rgba(255,215,0,0.4), inset 0 0 20px rgba(255,215,0,0.1)'
-                        : 'none',
+                        ? "0 0 30px rgba(255,215,0,0.4), inset 0 0 20px rgba(255,215,0,0.1)"
+                        : "none",
                   }}
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -464,12 +495,18 @@ export const EnhancedPatentExplorer: React.FC = () => {
                         {claim.number}
                       </div>
                       <div>
-                        <h4 className="font-bold text-foreground">{claim.title}</h4>
-                        <p className="text-xs text-foreground/60 mt-1">{claim.summary}</p>
+                        <h4 className="font-bold text-foreground">
+                          {claim.title}
+                        </h4>
+                        <p className="text-xs text-foreground/60 mt-1">
+                          {claim.summary}
+                        </p>
                       </div>
                     </div>
                     <motion.div
-                      animate={{ rotate: expandedClaim === claim.number ? 180 : 0 }}
+                      animate={{
+                        rotate: expandedClaim === claim.number ? 180 : 0,
+                      }}
                       transition={{ duration: 0.3 }}
                       className="text-primary flex-shrink-0"
                     >
@@ -482,8 +519,9 @@ export const EnhancedPatentExplorer: React.FC = () => {
                 <AnimatePresence>
                   {expandedClaim === claim.number && (
                     <motion.div
+                      id={`patent-claim-detail-${claim.number}`}
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
+                      animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden mt-2"
@@ -504,7 +542,9 @@ export const EnhancedPatentExplorer: React.FC = () => {
                                 transition={{ delay: idx * 0.05 }}
                                 className="flex items-start gap-2 text-foreground/80 text-sm"
                               >
-                                <span className="text-primary font-bold mt-1">▸</span>
+                                <span className="text-primary font-bold mt-1">
+                                  ▸
+                                </span>
                                 <span>{detail}</span>
                               </motion.li>
                             ))}
@@ -514,14 +554,25 @@ export const EnhancedPatentExplorer: React.FC = () => {
                         {/* Specifications Table */}
                         {claim.specifications && (
                           <div>
-                            <h5 className="font-bold text-primary mb-3">Specifications</h5>
+                            <h5 className="font-bold text-primary mb-3">
+                              Specifications
+                            </h5>
                             <div className="grid grid-cols-2 gap-2">
-                              {Object.entries(claim.specifications).map(([key, value]) => (
-                                <div key={key} className="p-2 rounded bg-background/50 border border-primary/20">
-                                  <p className="text-xs text-foreground/60">{key}</p>
-                                  <p className="text-sm font-semibold text-primary">{value}</p>
-                                </div>
-                              ))}
+                              {Object.entries(claim.specifications).map(
+                                ([key, value]) => (
+                                  <div
+                                    key={key}
+                                    className="p-2 rounded bg-background/50 border border-primary/20"
+                                  >
+                                    <p className="text-xs text-foreground/60">
+                                      {key}
+                                    </p>
+                                    <p className="text-sm font-semibold text-primary">
+                                      {value}
+                                    </p>
+                                  </div>
+                                )
+                              )}
                             </div>
                           </div>
                         )}
