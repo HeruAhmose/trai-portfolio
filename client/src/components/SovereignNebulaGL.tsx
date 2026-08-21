@@ -118,7 +118,7 @@ type NebulaVariant =
 const TINT_MAP: Record<NebulaVariant, [number, number, number]> = {
   default: [0.035, 0.065, 0.145], // lapis blue (TRAI home)
   cyber: [0.02, 0.08, 0.2], // deep cyber blue (QueenCalifia)
-  saffron: [0.2, 0.1, 0.02], // saffron-red (True Melange Φ)
+  saffron: [0.2, 0.1, 0.02], // saffron-red (True Mélange Φ)
   emerald: [0.02, 0.12, 0.07], // forest emerald (TechBridge)
   violet: [0.09, 0.02, 0.18], // sovereign violet (MeLaNiNa)
   copper: [0.18, 0.08, 0.02], // copper-bronze (Tamerian Materials)

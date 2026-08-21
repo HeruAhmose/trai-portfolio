@@ -18,7 +18,7 @@ const C = { gold: '#d8aa43', cream: '#f4f0e6', dark: '#050709', mid: '#070b0f' }
 
 const ORGANS = [
   { num: '01', role: 'Skeleton', name: 'Tamerian Materials', desc: 'Material sovereignty — hemp-derived carbon composite, energy harvesting, quantum sensing. Patent App 63/934,269 · 25 claims.', route: '/materials', external: 'https://tamerian-materials.com/' },
-  { num: '02', role: 'Heart', name: 'True Melange \u03a6', desc: 'Biological sovereignty — saffron-hemp biotechnology platform. First product: Blue-Gold Daily RTD tea.', route: '/true-melange', external: null },
+  { num: '02', role: 'Heart', name: 'True Mélange \u03a6', desc: 'Biological sovereignty — saffron-hemp biotechnology platform. First product: Blue-Gold Daily RTD tea.', route: '/true-melange', external: null },
   { num: '03', role: 'Brain', name: 'Queen Califia', desc: 'Cognitive sovereignty — autonomous cybersecurity AI. Triple-core: Cyber, Identity, Markets.', route: '/queen-califia', external: 'https://queencalifia-cyberai.web.app/' },
   { num: '04', role: 'Vessels', name: 'Mela Nation', desc: 'Mobility sovereignty — last-mile logistics, community access, supply-chain resilience.', route: '/mela-nation', external: null },
   { num: '05', role: 'Skin', name: 'MeLaNiNa', desc: 'Identity sovereignty — hemp apparel, cultural expression, employee-ownership pathways.', route: '/melanina', external: null },
@@ -284,8 +284,8 @@ export default function HomeSovereign() {
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
               <p className="ceremonial-label mb-6">02 — Biological Sovereignty</p>
               <h2 className="display-heading text-[clamp(2.4rem,5vw,4rem)] mb-8">The body as architecture.</h2>
-              <p className="text-xl text-[#f4f0e6]/55 font-sans leading-relaxed mb-8">True Melange Φ encodes sovereignty into daily ritual. Affron® 28 mg/day. Hempseed-only inputs. Blue-Gold Daily — a 12 oz RTD tea that is the biological heart of the organism.</p>
-              <button onClick={() => handleOrganClick(ORGANS[1])} onMouseEnter={() => sound.hover()} className="text-sm font-sans text-[#d8aa43]/70 hover:text-[#d8aa43] transition-colors tracking-wide">Enter True Melange Φ →</button>
+              <p className="text-xl text-[#f4f0e6]/55 font-sans leading-relaxed mb-8">True Mélange Φ encodes sovereignty into daily ritual. Affron® 28 mg/day. Hempseed-only inputs. Blue-Gold Daily — a 12 oz RTD tea that is the biological heart of the organism.</p>
+              <button onClick={() => handleOrganClick(ORGANS[1])} onMouseEnter={() => sound.hover()} className="text-sm font-sans text-[#d8aa43]/70 hover:text-[#d8aa43] transition-colors tracking-wide">Enter True Mélange Φ →</button>
             </motion.div>
             <motion.div className="h-[520px] relative" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
               <DNAHelix interactive={true} />

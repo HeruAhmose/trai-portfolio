@@ -42,7 +42,7 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
     { id: 'applications', label: 'Applications', icon: '🔧' },
     { id: 'timeline', label: 'Timeline', icon: '⏳' },
     { id: 'advanced', label: 'Advanced Features', icon: '🚀' },
-    { id: 'true-melange', label: 'True Melange Φ', icon: '🌿' },
+    { id: 'true-melange', label: 'True Mélange Φ', icon: '🌿' },
     { id: 'queen-califia', label: 'Queen Califia', icon: '👑' },
     { id: 'founder', label: 'Jonathan Peoples', icon: '◉' },
     { id: 'peoples-foundation', label: 'The Peoples Foundation', icon: '◈' },

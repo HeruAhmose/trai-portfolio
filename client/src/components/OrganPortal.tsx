@@ -102,7 +102,7 @@ const ORGAN_CONTENT: Record<string, {
       'Employee-ownership pathways built into the business model',
       'Cultural memory encoded in material — not just fashion',
       'Melanin as architecture, not aesthetic',
-      'Coordinates with True Melange Φ on hemp supply chain',
+      'Coordinates with True Mélange Φ on hemp supply chain',
       'Community co-design model — not top-down product development',
     ],
     status: 'Concept Stage · Designing',
