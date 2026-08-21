@@ -46,6 +46,43 @@ jobs:
           cp dist/public/index.html dist/public/404.html
           touch dist/public/.nojekyll
 
+          # GitHub Pages serves 404.html for any path it has no file for. The SPA
+          # body is correct, so human visitors are fine, but the HTTP status is 404
+          # - so crawlers, link checkers, uptime monitors and social-preview
+          # fetchers all read every deep route as broken. Materialise a real
+          # directory + index.html for each non-parameterised route so those routes
+          # return a true 200. 404.html stays as the catch-all.
+          #
+          # Deliberately NOT materialised:
+          #   /            already served by dist/public/index.html
+          #   /project/:id parameterised - the id set is not known at build time,
+          #                so it must keep relying on the 404.html fallback
+          #   /404         materialising it would serve the NotFound page with a
+          #                200 status (a soft 404); the fallback already renders
+          #                that page with the correct 404 status
+          #   <catch-all>  the pathless <Route component={NotFound} /> - same
+          # Source of truth: the <Switch> table in client/src/App.tsx.
+          SPA_ROUTES="cinematic case-studies materials community research timeline
+            patent-claims advanced-features energy manufacturing quantum
+            applications dashboard annotations gesture-control sound-preferences
+            projects career-timeline quantum-enhanced neural-training domain admin
+            projects-showcase video-showcase gamification search api-docs
+            ai-insights showcase true-melange queen-califia mela-nation melanina
+            founder peoples-foundation contact"
+
+          for route in $SPA_ROUTES; do
+            mkdir -p "dist/public/$route"
+            cp dist/public/index.html "dist/public/$route/index.html"
+          done
+
+          for route in $SPA_ROUTES; do
+            if ! cmp -s dist/public/index.html "dist/public/$route/index.html"; then
+              echo "::error::Route /$route was not materialised from index.html."
+              exit 1
+            fi
+          done
+          echo "Materialised $(echo $SPA_ROUTES | wc -w) SPA route directories."
+
           if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-organism-v5\.js|trai-cinematic\.js)' dist/public/index.html; then
             echo "::error::GitHub Pages build contains root-relative asset references."
             exit 1
