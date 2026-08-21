@@ -40,10 +40,31 @@ export interface VideoItem {
   provenance: Provenance;
 }
 
+/* --------------------------------------------------------------- base path
+   This site is served from a project sub-path (/trai-portfolio/) on GitHub
+   Pages, not from a domain root. A root-relative '/media/...' string therefore
+   resolves to the WRONG origin path and 404s in production, while working
+   perfectly in local dev where the base is '/'. Every asset path below is
+   authored root-relative for readability and rewritten through asset() at
+   module load, so the base path is applied in exactly one place.
+
+   Vite substitutes import.meta.env.BASE_URL at build time from --base. */
+export function asset(path: string): string {
+  if (/^(https?:)?\/\//.test(path) || path.startsWith('data:')) return path;
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+  return `${base}/${path.replace(/^\//, '')}`;
+}
+
+const withBase = <T extends { src: string; poster?: string }>(item: T): T => ({
+  ...item,
+  src: asset(item.src),
+  ...(item.poster ? { poster: asset(item.poster) } : {}),
+});
+
 /* ------------------------------------------------------------------ archive
    Verifiable photographs. The founder's own record: discipline, service,
    recognition — and a father's jersey number that became his own. */
-export const ARCHIVE: MediaItem[] = [
+const ARCHIVE_RAW: MediaItem[] = [
   {
     src: '/media/archive/salisbury-44.jpg',
     alt: 'A Salisbury High School football player in a number 44 jersey, kneeling with a helmet',
@@ -113,7 +134,7 @@ export const ARCHIVE: MediaItem[] = [
 /* ---------------------------------------------------------------- tamerian
    Renderings. Illustrations of a real, patent-anchored materials program —
    never presented as micrographs or measurements. */
-export const TAMERIAN: MediaItem[] = [
+const TAMERIAN_RAW: MediaItem[] = [
   {
     src: '/media/tamerian/living-circuit.jpg',
     alt: 'An isometric rendering of a layered crystalline substrate with gold circuit tracery and an orbiting core',
@@ -168,7 +189,7 @@ export const TAMERIAN: MediaItem[] = [
 
 /* ----------------------------------------------------------------- concept
    Design visuals for R&D-stage technologies. */
-export const CONCEPT: MediaItem[] = [
+const CONCEPT_RAW: MediaItem[] = [
   {
     src: '/media/concept/helm-crown.jpg',
     alt: 'A crown of upright crystal prisms above concentric rings of light',
@@ -186,7 +207,7 @@ export const CONCEPT: MediaItem[] = [
 ];
 
 /* ------------------------------------------------------------------- video */
-export const VIDEO: Record<string, VideoItem> = {
+const VIDEO_RAW: Record<string, VideoItem> = {
   tamerianProject: {
     src: '/media/video/tamerian-project.mp4',
     poster: '/media/video/tamerian-project-poster.jpg',
@@ -212,6 +233,16 @@ export const VIDEO: Record<string, VideoItem> = {
     provenance: 'rendering',
   },
 };
+
+/* -------------------------------------------------- base-resolved exports
+   These are what the app consumes. Declared before TECHNOLOGIES below, which
+   references TAMERIAN[n] and therefore inherits the corrected paths too. */
+export const ARCHIVE: MediaItem[] = ARCHIVE_RAW.map(withBase);
+export const TAMERIAN: MediaItem[] = TAMERIAN_RAW.map(withBase);
+export const CONCEPT: MediaItem[] = CONCEPT_RAW.map(withBase);
+export const VIDEO: Record<string, VideoItem> = Object.fromEntries(
+  Object.entries(VIDEO_RAW).map(([key, item]) => [key, withBase(item)])
+);
 
 /* ------------------------------------------- proprietary technologies
    Section 7 of the TRAI business plan. Stage is stated for each, using the
