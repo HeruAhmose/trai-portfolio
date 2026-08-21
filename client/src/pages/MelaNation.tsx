@@ -1,22 +1,23 @@
 import { SovereignNebulaGL } from "@/components/SovereignNebulaGL";
+import { asset } from '@/lib/media';
 import React from "react";
 import { motion } from "framer-motion";
 
 const VISION_IMAGES = [
   {
-    src: "/media/tamerian/living-circuit.jpg",
+    src: asset('/media/tamerian/living-circuit.jpg'),
     alt: "Sovereign city infrastructure concept",
   },
   {
-    src: "/media/tamerian/chamber-rendering.jpg",
+    src: asset('/media/tamerian/chamber-rendering.jpg'),
     alt: "Mobility network concept",
   },
   {
-    src: "/media/tamerian/honeycomb.jpg",
+    src: asset('/media/tamerian/honeycomb.jpg'),
     alt: "Community distribution concept",
   },
   {
-    src: "/media/tamerian/helix-lab.jpg",
+    src: asset('/media/tamerian/helix-lab.jpg'),
     alt: "Resilient access infrastructure concept",
   },
 ];

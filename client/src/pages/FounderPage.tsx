@@ -1,14 +1,15 @@
 import { SovereignNebulaGL } from '@/components/SovereignNebulaGL';
+import { asset } from '@/lib/media';
 import React from 'react';
 import { motion } from 'framer-motion';
 
 
 const PHOTOS = {
-  headshot: '/media/archive/founder-portrait.jpg',
-  navyWhites: '/media/archive/navy-whites.jpg',
-  footballSalisbury: '/media/archive/salisbury-44.jpg',
-  trackKannapolis: '/media/archive/track-handoff.jpg',
-  football2006: '/media/archive/maritime-portrait.jpg',
+  headshot: asset('/media/archive/founder-portrait.jpg'),
+  navyWhites: asset('/media/archive/navy-whites.jpg'),
+  footballSalisbury: asset('/media/archive/salisbury-44.jpg'),
+  trackKannapolis: asset('/media/archive/track-handoff.jpg'),
+  football2006: asset('/media/archive/maritime-portrait.jpg'),
 };
 
 const C = {
