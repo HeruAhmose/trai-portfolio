@@ -286,28 +286,39 @@ export const Manufacturing: React.FC = () => {
         transition={{ delay: 0.9, duration: 0.8 }}
         className="max-w-6xl mx-auto px-4 p-8 bg-black/50 rounded-lg border border-gold-400/30"
       >
-        <h3 className="text-2xl font-bold text-gold-400 mb-6 text-center">
-          Quality Control & Validation
+        <h3 className="text-2xl font-bold text-gold-400 mb-2 text-center">
+          QC Release Targets
         </h3>
+        <p className="text-sm text-cyan-400/70 mb-6 text-center max-w-2xl mx-auto">
+          The acceptance criteria the seven-step process is designed to meet, each
+          drawn from a claim in provisional 63/934,269. No system-level performance
+          data are reported.
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
-            { name: 'Electrical', value: '✓ 700 S/m' },
-            { name: 'Piezoelectric', value: '✓ 15V @ 100 MPa' },
-            { name: 'Thermoelectric', value: '✓ ZT 2.2 @ 300K' },
-            { name: 'Mechanical', value: '✓ Validated' },
+            { name: 'Electrical', value: '10²–10⁶ S/m', claim: 'Claim 1' },
+            { name: 'Piezoelectric', value: '>100 mV @ 1g', claim: 'Claim 20' },
+            { name: 'Thermal', value: '>50 mV @ 10°C/min', claim: 'Claim 21' },
+            { name: 'Mechanical', value: '>10⁶ cycles', claim: 'Claim 12' },
           ].map((test, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1 + idx * 0.1 }}
-              className="p-4 bg-black/70 rounded border border-green-400/50 text-center"
+              className="p-4 bg-black/70 rounded border border-gold-400/30 text-center"
             >
-              <div className="text-2xl font-bold text-green-400 mb-2">{test.value}</div>
+              <div className="text-xl font-bold text-gold-400 mb-2">{test.value}</div>
               <div className="text-sm text-cyan-400">{test.name}</div>
+              <div className="text-[10px] font-mono text-white/40 mt-1 tracking-wider">
+                {test.claim}
+              </div>
             </motion.div>
           ))}
         </div>
+        <p className="text-[10px] font-mono text-white/30 mt-6 text-center tracking-[0.2em] uppercase">
+          Design envelope · not measured data
+        </p>
       </motion.div>
     </div>
   );
