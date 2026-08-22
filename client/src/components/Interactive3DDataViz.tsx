@@ -299,10 +299,14 @@ export const Interactive3DDataViz: React.FC = () => {
         transition={{ duration: 0.8 }}
       >
         <h3 className="text-lg font-bold text-cyan-400 mb-2 text-center">
-          Interactive 3D Research Data Visualization
+          Interactive 3D Design-Space Model
         </h3>
-        <p className="text-xs text-gold-400 text-center mb-4">
-          Piezoelectric, Thermoelectric, Quantum Coherence & Electrical Conductivity Data
+        <p className="text-xs text-gold-400 text-center mb-1">
+          Piezoelectric, thermoelectric, quantum-coherence and electrical-conductivity
+          behaviour across the design space
+        </p>
+        <p className="text-[10px] font-mono text-white/35 text-center mb-4 tracking-[0.18em] uppercase">
+          Modelled envelope · not measured data
         </p>
 
         <canvas
