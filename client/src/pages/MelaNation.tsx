@@ -125,7 +125,7 @@ export default function MelaNation() {
                   "Last-mile logistics infrastructure",
                   "Community access routes",
                   "Supply-chain resilience",
-                  "Distribution for True Melange Φ products",
+                  "Distribution for True Mélange Φ products",
                   "TechBridge hub supply coordination",
                 ].map(item => (
                   <div key={item} className="flex items-center gap-3">

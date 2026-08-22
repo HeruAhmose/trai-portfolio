@@ -19,7 +19,7 @@ const MILESTONES = [
   { months: '1–4', label: 'Formulation lock and analytical method validation (saffron HPLC, caffeine, EGCG, ICP-MS, cannabinoids)' },
   { months: '2–5', label: 'Regulatory counsel written opinion: beverage category, colorant use, hemp inputs, claims language, label copy' },
   { months: '2–4', label: 'Trademark counsel on "Melange" — free preliminary knockout search at USPTO first' },
-  { months: '1–2', label: 'EINs filed for all 4 entities (Tamerian, Queen Califia, True Melange Φ, TechBridge). NC Articles of Organization ($125/entity)' },
+  { months: '1–2', label: 'EINs filed for all 4 entities (Tamerian, Queen Califia, True Mélange Φ, TechBridge). NC Articles of Organization ($125/entity)' },
   { months: '1–2', label: 'Co-packer outreach: Carolina Beverage Group (Mooresville NC, 704.799.2337) and Niche Beverage Company' },
   { months: '4–8', label: 'Co-manufacturer qualification, NDA, development batch (bench → pilot 1,000–5,000 units)' },
   { months: '6–9', label: 'Soft DTC launch via Shopify + Amazon; NC specialty retail outreach' },
@@ -42,7 +42,7 @@ export default function TrueMelangePhi() {
             02 · Metabolism · Biological Sovereignty
           </motion.p>
           <motion.h1 className="text-[clamp(3rem,7vw,6rem)] font-bold leading-[1.05] mb-6 max-w-[700px]" style={{ color: '#f4f0e6', WebkitTextFillColor: '#f4f0e6' }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            True Melange Φ
+            True Mélange Φ
           </motion.h1>
           <motion.p className="text-xl text-[#f4f0e6]/60 max-w-[560px] leading-relaxed font-sans mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             A saffron-hemp biotechnology platform. The biological heart of the TRAI organism. First product: Blue-Gold Daily.
@@ -61,7 +61,7 @@ export default function TrueMelangePhi() {
           <motion.div className="mb-12" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <p className="text-xs tracking-[0.22em] uppercase text-[#d8aa43]/70 mb-3 font-sans">The Φ Layer System</p>
             <h2 className="text-[clamp(1.8rem,3.5vw,2.8rem)] font-bold mb-4" style={{ color: '#d8aa43', WebkitTextFillColor: '#d8aa43' }}>One architecture for story and science.</h2>
-            <p className="text-[#f4f0e6]/50 font-sans max-w-2xl">Every True Melange Φ formula is built from Fibonacci-indexed layers. Each layer is a piece of the mythos, a ritual element, and a functional ingredient group. A product activates the layers it needs; the rest stay dormant.</p>
+            <p className="text-[#f4f0e6]/50 font-sans max-w-2xl">Every True Mélange Φ formula is built from Fibonacci-indexed layers. Each layer is a piece of the mythos, a ritual element, and a functional ingredient group. A product activates the layers it needs; the rest stay dormant.</p>
           </motion.div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {PHI_LAYERS.map((layer, i) => (
