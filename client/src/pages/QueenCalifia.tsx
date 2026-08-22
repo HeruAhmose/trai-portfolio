@@ -41,7 +41,7 @@ const CORES = [
 
 const SYNERGIES = [
   { from: 'Queen Califia', to: 'Tamerian Materials', type: 'Security', desc: 'Protects the patent estate and research data for App 63/934,269' },
-  { from: 'Queen Califia', to: 'True Melange Φ', type: 'AI-Ops', desc: 'Coordinates formulation data, regulatory documents, and supply chain intelligence' },
+  { from: 'Queen Califia', to: 'True Mélange Φ', type: 'AI-Ops', desc: 'Coordinates formulation data, regulatory documents, and supply chain intelligence' },
   { from: 'Queen Califia', to: 'TechBridge', type: 'Infrastructure', desc: 'Powers H.K. AI integration and Digital Navigator platform security' },
   { from: 'Queen Califia', to: 'Portfolio', type: 'Brand', desc: 'Carries the Queen Califia mythos — the unifying Afrofuturist sovereignty narrative' },
 ];

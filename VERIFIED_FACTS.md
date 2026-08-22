@@ -21,7 +21,7 @@
 - Email: aitconsult22@gmail.com · Phone: (216) 307-0174
 - Calendly: calendly.com/aitconsult22/30min
 
-## Blue-Gold Daily (True Melange Φ)
+## Blue-Gold Daily (True Mélange Φ)
 - 12 oz sleek aluminum can · $7–10 · DTC-first
 - 28 mg Affron® saffron (Pharmactive) · ISO 3632 Cat I · ≥3.5% Lepticrosalides® (US10933110B2)
 - Hemp: hempseed oil + hemp seed protein only (GRAS GRN 765/771/778) — NO CBD, NO THC
@@ -49,7 +49,7 @@
 
 ## Seven Organs
 1. Tamerian Materials — Skeleton — tamerian-materials.com
-2. True Melange Φ — Heart — /true-melange
+2. True Mélange Φ — Heart — /true-melange
 3. Queen Califia — Brain — queencalifia-cyberai.web.app
 4. Mela Nation — Vessels — early development
 5. MeLaNiNa — Skin — early development

@@ -114,7 +114,7 @@
 - [x] Fix home page: replace CosmicWebGL with SovereignStarfield (dark carbon aesthetic matching reference screenshot)
 - [x] Fix global h1 rainbow gradient in premiumDesign.css (ivory/cream color system)
 - [x] Remove all fabricated content — verified against tamerian-materials.com, techbridge-collective.org, queencalifia-cyberai.web.app
-- [x] Integrate TRAI1 master documents (Sovereign Lattice, TRAI Architecture, True Melange Phi Evidence Monograph)
+- [x] Integrate TRAI1 master documents (Sovereign Lattice, TRAI Architecture, True Mélange Phi Evidence Monograph)
 - [x] Integrate TRAI Production Package 2026 (11 documents, July 2026)
-- [x] Create True Melange Phi page (/true-melange) with verified Phi Layer System, evidence basis, milestones, IP targets
+- [x] Create True Mélange Phi page (/true-melange) with verified Phi Layer System, evidence basis, milestones, IP targets
 - [x] 638 tests passing, 0 TypeScript errors

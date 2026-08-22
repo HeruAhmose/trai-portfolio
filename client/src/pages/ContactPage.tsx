@@ -40,7 +40,7 @@ const CONTACT_METHODS = [
 ];
 
 const AUDIENCE = [
-  { role: 'Investors', copy: 'Seed-stage capital for Tamerian Materials, True Melange Φ, and TechBridge. Equity, SAFE, and grant structures available.' },
+  { role: 'Investors', copy: 'Seed-stage capital for Tamerian Materials, True Mélange Φ, and TechBridge. Equity, SAFE, and grant structures available.' },
   { role: 'Co-packers & Manufacturers', copy: 'Seeking co-packing partners for Blue-Gold Daily RTD tea. Contact Carolina Beverage Group or reach out directly.' },
   { role: 'Research Partners', copy: 'Collaboration on hemp-derived carbon composite characterization, quantum sensing, and thermoelectric measurement.' },
   { role: 'Community Partners', copy: 'Host a TechBridge Digital Navigator hub in your facility. Low-lift partnership — TechBridge provides everything except the space.' },
