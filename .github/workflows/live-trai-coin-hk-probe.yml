@@ -1,0 +1,151 @@
+name: Live TRAI Coin and H.K. probe
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify-live-estate:
+    name: Certify live TRAI Coin + H.K.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Wait for exact production SHA and direct route
+        shell: bash
+        env:
+          EXPECTED_SHA: 89c79e8f43bc1a359c80edf398d28de9a5557d17
+        run: |
+          set -euo pipefail
+          base='https://heruahmose.github.io/trai-portfolio'
+
+          deployed=''
+          for attempt in $(seq 1 36); do
+            status="$(curl --silent --show-error --location --output /tmp/deploy-commit --write-out '%{http_code}' "$base/deploy-commit.txt" || true)"
+            deployed="$(tr -d '\r\n' < /tmp/deploy-commit 2>/dev/null || true)"
+            echo "attempt=$attempt status=$status deployed=$deployed expected=$EXPECTED_SHA"
+            if [ "$status" = '200' ] && [ "$deployed" = "$EXPECTED_SHA" ]; then
+              break
+            fi
+            sleep 10
+          done
+
+          test "$deployed" = "$EXPECTED_SHA"
+          route_status="$(curl --silent --show-error --location --output /tmp/trai-coin-shell.html --write-out '%{http_code}' "$base/trai-coin/")"
+          test "$route_status" = '200'
+          grep -qi '<html' /tmp/trai-coin-shell.html
+          echo 'LIVE_DEPLOYMENT_IDENTITY=PASS'
+          echo 'LIVE_TRAI_COIN_DIRECT_ROUTE=PASS'
+
+      - name: Certify rendered TRAI Coin semantics and H.K. identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/trai-live-chrome
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$chrome"
+
+          "$chrome" \
+            --headless --no-sandbox --no-first-run \
+            --remote-debugging-port=9224 --user-data-dir=/tmp/trai-live-chrome \
+            --disable-background-networking --disable-component-update \
+            --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader \
+            'https://heruahmose.github.io/trai-portfolio/trai-coin/' \
+            >/tmp/trai-live-chrome.log 2>&1 &
+          chrome_pid=$!
+          trap 'kill "$chrome_pid" 2>/dev/null || true; wait "$chrome_pid" 2>/dev/null || true' EXIT
+
+          for _ in $(seq 1 40); do
+            curl --fail --silent http://127.0.0.1:9224/json >/tmp/trai-live-targets.json && break
+            sleep 0.5
+          done
+          test -s /tmp/trai-live-targets.json
+
+          cat > /tmp/assert-live-trai.mjs <<'NODE'
+          const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+          const targets = await fetch('http://127.0.0.1:9224/json').then(r => r.json());
+          const target = targets.find(t => t.type === 'page' && t.url.includes('/trai-portfolio/trai-coin/'));
+          if (!target?.webSocketDebuggerUrl) throw new Error('TRAI Coin browser target not found');
+
+          const ws = new WebSocket(target.webSocketDebuggerUrl);
+          await new Promise((resolve, reject) => {
+            ws.addEventListener('open', resolve, { once: true });
+            ws.addEventListener('error', reject, { once: true });
+          });
+
+          let id = 0;
+          const pending = new Map();
+          ws.addEventListener('message', event => {
+            const message = JSON.parse(event.data);
+            if (!message.id) return;
+            const waiter = pending.get(message.id);
+            if (!waiter) return;
+            pending.delete(message.id);
+            message.error ? waiter.reject(new Error(JSON.stringify(message.error))) : waiter.resolve(message.result);
+          });
+          function send(method, params = {}) {
+            const messageId = ++id;
+            return new Promise((resolve, reject) => {
+              pending.set(messageId, { resolve, reject });
+              ws.send(JSON.stringify({ id: messageId, method, params }));
+            });
+          }
+
+          await send('Runtime.enable');
+          let snapshot = null;
+          for (let attempt = 0; attempt < 40; attempt += 1) {
+            await sleep(500);
+            const result = await send('Runtime.evaluate', {
+              expression: `JSON.stringify({
+                pathname: location.pathname,
+                rootChildren: document.getElementById('root')?.childElementCount || 0,
+                text: document.body?.innerText || '',
+                hk: [...document.querySelectorAll('button')].map(b => ({
+                  text: (b.textContent || '').trim(),
+                  aria: b.getAttribute('aria-label') || ''
+                })).find(b => /H\\.K\\. Assistant/i.test(b.aria) || /^H\\.K\\./i.test(b.text)) || null
+              })`,
+              returnByValue: true,
+            });
+            const raw = result?.result?.value;
+            if (!raw) continue;
+            snapshot = JSON.parse(raw);
+            if (snapshot.rootChildren > 0 && /TRAI Coin/i.test(snapshot.text) && snapshot.hk) break;
+          }
+
+          console.log(JSON.stringify(snapshot, null, 2));
+          if (!snapshot || snapshot.rootChildren <= 0) throw new Error('React root did not render');
+          if (!/TRAI Coin/i.test(snapshot.text)) throw new Error('TRAI Coin heading missing');
+          if (!/Concept architecture/i.test(snapshot.text)) throw new Error('Concept status missing');
+          if (!/Not issued/i.test(snapshot.text)) throw new Error('Issuance boundary missing');
+          if (!/Not an eighth organ/i.test(snapshot.text)) throw new Error('Cross-organ framing missing');
+          if (!snapshot.hk || !/^H\.K\./i.test(snapshot.hk.text)) throw new Error('Visible named H.K. launcher missing');
+
+          const clickMore = await send('Runtime.evaluate', {
+            expression: `(() => {
+              const button = [...document.querySelectorAll('button')].find(b => b.textContent?.trim() === 'More');
+              if (!button) return false;
+              button.click();
+              return true;
+            })()`,
+            returnByValue: true,
+          });
+          if (!clickMore?.result?.value) throw new Error('More navigation button missing');
+          await sleep(500);
+
+          const menu = await send('Runtime.evaluate', {
+            expression: `document.body?.innerText || ''`,
+            returnByValue: true,
+          });
+          if (!/TRAI Coin/i.test(menu?.result?.value || '')) throw new Error('TRAI Coin navigation entry missing');
+
+          ws.close();
+          console.log('LIVE_TRAI_COIN_SEMANTICS=PASS');
+          console.log('LIVE_HK_IDENTITY=PASS');
+          console.log('LIVE_TRAI_COIN_NAVIGATION=PASS');
+          NODE
+
+          timeout --kill-after=5s 40s node /tmp/assert-live-trai.mjs
