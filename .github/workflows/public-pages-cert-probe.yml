@@ -8,83 +8,70 @@ permissions:
   contents: read
 
 jobs:
-  pipeline:
+  certify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: 472cdd4f6c29265008650aa918e41b02fe345eda
-          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci --prefer-offline --ignore-scripts
-      - run: npm audit --audit-level=low
-      - run: npm run check:facts
-      - name: Reproduce Pages artifact
+
+      - name: Verify exact deployed revision
         shell: bash
         run: |
           set -euo pipefail
-          npm exec -- vite build --base /trai-portfolio/
-          printf '%s\n' '472cdd4f6c29265008650aa918e41b02fe345eda' > dist/public/deploy-commit.txt
-          cp dist/public/index.html dist/public/404.html
-          touch dist/public/.nojekyll
-          SPA_ROUTES="cinematic case-studies materials community research timeline patent-claims advanced-features energy manufacturing quantum applications dashboard annotations gesture-control sound-preferences projects career-timeline quantum-enhanced neural-training domain admin projects-showcase video-showcase gamification search api-docs ai-insights showcase true-melange queen-califia mela-nation melanina founder peoples-foundation contact"
-          for route in $SPA_ROUTES; do mkdir -p "dist/public/$route"; cp dist/public/index.html "dist/public/$route/index.html"; done
-          grep -q '/trai-portfolio/assets/' dist/public/index.html
-          grep -q '/trai-portfolio/manifest.json' dist/public/index.html
-          test -f dist/public/trai-organism-v5.js
-          test -f dist/public/trai-organism-v5.json
+          expected='d4b1be76bc58e778cf178dcd389faf4d3b5d88dc'
+          base='https://heruahmose.github.io/trai-portfolio'
+          for _ in $(seq 1 30); do
+            status="$(curl --silent --location --output /tmp/deploy-commit --write-out '%{http_code}' "$base/deploy-commit.txt")"
+            if [ "$status" = 200 ] && [ "$(tr -d '\r\n' < /tmp/deploy-commit)" = "$expected" ]; then
+              break
+            fi
+            sleep 10
+          done
+          echo "DEPLOY_COMMIT_HTTP_STATUS=${status:-unknown}"
+          test "${status:-}" = 200
+          observed="$(tr -d '\r\n' < /tmp/deploy-commit)"
+          echo "EXPECTED=$expected"
+          echo "OBSERVED=$observed"
+          test "$observed" = "$expected"
+          curl --fail --silent --show-error --location "$base/deployment-meta.json" > /tmp/meta.json
+          grep -Fq '"sha":"'$expected'"' /tmp/meta.json
+          echo 'PUBLIC_DEPLOYMENT_IDENTITY=PASS'
 
-      - name: Execute candidate in Chrome and inspect committed DOM
+      - name: Execute public URL through Chrome DevTools Protocol
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf /tmp/trai-pages-root /tmp/trai-chrome
-          mkdir -p /tmp/trai-pages-root/trai-portfolio
-          cp -a dist/public/. /tmp/trai-pages-root/trai-portfolio/
-
-          python3 -m http.server 4173 --directory /tmp/trai-pages-root >/tmp/trai-http.log 2>&1 &
-          server_pid=$!
-
+          rm -rf /tmp/trai-public-chrome
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
           "$chrome" \
             --headless --no-sandbox --no-first-run \
-            --remote-debugging-port=9222 --user-data-dir=/tmp/trai-chrome \
+            --remote-debugging-port=9223 --user-data-dir=/tmp/trai-public-chrome \
             --disable-background-networking --disable-component-update \
             --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader \
-            http://127.0.0.1:4173/trai-portfolio/ \
-            >/tmp/trai-chrome.log 2>&1 &
+            https://heruahmose.github.io/trai-portfolio/ \
+            >/tmp/trai-public-chrome.log 2>&1 &
           chrome_pid=$!
-
-          cleanup() {
-            kill "$chrome_pid" 2>/dev/null || true
-            kill "$server_pid" 2>/dev/null || true
-            wait "$chrome_pid" 2>/dev/null || true
-            wait "$server_pid" 2>/dev/null || true
-          }
-          trap cleanup EXIT
+          trap 'kill "$chrome_pid" 2>/dev/null || true; wait "$chrome_pid" 2>/dev/null || true' EXIT
 
           for _ in $(seq 1 40); do
-            curl --fail --silent http://127.0.0.1:9222/json >/tmp/targets.json && break
+            curl --fail --silent http://127.0.0.1:9223/json >/tmp/public-targets.json && break
             sleep 0.5
           done
-          test -s /tmp/targets.json
+          test -s /tmp/public-targets.json
 
-          cat > /tmp/assert-trai-browser.mjs <<'NODE'
+          cat > /tmp/assert-trai-public.mjs <<'NODE'
           const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
           let target;
           for (let attempt = 0; attempt < 40; attempt += 1) {
-            const targets = await fetch('http://127.0.0.1:9222/json').then(r => r.json());
+            const targets = await fetch('http://127.0.0.1:9223/json').then(r => r.json());
             target = targets.find(t => t.type === 'page' && t.url.includes('/trai-portfolio/'));
             if (target) break;
             await sleep(250);
           }
-          if (!target?.webSocketDebuggerUrl) throw new Error('TRAI page target not found');
+          if (!target?.webSocketDebuggerUrl) throw new Error('Public TRAI page target not found');
 
           const ws = new WebSocket(target.webSocketDebuggerUrl);
           await new Promise((resolve, reject) => {
@@ -102,7 +89,6 @@ jobs:
             pending.delete(message.id);
             message.error ? waiter.reject(new Error(JSON.stringify(message.error))) : waiter.resolve(message.result);
           });
-
           function send(method, params = {}) {
             const messageId = ++id;
             return new Promise((resolve, reject) => {
@@ -112,7 +98,6 @@ jobs:
           }
 
           await send('Runtime.enable');
-
           let snapshot = null;
           for (let attempt = 0; attempt < 34; attempt += 1) {
             await sleep(500);
@@ -134,22 +119,11 @@ jobs:
           }
 
           console.log(JSON.stringify(snapshot, null, 2));
-          if (!snapshot) throw new Error('No DOM snapshot returned');
-          if (snapshot.rootChildren <= 0) throw new Error('React root has no committed children');
-          if (!/TRAI|Tamerian Renaissance Alliance Initiative/i.test(snapshot.text)) {
-            throw new Error('Expected TRAI content not found');
-          }
-          if (snapshot.skipVisible) throw new Error('Ceremonial intro remained visible past watchdog window');
+          if (!snapshot || snapshot.rootChildren <= 0) throw new Error('Public React root did not commit');
+          if (!/TRAI|Tamerian Renaissance Alliance Initiative/i.test(snapshot.text)) throw new Error('Public TRAI content not found');
+          if (snapshot.skipVisible) throw new Error('Public ceremonial intro remained visible past watchdog window');
           ws.close();
           NODE
 
-          timeout --kill-after=5s 30s node /tmp/assert-trai-browser.mjs
-
-          echo '=== HTTP REQUESTS ==='
-          cat /tmp/trai-http.log
-          if grep -Fq '/api/trpc/' /tmp/trai-http.log; then
-            echo 'STATIC_RUNTIME_API_LEAK=FAIL' >&2
-            exit 1
-          fi
-          echo 'STATIC_RUNTIME_API_LEAK=PASS'
-          echo 'LOCAL_BROWSER_RENDER=PASS'
+          timeout --kill-after=5s 30s node /tmp/assert-trai-public.mjs
+          echo 'PUBLIC_BROWSER_RENDER=PASS'
