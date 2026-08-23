@@ -1,0 +1,53 @@
+name: Wire civilization prestige
+on:
+  push:
+    branches: [feat/melanina-nutameri-prestige-20260823]
+    paths:
+      - '.github/workflows/wire-civilization-prestige.yml'
+permissions:
+  contents: write
+jobs:
+  wire:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/melanina-nutameri-prestige-20260823
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Wire Nu Ta Meri into live router and hero
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          app = Path('client/src/App.tsx')
+          text = app.read_text()
+          if "const NuTaMeriPage" not in text:
+              text = text.replace("const MeLaNiNaPage = lazy(() => import('./pages/MeLaNiNa'));", "const MeLaNiNaPage = lazy(() => import('./pages/MeLaNiNa'));\nconst NuTaMeriPage = lazy(() => import('./pages/NuTaMeri'));")
+          if 'path="/nu-ta-meri"' not in text:
+              text = text.replace('<Route path="/melanina" component={MeLaNiNaPage} />', '<Route path="/melanina" component={MeLaNiNaPage} />\n          <Route path="/nu-ta-meri" component={NuTaMeriPage} />')
+          if "'nu-ta-meri': '/nu-ta-meri'" not in text:
+              text = text.replace("'melanina': '/melanina',", "'melanina': '/melanina',\n      'nu-ta-meri': '/nu-ta-meri',")
+          app.write_text(text)
+
+          home = Path('client/src/pages/HomeSovereign.tsx')
+          text = home.read_text()
+          marker = """<button onClick={() => { sound.click(); document.getElementById('remembered-world')?.scrollIntoView({ behavior: 'smooth' }); }} className=\"px-8 py-3.5 font-sans text-sm tracking-[0.12em] uppercase border transition-colors hover:border-[#d8aa43]/60\" style={{ borderColor: `${C.gold}30`, color: `${C.cream}60` }} onMouseEnter={() => sound.hover()}>\n                  See the remembered world →\n                </button>"""
+          addition = marker + """\n                <button onClick={() => { sound.navigate(); navigate('/nu-ta-meri'); }} className=\"px-8 py-3.5 font-sans text-sm tracking-[0.12em] uppercase border transition-colors hover:border-[#7cc7ff]/60\" style={{ borderColor: 'rgba(124,199,255,.24)', color: 'rgba(124,199,255,.82)' }} onMouseEnter={() => sound.hover()}>\n                  Enter Nu Ta Meri →\n                </button>"""
+          if 'Enter Nu Ta Meri' not in text:
+              if marker not in text:
+                  raise SystemExit('HomeSovereign hero marker not found')
+              text = text.replace(marker, addition)
+          home.write_text(text)
+          PY
+          npx prettier --write client/src/App.tsx client/src/pages/HomeSovereign.tsx client/src/pages/MeLaNiNa.tsx client/src/pages/MelaNation.tsx client/src/pages/NuTaMeri.tsx
+      - name: Commit application-only changes and remove helper
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/wire-civilization-prestige.yml
+          git add client/src/App.tsx client/src/pages/HomeSovereign.tsx client/src/pages/MeLaNiNa.tsx client/src/pages/MelaNation.tsx client/src/pages/NuTaMeri.tsx
+          git commit -m 'feat(civilization): wire MeLaNiNa Mela Nation and Nu Ta Meri prestige experiences'
+          git push origin HEAD:feat/melanina-nutameri-prestige-20260823
