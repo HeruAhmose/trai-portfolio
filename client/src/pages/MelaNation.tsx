@@ -34,8 +34,8 @@ export default function MelaNation() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_30%,rgba(31,102,173,.24),transparent_31%),radial-gradient(circle_at_18%_82%,rgba(216,170,67,.08),transparent_22%),linear-gradient(135deg,#03070b,#07111d_62%,#020508)]" />
         <div className="relative z-10 mx-auto grid min-h-[90vh] max-w-[1500px] items-center gap-14 px-6 py-28 lg:grid-cols-[.9fr_1.1fr] lg:px-14">
           <div>
-            <p className="mb-7 text-[10px] uppercase tracking-[0.32em] text-[#7bc4ff]/75">04 /// Vessels · Mobility sovereignty</p>
-            <h1 className="mb-7 text-[clamp(4rem,8vw,8rem)] leading-[.82] tracking-[-.045em]" style={{ fontFamily: '"Cormorant Garamond", serif' }}>Mela<br/><span className="text-[#7bc4ff]">Nation.</span></h1>
+            <p className="mb-7 text-[10px] uppercase tracking-[0.32em] text-[#7bc4ff]/75">04 · Vessels · Mobility Sovereignty</p>
+            <h1 className="mb-7 text-[clamp(4rem,8vw,8rem)] leading-[.82] tracking-[-.045em]" style={{ fontFamily: '"Cormorant Garamond", serif' }}>Mela<br /><span className="text-[#7bc4ff]">Nation.</span></h1>
             <p className="max-w-[650px] text-[clamp(1.15rem,2vw,1.65rem)] leading-[1.5] text-white/62">A mobility and logistics system designed to move people, goods, access, and opportunity through the TRAI organism with the discipline of infrastructure—not the visual language of a generic delivery startup.</p>
             <div className="mt-10 grid max-w-[620px] grid-cols-3 gap-px bg-white/10 text-[9px] uppercase tracking-[.18em]"><div className="bg-[#06111d] p-4"><span className="block text-[#d8aa43]">01</span>Access</div><div className="bg-[#06111d] p-4"><span className="block text-[#d8aa43]">02</span>Logistics</div><div className="bg-[#06111d] p-4"><span className="block text-[#d8aa43]">03</span>Circulation</div></div>
           </div>
