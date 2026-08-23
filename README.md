@@ -1,6 +1,6 @@
 # TRAI Portfolio
 
-The full TRAI estate site — a 47-page React 19 + Vite + wouter + Tailwind app
+The full TRAI estate site — a 48-page React 19 + Vite + wouter + Tailwind app
 with an Express/tRPC server that does **not** run on the deployed site.
 Deployed static to GitHub Pages at
 [heruahmose.github.io/trai-portfolio](https://heruahmose.github.io/trai-portfolio/).
@@ -28,6 +28,12 @@ have no site of their own yet.
 | 05  | Skin — identity sovereignty     | MeLaNiNa               | EIN filed · early development    | **lives here** — [`/melanina`](client/src/pages/MeLaNiNa.tsx) — no separate repo                                                                                                                                                            |
 | 06  | Hands — community reach         | TechBridge Collective  | Designed · not yet operating     | own repo: [techbridge-collective](https://github.com/HeruAhmose/techbridge-collective) → [techbridge-collective.org](https://techbridge-collective.org/) · deeper content here: [`/community`](client/src/pages/CommunityImpact.tsx)        |
 | 07  | Lymphatic — regenerative return | The Peoples Foundation | EIN obtained · exemption pending | **lives here** — [`/peoples-foundation`](client/src/pages/PeoplesFoundation.tsx) — no separate repo                                                                                                                                         |
+
+**TRAI Coin is not an eighth organ.** It is represented in this estate as a
+proposed cross-organ governance and participation layer. Its dedicated
+[`/trai-coin`](client/src/pages/TraiCoin.tsx) experience describes concept
+architecture only: no live token, public sale, exchange listing, deployed smart
+contract, or economic right is represented by the current site.
 
 The entry gate: [peoples-portfolio](https://github.com/HeruAhmose/peoples-portfolio) → [heruahmose.github.io/peoples-portfolio](https://heruahmose.github.io/peoples-portfolio/).
 
@@ -95,6 +101,9 @@ root-relative `"/assets/"` references.
   bridge builder") powered by Claude, with conversation memory, wired through
   `server/routers/hkAssistant.ts` and rendered by
   `client/src/components/HKAssistant.tsx`.
+- **TRAI Coin** (`/trai-coin`) — a first-class, cross-organ governance and
+  participation concept experience, explicitly separated from claims of token
+  issuance, public sale, smart-contract deployment, or investment performance.
 
 ---
 
@@ -102,7 +111,7 @@ root-relative `"/assets/"` references.
 
 | Path       | Role                                                |
 | ---------- | --------------------------------------------------- |
-| `client/`  | Vite React app — 47 pages under `client/src/pages/` |
+| `client/`  | Vite React app — 48 pages under `client/src/pages/` |
 | `server/`  | Express entry, tRPC routers, storage/db helpers     |
 | `shared/`  | Shared TS used by both client and server            |
 | `drizzle/` | Schema + SQL migrations (MySQL)                     |
