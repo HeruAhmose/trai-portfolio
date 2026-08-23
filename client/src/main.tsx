@@ -1,3 +1,4 @@
+import { STATIC_MODE, staticLink } from "@/lib/staticLink";
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from '@shared/const';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -15,6 +16,7 @@ const routerBase =
 const queryClient = new QueryClient();
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
+  if (STATIC_MODE) return;
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
 
@@ -43,16 +45,18 @@ queryClient.getMutationCache().subscribe(event => {
 
 const trpcClient = trpc.createClient({
   links: [
-    httpBatchLink({
-      url: "/api/trpc",
-      transformer: superjson,
-      fetch(input, init) {
-        return globalThis.fetch(input, {
-          ...(init ?? {}),
-          credentials: "include",
-        });
-      },
-    }),
+    STATIC_MODE
+      ? staticLink
+      : httpBatchLink({
+          url: "/api/trpc",
+          transformer: superjson,
+          fetch(input, init) {
+            return globalThis.fetch(input, {
+              ...(init ?? {}),
+              credentials: "include",
+            });
+          },
+        }),
   ],
 });
 

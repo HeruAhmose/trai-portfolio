@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Star, Zap, ChevronUp, X } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { STATIC_MODE } from '@/lib/staticLink';
 
 interface GamificationHUDProps {
   sessionId: string;
@@ -10,7 +11,13 @@ interface GamificationHUDProps {
 export const GamificationHUD: React.FC<GamificationHUDProps> = ({ sessionId }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { data } = trpc.gamification.getStatus.useQuery({ sessionId }, { refetchInterval: 15000 });
+  const { data } = trpc.gamification.getStatus.useQuery(
+    { sessionId },
+    {
+      refetchInterval: STATIC_MODE ? false : 15000,
+      retry: STATIC_MODE ? false : 3,
+    }
+  );
 
   const points = data?.points ?? 0;
   const level = data?.level ?? 1;

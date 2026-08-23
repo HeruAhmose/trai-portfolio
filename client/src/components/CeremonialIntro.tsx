@@ -29,6 +29,7 @@ export function CeremonialIntro({ onComplete }: CeremonialIntroProps) {
   const [visible, setVisible] = useState(true);
   const rafRef = useRef<number>(0);
   const startRef = useRef<number>(0);
+  const completedRef = useRef(false);
 
   // Visit-count speed tuning: first visit 9s, each subsequent visit 1.2x faster, min 4s
   const getDuration = () => {
@@ -198,9 +199,12 @@ export function CeremonialIntro({ onComplete }: CeremonialIntroProps) {
       }
 
       if (t > dissolveStart + 1200) {
-        cancelAnimationFrame(rafRef.current);
-        setVisible(false);
-        setTimeout(onComplete, 400);
+        if (!completedRef.current) {
+          completedRef.current = true;
+          cancelAnimationFrame(rafRef.current);
+          setVisible(false);
+          window.setTimeout(onComplete, 400);
+        }
         return;
       }
 
@@ -214,19 +218,35 @@ export function CeremonialIntro({ onComplete }: CeremonialIntroProps) {
     const t2 = setTimeout(() => setPhase("tagline"), TOTAL * 0.56);
     const t3 = setTimeout(() => setPhase("dissolve"), TOTAL * 0.83);
 
+    // Independent fail-open: the intro may never be allowed to cover the site
+    // indefinitely if requestAnimationFrame, Canvas, WebGL, or a driver stalls.
+    const watchdog = window.setTimeout(() => {
+      if (completedRef.current) return;
+      completedRef.current = true;
+      cancelAnimationFrame(rafRef.current);
+      setVisible(false);
+      onComplete();
+    }, TOTAL + 2000);
+
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", resize);
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
+      clearTimeout(watchdog);
     };
-  }, [onComplete]);
+    // Deliberately one lifetime per mounted intro. The parent passes an inline
+    // state transition; depending on that function would restart this effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const skip = () => {
+    if (completedRef.current) return;
+    completedRef.current = true;
     cancelAnimationFrame(rafRef.current);
     setVisible(false);
-    setTimeout(onComplete, 300);
+    window.setTimeout(onComplete, 300);
   };
 
   return (
