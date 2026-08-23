@@ -11,7 +11,7 @@ const ROUTES = [
 
 function MobilityField({ active }: { active: number }) {
   return (
-    <div className="relative aspect-[16/11] overflow-hidden border border-[#7bc4ff]/15 bg-[#03080d]">
+    <div className="relative aspect-[16/11] overflow-hidden border bg-[#03080d]" style={{ borderColor: '#1f66ad' }}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_74%_28%,rgba(31,102,173,.18),transparent_27%),linear-gradient(180deg,rgba(6,17,29,.15),rgba(6,17,29,.88))]" />
       {[18, 36, 54, 72].map((top, i) => (
         <motion.div key={top} className="absolute left-[9%] right-[9%] h-px bg-gradient-to-r from-transparent via-[#7bc4ff]/45 to-transparent" style={{ top: `${top}%`, rotate: `${i % 2 ? -4 : 5}deg` }} animate={{ opacity: i === active ? [0.35, 0.9, 0.35] : 0.17, scaleX: i === active ? [0.72, 1, 0.82] : 0.78 }} transition={{ duration: 3.8, repeat: Infinity }} />
