@@ -34,7 +34,7 @@ jobs:
           node-version: '22'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm prettier --write client/src/pages/Home.tsx client/src/components/EstateConstellation.tsx
+      - run: pnpm exec prettier --write client/src/pages/Home.tsx client/src/components/EstateConstellation.tsx
       - run: |
           git config user.name github-actions[bot]
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
