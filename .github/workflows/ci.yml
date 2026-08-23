@@ -53,6 +53,9 @@ jobs:
       - name: Verified-facts guard
         run: npm run check:facts
 
+      - name: Organism visual contract
+        run: node scripts/check-organism-visuals.mjs
+
       - name: Typecheck
         run: npm exec -- tsc --noEmit
 
