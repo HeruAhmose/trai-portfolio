@@ -1,0 +1,47 @@
+name: prestige-organism-v55-sync
+on:
+  push:
+    branches: [feat/prestige-estate-20260823]
+permissions:
+  contents: write
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/prestige-estate-20260823
+      - name: Apply v5.5 presentation delta only
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/HeruAhmose/tamerian-materials/main/client/public/trai-organism-v5.js -o /tmp/reference.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('client/public/trai-organism-v5.js')
+          s=p.read_text(encoding='utf-8')
+          r=Path('/tmp/reference.js').read_text(encoding='utf-8')
+          assert 'var VERSION = "5.3.0";' in s
+          assert '/* v5.5 prestige organism:' not in s
+          s=s.replace('Six independent worlds, one shared navigation organism.','Seven functional regions, one shared navigation organism and memory.',1)
+          s=s.replace('var VERSION = "5.3.0";','var VERSION = "5.5.0";',1)
+          start=r.index('/* v5.5 prestige organism:')
+          end=r.index('@media (max-width: 760px)', start)
+          block=r[start:end]
+          media=s.index('@media (max-width: 760px)')
+          s=s[:media]+block+s[media:]
+          for name,next_name in [('worldButton','escapeHtml'),('buildPortal','buildLauncher'),('selectWorld','openPortal')]:
+              a=s.index('  function '+name+'(')
+              b=s.index('  function '+next_name+'(',a)
+              ra=r.index('  function '+name+'(')
+              rb=r.index('  function '+next_name+'(',ra)
+              s=s[:a]+r[ra:rb]+s[b:]
+          p.write_text(s,encoding='utf-8')
+          print('TRAI_PRESTIGE_ORGANISM_V55=PASS')
+          PY
+      - name: Commit runtime only
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add client/public/trai-organism-v5.js
+          git commit -m 'feat(organism): add prestige seven-region interaction while preserving hardened transport'
+          git push origin HEAD:feat/prestige-estate-20260823
