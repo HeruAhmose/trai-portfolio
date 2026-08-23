@@ -1,63 +1,45 @@
 import { SovereignNebulaGL } from "@/components/SovereignNebulaGL";
-import { asset } from '@/lib/media';
+import { VesselNetworkVisual } from "@/components/OrganVisuals";
 import React from "react";
 import { motion } from "framer-motion";
 
-const VISION_IMAGES = [
-  {
-    src: asset('/media/tamerian/living-circuit.jpg'),
-    alt: "Sovereign city infrastructure concept",
-  },
-  {
-    src: asset('/media/tamerian/chamber-rendering.jpg'),
-    alt: "Mobility network concept",
-  },
-  {
-    src: asset('/media/tamerian/honeycomb.jpg'),
-    alt: "Community distribution concept",
-  },
-  {
-    src: asset('/media/tamerian/helix-lab.jpg'),
-    alt: "Resilient access infrastructure concept",
-  },
-];
+const C = {
+  vessel: "#1f66ad",
+  vesselLight: "#6ea8da",
+  returnGold: "#f0cc79",
+  cream: "#f4f0e6",
+  dark: "#050709",
+};
 
 export default function MelaNation() {
   return (
     <div className="min-h-screen bg-[#050709] text-[#f4f0e6]">
       <section className="relative min-h-[70vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 pointer-events-none z-0">
-          <SovereignNebulaGL variant="crimson" />
+          <SovereignNebulaGL variant="cyber" />
         </div>
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse 60% 60% at 60% 50%, rgba(30,80,160,0.15) 0%, transparent 70%)",
+              "radial-gradient(ellipse 60% 60% at 60% 50%, rgba(31,102,173,0.18) 0%, transparent 70%)",
           }}
         />
-        <div className="absolute right-0 top-0 w-1/2 h-full pointer-events-none opacity-20 z-[1] overflow-hidden">
-          <img
-            src={VISION_IMAGES[0].src}
-            alt=""
-            className="w-full h-full object-cover"
-            style={{
-              maskImage:
-                "linear-gradient(to left, rgba(0,0,0,0.6), transparent)",
-            }}
-          />
+        <div className="absolute right-[4%] top-[16%] hidden h-[62%] w-[42%] pointer-events-none opacity-65 z-[1] overflow-hidden lg:block">
+          <VesselNetworkVisual compact />
         </div>
         <div className="relative z-[2] max-w-[1380px] mx-auto px-6 lg:px-12 py-32">
           <motion.p
-            className="text-xs tracking-[0.22em] uppercase text-[#d8aa43]/70 mb-4 font-sans"
+            className="text-xs tracking-[0.22em] uppercase mb-4 font-sans"
+            style={{ color: `${C.vesselLight}cc` }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            04 · Circulation · Mobility Sovereignty
+            04 · Vessels · Mobility Sovereignty
           </motion.p>
           <motion.h1
             className="text-[clamp(3rem,7vw,6rem)] font-bold leading-[1.05] mb-6 max-w-[700px]"
-            style={{ color: "#f4f0e6", WebkitTextFillColor: "#f4f0e6" }}
+            style={{ color: C.cream, WebkitTextFillColor: C.cream }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -71,7 +53,8 @@ export default function MelaNation() {
             transition={{ delay: 0.2 }}
           >
             Mobility sovereignty — last-mile logistics, community access, and
-            resilient distribution. Mela Nation moves what the heart makes.
+            resilient distribution. Mela Nation moves value through the TRAI
+            organism the way vessels move life through a body.
           </motion.p>
           <motion.div
             className="flex flex-wrap gap-4"
@@ -81,8 +64,8 @@ export default function MelaNation() {
           >
             <a
               href="mailto:aitconsult22@gmail.com?subject=Mela%20Nation%20Inquiry"
-              className="px-8 py-3.5 font-sans font-bold text-sm tracking-[0.12em] uppercase text-[#050709]"
-              style={{ background: "#d8aa43" }}
+              className="px-8 py-3.5 font-sans font-bold text-sm tracking-[0.12em] uppercase text-white"
+              style={{ background: C.vessel }}
             >
               Partner with Mela Nation
             </a>
@@ -90,13 +73,15 @@ export default function MelaNation() {
               href="https://calendly.com/aitconsult22/30min"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3.5 font-sans font-bold text-sm tracking-[0.12em] uppercase text-[#d8aa43] border border-[#d8aa43]/40 hover:border-[#d8aa43] transition-colors"
+              className="px-8 py-3.5 font-sans font-bold text-sm tracking-[0.12em] uppercase border transition-colors"
+              style={{ color: C.vesselLight, borderColor: `${C.vesselLight}66` }}
             >
               Book a Call
             </a>
           </motion.div>
         </div>
       </section>
+
       <section className="py-32 bg-[#070b0f]">
         <div className="max-w-[1380px] mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -105,12 +90,15 @@ export default function MelaNation() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <p className="text-xs tracking-[0.22em] uppercase text-[#d8aa43]/70 mb-4 font-sans">
+              <p
+                className="text-xs tracking-[0.22em] uppercase mb-4 font-sans"
+                style={{ color: `${C.vesselLight}cc` }}
+              >
                 The Circulation Organ
               </p>
               <h2
                 className="text-[clamp(2rem,4vw,3rem)] font-bold mb-6"
-                style={{ color: "#f4f0e6", WebkitTextFillColor: "#f4f0e6" }}
+                style={{ color: C.cream, WebkitTextFillColor: C.cream }}
               >
                 The blood vessels of the organism.
               </h2>
@@ -118,7 +106,8 @@ export default function MelaNation() {
                 Mela Nation does not make the blood — it moves it. Resilient
                 routes connect people, goods, and opportunity across the
                 organism. Last-mile logistics and community access
-                infrastructure designed for underserved communities.
+                infrastructure are designed around movement, continuity, and
+                underserved routes.
               </p>
               <div className="space-y-3">
                 {[
@@ -129,14 +118,20 @@ export default function MelaNation() {
                   "TechBridge hub supply coordination",
                 ].map(item => (
                   <div key={item} className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#d8aa43] flex-shrink-0" />
+                    <div
+                      className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                      style={{ background: C.vessel }}
+                    />
                     <span className="text-sm font-sans text-[#f4f0e6]/60">
                       {item}
                     </span>
                   </div>
                 ))}
               </div>
-              <p className="mt-8 text-xs font-sans text-[#f4f0e6]/30 border-t border-[#d8aa43]/10 pt-4">
+              <p
+                className="mt-8 text-xs font-sans text-[#f4f0e6]/30 border-t pt-4"
+                style={{ borderColor: `${C.vessel}33` }}
+              >
                 Mela Nation is in early development. Entity formation pending
                 EIN filing. Venture architecture defined in the TRAI Sovereignty
                 Architecture document. No products or services currently
@@ -148,27 +143,12 @@ export default function MelaNation() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
             >
-              <div className="grid grid-cols-2 gap-2">
-                {VISION_IMAGES.map((img, i) => (
-                  <motion.div
-                    key={img.src}
-                    className="overflow-hidden"
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <img
-                      src={img.src}
-                      alt={img.alt}
-                      className="w-full h-40 object-cover"
-                      style={{ filter: "brightness(0.8) saturate(0.85)" }}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-              <p className="text-xs font-mono text-[#d8aa43]/40 mt-3 tracking-[0.12em]">
-                Conceptual vision — not current infrastructure
+              <VesselNetworkVisual />
+              <p
+                className="text-xs font-mono mt-3 tracking-[0.12em]"
+                style={{ color: `${C.vesselLight}80` }}
+              >
+                Conceptual circulation map — not current infrastructure
               </p>
             </motion.div>
           </div>
