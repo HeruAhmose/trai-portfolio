@@ -58,7 +58,7 @@ jobs:
             projects career-timeline quantum-enhanced neural-training domain admin
             projects-showcase video-showcase gamification search api-docs
             ai-insights showcase true-melange queen-califia mela-nation melanina
-            founder peoples-foundation contact"
+            trai-coin founder peoples-foundation contact"
 
           for route in $SPA_ROUTES; do
             mkdir -p "dist/public/$route"
@@ -81,6 +81,9 @@ jobs:
           grep -q '/trai-portfolio/manifest.json' dist/public/index.html
           test -f dist/public/trai-organism-v5.js
           test -f dist/public/trai-organism-v5.json
+          test -f dist/public/trai-coin/index.html
+          cmp -s dist/public/index.html dist/public/trai-coin/index.html
+          grep -R -Fq 'TRAI Coin' dist/public/assets
           test -s dist/public/deploy-commit.txt
           grep -Fqx "$GITHUB_SHA" dist/public/deploy-commit.txt
           grep -Fq '"sha":"'$GITHUB_SHA'"' dist/public/deployment-meta.json
@@ -243,7 +246,10 @@ jobs:
           test "$(tr -d '\r\n' < /tmp/deploy-commit)" = "$GITHUB_SHA"
           curl --fail --silent --show-error --location "$base/deployment-meta.json" > /tmp/deployment-meta.json
           grep -Fq '"sha":"'$GITHUB_SHA'"' /tmp/deployment-meta.json
+          curl --fail --silent --show-error --location "$base/trai-coin/" > /tmp/trai-coin.html
+          grep -qi '<html' /tmp/trai-coin.html
           echo 'PUBLIC_DEPLOYMENT_IDENTITY=PASS'
+          echo 'PUBLIC_TRAI_COIN_ROUTE=PASS'
 
       - name: Execute public URL in Chrome
         shell: bash

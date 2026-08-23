@@ -45,6 +45,7 @@ const QueenCalifiaPage = lazy(() => import('./pages/QueenCalifia'));
 const MelaNationPage = lazy(() => import('./pages/MelaNation'));
 const MeLaNiNaPage = lazy(() => import('./pages/MeLaNiNa'));
 const NuTaMeriPage = lazy(() => import('./pages/NuTaMeri'));
+const TraiCoinPage = lazy(() => import('./pages/TraiCoin'));
 const FounderPage = lazy(() => import('./pages/FounderPage'));
 const PeoplesFoundation = lazy(() => import('./pages/PeoplesFoundation'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
@@ -109,6 +110,7 @@ function Router() {
         <Route path="/mela-nation" component={MelaNationPage} />
         <Route path="/melanina" component={MeLaNiNaPage} />
         <Route path="/nu-ta-meri" component={NuTaMeriPage} />
+        <Route path="/trai-coin" component={TraiCoinPage} />
         <Route path="/founder" component={FounderPage} />
         <Route path="/peoples-foundation" component={PeoplesFoundation} />
         <Route path="/contact" component={ContactPage} />
@@ -149,7 +151,7 @@ function App() {
 
   const handleTabChange = (tabId: string) => {
     const routeMap: Record<string, string> = {
-      hero: '/', sovereign: '/', materials: '/materials', energy: '/energy', manufacturing: '/manufacturing', quantum: '/quantum', applications: '/applications', patents: '/patent-claims', community: '/community', research: '/research', timeline: '/timeline', advanced: '/advanced-features', about: '/', search: '/search', gamification: '/gamification', 'ai-insights': '/ai-insights', 'api-docs': '/api-docs', 'true-melange': '/true-melange', 'queen-califia': '/queen-califia', founder: '/founder', 'peoples-foundation': '/peoples-foundation', contact: '/contact', 'mela-nation': '/mela-nation', melanina: '/melanina', 'nu-ta-meri': '/nu-ta-meri',
+      hero: '/', sovereign: '/', materials: '/materials', energy: '/energy', manufacturing: '/manufacturing', quantum: '/quantum', applications: '/applications', patents: '/patent-claims', community: '/community', research: '/research', timeline: '/timeline', advanced: '/advanced-features', about: '/', search: '/search', gamification: '/gamification', 'ai-insights': '/ai-insights', 'api-docs': '/api-docs', 'true-melange': '/true-melange', 'queen-califia': '/queen-califia', founder: '/founder', 'peoples-foundation': '/peoples-foundation', contact: '/contact', 'mela-nation': '/mela-nation', melanina: '/melanina', 'nu-ta-meri': '/nu-ta-meri', 'trai-coin': '/trai-coin',
     };
     const route = routeMap[tabId] || '/';
     const transition = (window as any).TRAIOrganismV5?.transitionInternal;
@@ -175,6 +177,7 @@ function App() {
     if (location === '/mela-nation') return 'mela-nation';
     if (location === '/melanina') return 'melanina';
     if (location === '/nu-ta-meri') return 'nu-ta-meri';
+    if (location === '/trai-coin') return 'trai-coin';
     return 'hero';
   };
 
@@ -194,7 +197,19 @@ function App() {
                   <PremiumFooter />
                   <ScrollProgressIndicator />
                   <SovereignAudioEngine enabled={audioEnabled} onToggle={() => setAudioEnabled(a => !a)} />
-                  <motion.button onClick={() => setHkAssistantOpen(!hkAssistantOpen)} className="fixed bottom-4 left-4 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl" style={{ background: 'linear-gradient(135deg, #D4AF37, #B87333)', boxShadow: '0 0 30px rgba(212,175,55,0.5)' }} whileHover={{ scale: 1.1, boxShadow: '0 0 50px rgba(212,175,55,0.8)' }} whileTap={{ scale: 0.9 }} title="Open H.K. Assistant"><span className="text-xl font-black text-black">◉</span></motion.button>
+                  <motion.button
+                    onClick={() => setHkAssistantOpen(!hkAssistantOpen)}
+                    className="fixed bottom-4 left-4 z-40 flex h-14 items-center gap-2 rounded-full px-4 shadow-2xl"
+                    style={{ background: 'linear-gradient(135deg, #D4AF37, #B87333)', boxShadow: '0 0 30px rgba(212,175,55,0.5)' }}
+                    whileHover={{ scale: 1.06, boxShadow: '0 0 50px rgba(212,175,55,0.8)' }}
+                    whileTap={{ scale: 0.94 }}
+                    title="Open H.K. Assistant"
+                    aria-label={hkAssistantOpen ? 'Close H.K. Assistant' : 'Open H.K. Assistant'}
+                    aria-expanded={hkAssistantOpen}
+                  >
+                    <span className="text-base font-black tracking-[0.12em] text-black">H.K.</span>
+                    <span className="hidden text-[9px] font-bold uppercase tracking-[0.18em] text-black/70 sm:inline">Assistant</span>
+                  </motion.button>
                   {hkAssistantLoaded && <Suspense fallback={null}><HKAssistant isOpen={hkAssistantOpen} onClose={() => setHkAssistantOpen(false)} /></Suspense>}
                   <GamificationHUD sessionId={sessionId} />
                 </>
