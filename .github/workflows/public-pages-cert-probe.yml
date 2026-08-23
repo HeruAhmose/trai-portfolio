@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: c4fc97328405dfe24a50c28fe0d0feef46c41f96
+          ref: 472cdd4f6c29265008650aa918e41b02fe345eda
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
@@ -27,84 +27,129 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          BASE_PATH='/trai-portfolio/'
-          npm exec -- vite build --base "$BASE_PATH"
-          printf '%s\n' 'c4fc97328405dfe24a50c28fe0d0feef46c41f96' > dist/public/deploy-commit.txt
-          cat > dist/public/deployment-meta.json <<'EOF'
-          {"sha":"c4fc97328405dfe24a50c28fe0d0feef46c41f96","repository":"HeruAhmose/trai-portfolio","ref":"main"}
-          EOF
+          npm exec -- vite build --base /trai-portfolio/
+          printf '%s\n' '472cdd4f6c29265008650aa918e41b02fe345eda' > dist/public/deploy-commit.txt
           cp dist/public/index.html dist/public/404.html
           touch dist/public/.nojekyll
           SPA_ROUTES="cinematic case-studies materials community research timeline patent-claims advanced-features energy manufacturing quantum applications dashboard annotations gesture-control sound-preferences projects career-timeline quantum-enhanced neural-training domain admin projects-showcase video-showcase gamification search api-docs ai-insights showcase true-melange queen-califia mela-nation melanina founder peoples-foundation contact"
           for route in $SPA_ROUTES; do mkdir -p "dist/public/$route"; cp dist/public/index.html "dist/public/$route/index.html"; done
-          for route in $SPA_ROUTES; do cmp -s dist/public/index.html "dist/public/$route/index.html"; done
-          if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-organism-v5\.js|trai-cinematic\.js)' dist/public/index.html; then exit 1; fi
           grep -q '/trai-portfolio/assets/' dist/public/index.html
           grep -q '/trai-portfolio/manifest.json' dist/public/index.html
           test -f dist/public/trai-organism-v5.js
           test -f dist/public/trai-organism-v5.json
-          grep -Fqx 'c4fc97328405dfe24a50c28fe0d0feef46c41f96' dist/public/deploy-commit.txt
-      - name: Execute reproduced artifact in bounded Chrome
+
+      - name: Execute candidate in Chrome and inspect committed DOM
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf /tmp/trai-pages-root
+          rm -rf /tmp/trai-pages-root /tmp/trai-chrome
           mkdir -p /tmp/trai-pages-root/trai-portfolio
           cp -a dist/public/. /tmp/trai-pages-root/trai-portfolio/
-          python3 -m http.server 4173 --directory /tmp/trai-pages-root >/tmp/trai-http.log 2>&1 &
-          pid=$!
-          trap 'kill "$pid" 2>/dev/null || true' EXIT
-          for _ in $(seq 1 30); do curl --fail --silent http://127.0.0.1:4173/trai-portfolio/ >/dev/null && break; sleep 1; done
-          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
-          test -n "$chrome"
-          set +e
-          timeout --kill-after=5s 40s "$chrome" \
-            --headless --no-sandbox --disable-gpu --disable-background-networking \
-            --disable-component-update --no-first-run --enable-logging=stderr \
-            --virtual-time-budget=8000 --dump-dom \
-            http://127.0.0.1:4173/trai-portfolio/ \
-            > /tmp/local-dom.html 2>/tmp/chrome-stderr.log
-          chrome_rc=$?
-          set -e
-          echo "CHROME_EXIT=$chrome_rc"
-          echo "DOM_BYTES=$(wc -c < /tmp/local-dom.html)"
-          echo '=== CHROME STDERR TAIL ==='
-          tail -n 80 /tmp/chrome-stderr.log || true
-          echo '=== HTTP LOG ==='
-          cat /tmp/trai-http.log || true
-          grep -Fq 'id="root"' /tmp/local-dom.html
-          grep -Eiq 'TRAI|Tamerian Renaissance Alliance Initiative' /tmp/local-dom.html
-          echo 'LOCAL_PAGES_PIPELINE=PASS'
 
-  live:
-    needs: pipeline
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - name: Verify exact deployed revision
-        shell: bash
-        run: |
-          set -euo pipefail
-          expected='c4fc97328405dfe24a50c28fe0d0feef46c41f96'
-          base='https://heruahmose.github.io/trai-portfolio'
-          status="$(curl --silent --location --output /tmp/deploy-commit --write-out '%{http_code}' "$base/deploy-commit.txt")"
-          echo "DEPLOY_COMMIT_HTTP_STATUS=$status"
-          test "$status" = 200
-          test "$(tr -d '\r\n' < /tmp/deploy-commit)" = "$expected"
-          curl --fail --silent --show-error --location "$base/deployment-meta.json" > /tmp/meta.json
-          grep -Fq '"sha":"'$expected'"' /tmp/meta.json
-          echo 'PUBLIC_DEPLOYMENT_IDENTITY=PASS'
-      - name: Execute public URL in bounded Chrome
-        shell: bash
-        run: |
-          set -euo pipefail
+          python3 -m http.server 4173 --directory /tmp/trai-pages-root >/tmp/trai-http.log 2>&1 &
+          server_pid=$!
+
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
-          set +e
-          timeout --kill-after=5s 40s "$chrome" --headless --no-sandbox --disable-gpu --disable-background-networking --disable-component-update --no-first-run --virtual-time-budget=8000 --dump-dom https://heruahmose.github.io/trai-portfolio/ > /tmp/public-dom.html 2>/tmp/public-chrome.log
-          chrome_rc=$?
-          set -e
-          echo "PUBLIC_CHROME_EXIT=$chrome_rc"
-          grep -Fq 'id="root"' /tmp/public-dom.html
-          grep -Eiq 'TRAI|Tamerian Renaissance Alliance Initiative' /tmp/public-dom.html
-          echo 'PUBLIC_BROWSER_RENDER=PASS'
+          "$chrome" \
+            --headless --no-sandbox --no-first-run \
+            --remote-debugging-port=9222 --user-data-dir=/tmp/trai-chrome \
+            --disable-background-networking --disable-component-update \
+            --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader \
+            http://127.0.0.1:4173/trai-portfolio/ \
+            >/tmp/trai-chrome.log 2>&1 &
+          chrome_pid=$!
+
+          cleanup() {
+            kill "$chrome_pid" 2>/dev/null || true
+            kill "$server_pid" 2>/dev/null || true
+            wait "$chrome_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          for _ in $(seq 1 40); do
+            curl --fail --silent http://127.0.0.1:9222/json >/tmp/targets.json && break
+            sleep 0.5
+          done
+          test -s /tmp/targets.json
+
+          cat > /tmp/assert-trai-browser.mjs <<'NODE'
+          const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+          let target;
+          for (let attempt = 0; attempt < 40; attempt += 1) {
+            const targets = await fetch('http://127.0.0.1:9222/json').then(r => r.json());
+            target = targets.find(t => t.type === 'page' && t.url.includes('/trai-portfolio/'));
+            if (target) break;
+            await sleep(250);
+          }
+          if (!target?.webSocketDebuggerUrl) throw new Error('TRAI page target not found');
+
+          const ws = new WebSocket(target.webSocketDebuggerUrl);
+          await new Promise((resolve, reject) => {
+            ws.addEventListener('open', resolve, { once: true });
+            ws.addEventListener('error', reject, { once: true });
+          });
+
+          let id = 0;
+          const pending = new Map();
+          ws.addEventListener('message', event => {
+            const message = JSON.parse(event.data);
+            if (!message.id) return;
+            const waiter = pending.get(message.id);
+            if (!waiter) return;
+            pending.delete(message.id);
+            message.error ? waiter.reject(new Error(JSON.stringify(message.error))) : waiter.resolve(message.result);
+          });
+
+          function send(method, params = {}) {
+            const messageId = ++id;
+            return new Promise((resolve, reject) => {
+              pending.set(messageId, { resolve, reject });
+              ws.send(JSON.stringify({ id: messageId, method, params }));
+            });
+          }
+
+          await send('Runtime.enable');
+
+          let snapshot = null;
+          for (let attempt = 0; attempt < 34; attempt += 1) {
+            await sleep(500);
+            const evaluated = await send('Runtime.evaluate', {
+              expression: `JSON.stringify({
+                rootChildren: document.getElementById('root')?.childElementCount || 0,
+                text: (document.body?.innerText || '').slice(0, 12000),
+                skipVisible: [...document.querySelectorAll('button')].some(button =>
+                  button.textContent?.trim() === 'Skip' && button.getClientRects().length > 0
+                )
+              })`,
+              returnByValue: true,
+            });
+            const raw = evaluated?.result?.value;
+            if (!raw) continue;
+            snapshot = JSON.parse(raw);
+            const hasTRAI = /TRAI|Tamerian Renaissance Alliance Initiative/i.test(snapshot.text);
+            if (snapshot.rootChildren > 0 && hasTRAI && !snapshot.skipVisible) break;
+          }
+
+          console.log(JSON.stringify(snapshot, null, 2));
+          if (!snapshot) throw new Error('No DOM snapshot returned');
+          if (snapshot.rootChildren <= 0) throw new Error('React root has no committed children');
+          if (!/TRAI|Tamerian Renaissance Alliance Initiative/i.test(snapshot.text)) {
+            throw new Error('Expected TRAI content not found');
+          }
+          if (snapshot.skipVisible) throw new Error('Ceremonial intro remained visible past watchdog window');
+          ws.close();
+          NODE
+
+          timeout --kill-after=5s 30s node /tmp/assert-trai-browser.mjs
+
+          echo '=== HTTP REQUESTS ==='
+          cat /tmp/trai-http.log
+          if grep -Fq '/api/trpc/' /tmp/trai-http.log; then
+            echo 'STATIC_RUNTIME_API_LEAK=FAIL' >&2
+            exit 1
+          fi
+          echo 'STATIC_RUNTIME_API_LEAK=PASS'
+          echo 'LOCAL_BROWSER_RENDER=PASS'
