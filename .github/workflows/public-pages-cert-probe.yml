@@ -8,7 +8,65 @@ permissions:
   contents: read
 
 jobs:
-  certify:
+  pipeline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: c4fc97328405dfe24a50c28fe0d0feef46c41f96
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --prefer-offline --ignore-scripts
+      - run: npm audit --audit-level=low
+      - run: npm run check:facts
+      - name: Reproduce Pages artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_PATH='/trai-portfolio/'
+          npm exec -- vite build --base "$BASE_PATH"
+          printf '%s\n' 'c4fc97328405dfe24a50c28fe0d0feef46c41f96' > dist/public/deploy-commit.txt
+          cat > dist/public/deployment-meta.json <<'EOF'
+          {"sha":"c4fc97328405dfe24a50c28fe0d0feef46c41f96","repository":"HeruAhmose/trai-portfolio","ref":"main"}
+          EOF
+          cp dist/public/index.html dist/public/404.html
+          touch dist/public/.nojekyll
+          SPA_ROUTES="cinematic case-studies materials community research timeline patent-claims advanced-features energy manufacturing quantum applications dashboard annotations gesture-control sound-preferences projects career-timeline quantum-enhanced neural-training domain admin projects-showcase video-showcase gamification search api-docs ai-insights showcase true-melange queen-califia mela-nation melanina founder peoples-foundation contact"
+          for route in $SPA_ROUTES; do
+            mkdir -p "dist/public/$route"
+            cp dist/public/index.html "dist/public/$route/index.html"
+          done
+          for route in $SPA_ROUTES; do cmp -s dist/public/index.html "dist/public/$route/index.html"; done
+          if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-organism-v5\.js|trai-cinematic\.js)' dist/public/index.html; then exit 1; fi
+          grep -q '/trai-portfolio/assets/' dist/public/index.html
+          grep -q '/trai-portfolio/manifest.json' dist/public/index.html
+          test -f dist/public/trai-organism-v5.js
+          test -f dist/public/trai-organism-v5.json
+          grep -Fqx 'c4fc97328405dfe24a50c28fe0d0feef46c41f96' dist/public/deploy-commit.txt
+      - name: Execute reproduced artifact in Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/trai-pages-root
+          mkdir -p /tmp/trai-pages-root/trai-portfolio
+          cp -a dist/public/. /tmp/trai-pages-root/trai-portfolio/
+          python3 -m http.server 4173 --directory /tmp/trai-pages-root >/tmp/trai-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for _ in $(seq 1 30); do curl --fail --silent http://127.0.0.1:4173/trai-portfolio/ >/dev/null && break; sleep 1; done
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$chrome"
+          "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=12000 --dump-dom http://127.0.0.1:4173/trai-portfolio/ > /tmp/local-dom.html
+          grep -Fq 'id="root"' /tmp/local-dom.html
+          grep -Eiq 'TRAI|Tamerian Renaissance Alliance Initiative' /tmp/local-dom.html
+          echo 'LOCAL_PAGES_PIPELINE=PASS'
+
+  live:
+    needs: pipeline
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -21,22 +79,17 @@ jobs:
           status="$(curl --silent --location --output /tmp/deploy-commit --write-out '%{http_code}' "$base/deploy-commit.txt")"
           echo "DEPLOY_COMMIT_HTTP_STATUS=$status"
           test "$status" = 200
-          observed="$(tr -d '\r\n' < /tmp/deploy-commit)"
-          echo "EXPECTED=$expected"
-          echo "OBSERVED=$observed"
-          test "$observed" = "$expected"
+          test "$(tr -d '\r\n' < /tmp/deploy-commit)" = "$expected"
           curl --fail --silent --show-error --location "$base/deployment-meta.json" > /tmp/meta.json
           grep -Fq '"sha":"'$expected'"' /tmp/meta.json
           echo 'PUBLIC_DEPLOYMENT_IDENTITY=PASS'
-
       - name: Execute public URL in Chrome
         shell: bash
         run: |
           set -euo pipefail
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
-          "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=12000 --dump-dom \
-            https://heruahmose.github.io/trai-portfolio/ > /tmp/public-dom.html
+          "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=12000 --dump-dom https://heruahmose.github.io/trai-portfolio/ > /tmp/public-dom.html
           grep -Fq 'id="root"' /tmp/public-dom.html
           grep -Eiq 'TRAI|Tamerian Renaissance Alliance Initiative' /tmp/public-dom.html
           echo 'PUBLIC_BROWSER_RENDER=PASS'
