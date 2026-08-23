@@ -1,0 +1,42 @@
+name: Public Pages Certification Probe
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Verify exact deployed revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='c4fc97328405dfe24a50c28fe0d0feef46c41f96'
+          base='https://heruahmose.github.io/trai-portfolio'
+          status="$(curl --silent --location --output /tmp/deploy-commit --write-out '%{http_code}' "$base/deploy-commit.txt")"
+          echo "DEPLOY_COMMIT_HTTP_STATUS=$status"
+          test "$status" = 200
+          observed="$(tr -d '\r\n' < /tmp/deploy-commit)"
+          echo "EXPECTED=$expected"
+          echo "OBSERVED=$observed"
+          test "$observed" = "$expected"
+          curl --fail --silent --show-error --location "$base/deployment-meta.json" > /tmp/meta.json
+          grep -Fq '"sha":"'$expected'"' /tmp/meta.json
+          echo 'PUBLIC_DEPLOYMENT_IDENTITY=PASS'
+
+      - name: Execute public URL in Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$chrome"
+          "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=12000 --dump-dom \
+            https://heruahmose.github.io/trai-portfolio/ > /tmp/public-dom.html
+          grep -Fq 'id="root"' /tmp/public-dom.html
+          grep -Eiq 'TRAI|Tamerian Renaissance Alliance Initiative' /tmp/public-dom.html
+          echo 'PUBLIC_BROWSER_RENDER=PASS'
