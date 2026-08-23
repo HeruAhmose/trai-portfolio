@@ -35,6 +35,7 @@ jobs:
         env:
           VITE_SITE_URL: ${{ vars.SITE_URL }}
         run: |
+          set -euo pipefail
           if [ -z "$VITE_SITE_URL" ]; then
             echo "::warning::SITE_URL variable not set; building with the default domain."
           fi
@@ -43,25 +44,14 @@ jobs:
           echo "Building with Vite base: $BASE_PATH"
           npm exec -- vite build --base "$BASE_PATH"
 
+          printf '%s\n' "$GITHUB_SHA" > dist/public/deploy-commit.txt
+          cat > dist/public/deployment-meta.json <<EOF
+          {"sha":"$GITHUB_SHA","repository":"$GITHUB_REPOSITORY","ref":"$GITHUB_REF_NAME"}
+          EOF
+
           cp dist/public/index.html dist/public/404.html
           touch dist/public/.nojekyll
 
-          # GitHub Pages serves 404.html for any path it has no file for. The SPA
-          # body is correct, so human visitors are fine, but the HTTP status is 404
-          # - so crawlers, link checkers, uptime monitors and social-preview
-          # fetchers all read every deep route as broken. Materialise a real
-          # directory + index.html for each non-parameterised route so those routes
-          # return a true 200. 404.html stays as the catch-all.
-          #
-          # Deliberately NOT materialised:
-          #   /            already served by dist/public/index.html
-          #   /project/:id parameterised - the id set is not known at build time,
-          #                so it must keep relying on the 404.html fallback
-          #   /404         materialising it would serve the NotFound page with a
-          #                200 status (a soft 404); the fallback already renders
-          #                that page with the correct 404 status
-          #   <catch-all>  the pathless <Route component={NotFound} /> - same
-          # Source of truth: the <Switch> table in client/src/App.tsx.
           SPA_ROUTES="cinematic case-studies materials community research timeline
             patent-claims advanced-features energy manufacturing quantum
             applications dashboard annotations gesture-control sound-preferences
@@ -81,7 +71,6 @@ jobs:
               exit 1
             fi
           done
-          echo "Materialised $(echo $SPA_ROUTES | wc -w) SPA route directories."
 
           if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-organism-v5\.js|trai-cinematic\.js)' dist/public/index.html; then
             echo "::error::GitHub Pages build contains root-relative asset references."
@@ -92,8 +81,34 @@ jobs:
           grep -q '/trai-portfolio/manifest.json' dist/public/index.html
           test -f dist/public/trai-organism-v5.js
           test -f dist/public/trai-organism-v5.json
+          test -s dist/public/deploy-commit.txt
+          grep -Fqx "$GITHUB_SHA" dist/public/deploy-commit.txt
+          grep -Fq '"sha":"'$GITHUB_SHA'"' dist/public/deployment-meta.json
           grep -q '/trai-portfolio/trai-organism-v5.js' dist/public/index.html
           grep -q '/trai-portfolio/trai-cinematic.js' dist/public/index.html
+
+      - name: Execute built Pages artifact in Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/trai-pages-root
+          mkdir -p /tmp/trai-pages-root/trai-portfolio
+          cp -a dist/public/. /tmp/trai-pages-root/trai-portfolio/
+          python3 -m http.server 4173 --directory /tmp/trai-pages-root >/tmp/trai-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for _ in $(seq 1 30); do
+            curl --fail --silent http://127.0.0.1:4173/trai-portfolio/ >/dev/null && break
+            sleep 1
+          done
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$chrome"
+          "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=12000 --dump-dom \
+            http://127.0.0.1:4173/trai-portfolio/ > /tmp/trai-dom.html
+          grep -Fq 'id="root"' /tmp/trai-dom.html
+          grep -Eiq 'TRAI|Tamerian Renaissance Alliance Initiative' /tmp/trai-dom.html
+          echo 'LOCAL_BROWSER_RENDER=PASS'
+
       - name: Package Pages artifact once
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
@@ -114,3 +129,38 @@ jobs:
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - id: deploy
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+  certify:
+    name: Public Pages certification
+    needs: pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Require exact deployed SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://heruahmose.github.io/trai-portfolio'
+          for _ in $(seq 1 30); do
+            status="$(curl --silent --location --output /tmp/deploy-commit --write-out '%{http_code}' "$base/deploy-commit.txt")"
+            if [ "$status" = 200 ] && [ "$(tr -d '\r\n' < /tmp/deploy-commit)" = "$GITHUB_SHA" ]; then
+              break
+            fi
+            sleep 10
+          done
+          test "$(tr -d '\r\n' < /tmp/deploy-commit)" = "$GITHUB_SHA"
+          curl --fail --silent --show-error --location "$base/deployment-meta.json" > /tmp/deployment-meta.json
+          grep -Fq '"sha":"'$GITHUB_SHA'"' /tmp/deployment-meta.json
+          echo 'PUBLIC_DEPLOYMENT_IDENTITY=PASS'
+
+      - name: Execute public URL in Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$chrome"
+          "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=12000 --dump-dom \
+            https://heruahmose.github.io/trai-portfolio/ > /tmp/public-dom.html
+          grep -Fq 'id="root"' /tmp/public-dom.html
+          grep -Eiq 'TRAI|Tamerian Renaissance Alliance Initiative' /tmp/public-dom.html
+          echo 'PUBLIC_BROWSER_RENDER=PASS'
