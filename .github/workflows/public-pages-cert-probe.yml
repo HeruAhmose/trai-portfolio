@@ -36,10 +36,7 @@ jobs:
           cp dist/public/index.html dist/public/404.html
           touch dist/public/.nojekyll
           SPA_ROUTES="cinematic case-studies materials community research timeline patent-claims advanced-features energy manufacturing quantum applications dashboard annotations gesture-control sound-preferences projects career-timeline quantum-enhanced neural-training domain admin projects-showcase video-showcase gamification search api-docs ai-insights showcase true-melange queen-califia mela-nation melanina founder peoples-foundation contact"
-          for route in $SPA_ROUTES; do
-            mkdir -p "dist/public/$route"
-            cp dist/public/index.html "dist/public/$route/index.html"
-          done
+          for route in $SPA_ROUTES; do mkdir -p "dist/public/$route"; cp dist/public/index.html "dist/public/$route/index.html"; done
           for route in $SPA_ROUTES; do cmp -s dist/public/index.html "dist/public/$route/index.html"; done
           if grep -Eq '(src|href)="/(assets/|manifest\.json|trai-ecosystem\.js|trai-organism-v5\.js|trai-cinematic\.js)' dist/public/index.html; then exit 1; fi
           grep -q '/trai-portfolio/assets/' dist/public/index.html
@@ -47,7 +44,7 @@ jobs:
           test -f dist/public/trai-organism-v5.js
           test -f dist/public/trai-organism-v5.json
           grep -Fqx 'c4fc97328405dfe24a50c28fe0d0feef46c41f96' dist/public/deploy-commit.txt
-      - name: Execute reproduced artifact in Chrome
+      - name: Execute reproduced artifact in bounded Chrome
         shell: bash
         run: |
           set -euo pipefail
@@ -60,7 +57,21 @@ jobs:
           for _ in $(seq 1 30); do curl --fail --silent http://127.0.0.1:4173/trai-portfolio/ >/dev/null && break; sleep 1; done
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
-          "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=12000 --dump-dom http://127.0.0.1:4173/trai-portfolio/ > /tmp/local-dom.html
+          set +e
+          timeout 40s "$chrome" \
+            --headless --no-sandbox --disable-gpu --disable-background-networking \
+            --disable-component-update --no-first-run --enable-logging=stderr \
+            --virtual-time-budget=8000 --dump-dom \
+            http://127.0.0.1:4173/trai-portfolio/ \
+            > /tmp/local-dom.html 2>/tmp/chrome-stderr.log
+          chrome_rc=$?
+          set -e
+          echo "CHROME_EXIT=$chrome_rc"
+          echo "DOM_BYTES=$(wc -c < /tmp/local-dom.html)"
+          echo '=== CHROME STDERR TAIL ==='
+          tail -n 80 /tmp/chrome-stderr.log || true
+          echo '=== HTTP LOG ==='
+          cat /tmp/trai-http.log || true
           grep -Fq 'id="root"' /tmp/local-dom.html
           grep -Eiq 'TRAI|Tamerian Renaissance Alliance Initiative' /tmp/local-dom.html
           echo 'LOCAL_PAGES_PIPELINE=PASS'
@@ -83,13 +94,17 @@ jobs:
           curl --fail --silent --show-error --location "$base/deployment-meta.json" > /tmp/meta.json
           grep -Fq '"sha":"'$expected'"' /tmp/meta.json
           echo 'PUBLIC_DEPLOYMENT_IDENTITY=PASS'
-      - name: Execute public URL in Chrome
+      - name: Execute public URL in bounded Chrome
         shell: bash
         run: |
           set -euo pipefail
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
-          "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=12000 --dump-dom https://heruahmose.github.io/trai-portfolio/ > /tmp/public-dom.html
+          set +e
+          timeout 40s "$chrome" --headless --no-sandbox --disable-gpu --disable-background-networking --disable-component-update --no-first-run --virtual-time-budget=8000 --dump-dom https://heruahmose.github.io/trai-portfolio/ > /tmp/public-dom.html 2>/tmp/public-chrome.log
+          chrome_rc=$?
+          set -e
+          echo "PUBLIC_CHROME_EXIT=$chrome_rc"
           grep -Fq 'id="root"' /tmp/public-dom.html
           grep -Eiq 'TRAI|Tamerian Renaissance Alliance Initiative' /tmp/public-dom.html
           echo 'PUBLIC_BROWSER_RENDER=PASS'
