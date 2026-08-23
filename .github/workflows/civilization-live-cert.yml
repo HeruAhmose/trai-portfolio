@@ -1,0 +1,67 @@
+name: Civilization Live Certification
+
+on:
+  push:
+    branches: [probe/trai-civilization-live-cert-20260823]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Wait for exact Pages deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='4d3bfb8251b0a2aec985ddc68f6ff06e2c81b3e6'
+          url='https://heruahmose.github.io/trai-portfolio/deploy-commit.txt'
+          observed=''
+          for i in {1..40}; do
+            observed="$(curl -fsSL "$url" 2>/dev/null | tr -d '\r\n' || true)"
+            echo "attempt=$i observed=$observed"
+            [ "$observed" = "$expected" ] && break
+            sleep 10
+          done
+          test "$observed" = "$expected"
+          echo "TRAI_PUBLIC_SHA=$observed"
+
+      - name: Certify MeLaNiNa prestige route
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          timeout 60s "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=14000 --dump-dom 'https://heruahmose.github.io/trai-portfolio/melanina' > /tmp/melanina.html
+          grep -Fq '05 · Skin · Identity Sovereignty' /tmp/melanina.html
+          grep -Fq 'Prestige begins with proportion, not decoration.' /tmp/melanina.html
+          grep -Fq 'Fiber. Form. Identity. Return.' /tmp/melanina.html
+          grep -Fq 'The Column' /tmp/melanina.html
+          echo 'MELANINA_PUBLIC_PRESTIGE=PASS'
+
+      - name: Certify Mela Nation prestige route
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          timeout 60s "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=14000 --dump-dom 'https://heruahmose.github.io/trai-portfolio/mela-nation' > /tmp/mela.html
+          grep -Fq '04 · Vessels · Mobility Sovereignty' /tmp/mela.html
+          grep -Fq 'Movement is a public system.' /tmp/mela.html
+          grep -Fq 'Nu Ta Meri Circulation' /tmp/mela.html
+          echo 'MELA_NATION_PUBLIC_PRESTIGE=PASS'
+
+      - name: Certify Nu Ta Meri prestige route
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          timeout 60s "$chrome" --headless --no-sandbox --disable-gpu --virtual-time-budget=14000 --dump-dom 'https://heruahmose.github.io/trai-portfolio/nu-ta-meri' > /tmp/city.html
+          grep -Fq 'A city that' /tmp/city.html
+          grep -Fq 'Living Canopy' /tmp/city.html
+          grep -Fq 'Blue Arteries' /tmp/city.html
+          grep -Fq 'Cathedral of Light' /tmp/city.html
+          grep -Fq 'Mela Nation as vessels' /tmp/city.html
+          echo 'NU_TA_MERI_PUBLIC_PRESTIGE=PASS'
