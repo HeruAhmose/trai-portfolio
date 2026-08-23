@@ -8,7 +8,6 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { CeremonialIntro } from './components/CeremonialIntro';
 import { EnhancedNavigation } from './components/EnhancedNavigation';
 import { PremiumNavigation } from './components/PremiumNavigation';
-// Lazy-loaded pages for code splitting
 const HomeCinematic = lazy(() => import('./pages/HomeCinematic').then(m => ({ default: m.HomeCinematic })));
 const CaseStudies = lazy(() => import('./pages/CaseStudies'));
 const MaterialsScience = lazy(() => import('./pages/MaterialsScience'));
@@ -45,15 +44,12 @@ const TrueMelangePhi = lazy(() => import('./pages/TrueMelangePhi'));
 const QueenCalifiaPage = lazy(() => import('./pages/QueenCalifia'));
 const MelaNationPage = lazy(() => import('./pages/MelaNation'));
 const MeLaNiNaPage = lazy(() => import('./pages/MeLaNiNa'));
+const NuTaMeriPage = lazy(() => import('./pages/NuTaMeri'));
 const FounderPage = lazy(() => import('./pages/FounderPage'));
 const PeoplesFoundation = lazy(() => import('./pages/PeoplesFoundation'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const HKAssistant = lazy(() => import('./components/HKAssistant'));
-const CommandPalette = lazy(() =>
-  import('./components/CommandPalette').then(module => ({
-    default: module.CommandPalette,
-  }))
-);
+const CommandPalette = lazy(() => import('./components/CommandPalette').then(module => ({ default: module.CommandPalette })));
 import { GamificationHUD } from './components/GamificationHUD';
 import { SovereignAudioEngine } from './components/SovereignAudioEngine';
 import { ScrollProgressIndicator } from './components/ScrollProgressIndicator';
@@ -64,7 +60,6 @@ const AIInsightsPage = lazy(() => import('./pages/AIInsightsPage').then(m => ({ 
 const AdvancedFeaturesShowcase = lazy(() => import('./pages/AdvancedFeaturesShowcase').then(m => ({ default: m.AdvancedFeaturesShowcase })));
 import { useSessionId } from './hooks/useSessionId';
 
-// Page loading fallback
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="flex flex-col items-center gap-4">
@@ -112,10 +107,11 @@ function Router() {
         <Route path="/true-melange" component={TrueMelangePhi} />
         <Route path="/queen-califia" component={QueenCalifiaPage} />
         <Route path="/mela-nation" component={MelaNationPage} />
-          <Route path="/melanina" component={MeLaNiNaPage} />
-          <Route path="/founder" component={FounderPage} />
-          <Route path="/peoples-foundation" component={PeoplesFoundation} />
-          <Route path="/contact" component={ContactPage} />
+        <Route path="/melanina" component={MeLaNiNaPage} />
+        <Route path="/nu-ta-meri" component={NuTaMeriPage} />
+        <Route path="/founder" component={FounderPage} />
+        <Route path="/peoples-foundation" component={PeoplesFoundation} />
+        <Route path="/contact" component={ContactPage} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
@@ -131,44 +127,21 @@ function App() {
   const [location, setLocation] = useLocation();
   const [audioEnabled, setAudioEnabled] = useState(true);
   const sessionId = useSessionId();
-  // Intro plays on initial page load only — not on client-side navigation between pages
   const [introPhase, setIntroPhase] = useState<'sovereign' | 'cinematic' | 'done'>(() => {
-    // If the user landed directly on a subpage (not root), skip the intro
     if (typeof window !== 'undefined') {
       const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
       const rootPath = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
-
-      if (currentPath !== rootPath) {
-        return 'done';
-      }
+      if (currentPath !== rootPath) return 'done';
     }
     return 'sovereign';
   });
 
-  useEffect(() => {
-    // Force dark theme
-    document.documentElement.classList.add('dark');
-  }, []);
-
-  useEffect(() => {
-    if (hkAssistantOpen) {
-      setHkAssistantLoaded(true);
-    }
-  }, [hkAssistantOpen]);
-
-  useEffect(() => {
-    if (commandPaletteOpen) {
-      setCommandPaletteLoaded(true);
-    }
-  }, [commandPaletteOpen]);
-
-  // Cmd+K / Ctrl+K to open command palette
+  useEffect(() => { document.documentElement.classList.add('dark'); }, []);
+  useEffect(() => { if (hkAssistantOpen) setHkAssistantLoaded(true); }, [hkAssistantOpen]);
+  useEffect(() => { if (commandPaletteOpen) setCommandPaletteLoaded(true); }, [commandPaletteOpen]);
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setCommandPaletteOpen(prev => !prev);
-      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setCommandPaletteOpen(prev => !prev); }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -176,38 +149,11 @@ function App() {
 
   const handleTabChange = (tabId: string) => {
     const routeMap: Record<string, string> = {
-      'hero': '/',
-      'sovereign': '/',
-      'materials': '/materials',
-      'energy': '/energy',
-      'manufacturing': '/manufacturing',
-      'quantum': '/quantum',
-      'applications': '/applications',
-      'patents': '/patent-claims',
-      'community': '/community',
-      'research': '/research',
-      'timeline': '/timeline',
-      'advanced': '/advanced-features',
-      'about': '/',
-      
-      'search': '/search',
-      'gamification': '/gamification',
-      'ai-insights': '/ai-insights',
-      'api-docs': '/api-docs',
-      'true-melange': '/true-melange',
-      'queen-califia': '/queen-califia',
-      'founder': '/founder',
-      'peoples-foundation': '/peoples-foundation',
-      'contact': '/contact',
-      'mela-nation': '/mela-nation',
-      'melanina': '/melanina',
+      hero: '/', sovereign: '/', materials: '/materials', energy: '/energy', manufacturing: '/manufacturing', quantum: '/quantum', applications: '/applications', patents: '/patent-claims', community: '/community', research: '/research', timeline: '/timeline', advanced: '/advanced-features', about: '/', search: '/search', gamification: '/gamification', 'ai-insights': '/ai-insights', 'api-docs': '/api-docs', 'true-melange': '/true-melange', 'queen-califia': '/queen-califia', founder: '/founder', 'peoples-foundation': '/peoples-foundation', contact: '/contact', 'mela-nation': '/mela-nation', melanina: '/melanina', 'nu-ta-meri': '/nu-ta-meri',
     };
     const route = routeMap[tabId] || '/';
     const transition = (window as any).TRAIOrganismV5?.transitionInternal;
-    if (typeof transition === 'function') {
-      void transition(() => setLocation(route), { label: tabId });
-      return;
-    }
+    if (typeof transition === 'function') { void transition(() => setLocation(route), { label: tabId }); return; }
     setLocation(route);
   };
 
@@ -226,83 +172,33 @@ function App() {
     if (location === '/search') return 'search';
     if (location === '/gamification') return 'gamification';
     if (location === '/ai-insights') return 'ai-insights';
+    if (location === '/mela-nation') return 'mela-nation';
+    if (location === '/melanina') return 'melanina';
+    if (location === '/nu-ta-meri') return 'nu-ta-meri';
     return 'hero';
   };
 
   return (
-      <ErrorBoundary>
+    <ErrorBoundary>
       <SoundPreferencesProvider>
         <VoicePreferencesProvider>
           <GestureNavigationProvider>
             <ThemeProvider>
-          <TooltipProvider>
-            <Toaster />
-            {/* Command Palette (Cmd+K) */}
-            {commandPaletteLoaded && (
-              <Suspense fallback={null}>
-                <CommandPalette
-                  isOpen={commandPaletteOpen}
-                  onClose={() => setCommandPaletteOpen(false)}
-                />
-              </Suspense>
-            )}
-
-            {/* Ceremonial intro — plays every visit */}
-            {introPhase === 'sovereign' && (
-              <CeremonialIntro onComplete={() => setIntroPhase('done')} />
-            )}
-
-            {/* Main Content */}
-            <>
-              <PremiumNavigation
-                activeTab={getCurrentTab()}
-                onTabChange={handleTabChange}
-                isMuted={!audioEnabled}
-                onMuteToggle={() => setAudioEnabled(!audioEnabled)}
-                onSearchOpen={() => setCommandPaletteOpen(true)}
-                sessionId={sessionId}
-              />
-
-              <main className="pt-16 min-h-screen bg-background">
-                <Router />
-              </main>
-
-              {/* Premium Footer */}
-              <PremiumFooter />
-
-            {/* Sovereign Audio Engine — synthesized ambient sound */}
-            <ScrollProgressIndicator />
-              <SovereignAudioEngine enabled={audioEnabled} onToggle={() => setAudioEnabled(a => !a)} />
-
-              {/* H.K. Assistant Button */}
-              <motion.button
-                onClick={() => setHkAssistantOpen(!hkAssistantOpen)}
-                className="fixed bottom-4 left-4 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl"
-                style={{
-                  background: 'linear-gradient(135deg, #D4AF37, #B87333)',
-                  boxShadow: '0 0 30px rgba(212,175,55,0.5)',
-                }}
-                whileHover={{ scale: 1.1, boxShadow: '0 0 50px rgba(212,175,55,0.8)' }}
-                whileTap={{ scale: 0.9 }}
-                title="Open H.K. Assistant"
-              >
-                <span className="text-xl font-black text-black">◉</span>
-              </motion.button>
-
-              {/* H.K. Assistant */}
-              {hkAssistantLoaded && (
-                <Suspense fallback={null}>
-                  <HKAssistant
-                    isOpen={hkAssistantOpen}
-                    onClose={() => setHkAssistantOpen(false)}
-                  />
-                </Suspense>
-              )}
-
-              {/* Explorer points / badges / level HUD */}
-              <GamificationHUD sessionId={sessionId} />
-            </>
-          </TooltipProvider>
+              <TooltipProvider>
+                <Toaster />
+                {commandPaletteLoaded && <Suspense fallback={null}><CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} /></Suspense>}
+                {introPhase === 'sovereign' && <CeremonialIntro onComplete={() => setIntroPhase('done')} />}
+                <>
+                  <PremiumNavigation activeTab={getCurrentTab()} onTabChange={handleTabChange} isMuted={!audioEnabled} onMuteToggle={() => setAudioEnabled(!audioEnabled)} onSearchOpen={() => setCommandPaletteOpen(true)} sessionId={sessionId} />
+                  <main className="pt-16 min-h-screen bg-background"><Router /></main>
+                  <PremiumFooter />
+                  <ScrollProgressIndicator />
+                  <SovereignAudioEngine enabled={audioEnabled} onToggle={() => setAudioEnabled(a => !a)} />
+                  <motion.button onClick={() => setHkAssistantOpen(!hkAssistantOpen)} className="fixed bottom-4 left-4 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl" style={{ background: 'linear-gradient(135deg, #D4AF37, #B87333)', boxShadow: '0 0 30px rgba(212,175,55,0.5)' }} whileHover={{ scale: 1.1, boxShadow: '0 0 50px rgba(212,175,55,0.8)' }} whileTap={{ scale: 0.9 }} title="Open H.K. Assistant"><span className="text-xl font-black text-black">◉</span></motion.button>
+                  {hkAssistantLoaded && <Suspense fallback={null}><HKAssistant isOpen={hkAssistantOpen} onClose={() => setHkAssistantOpen(false)} /></Suspense>}
+                  <GamificationHUD sessionId={sessionId} />
+                </>
+              </TooltipProvider>
             </ThemeProvider>
           </GestureNavigationProvider>
         </VoicePreferencesProvider>
