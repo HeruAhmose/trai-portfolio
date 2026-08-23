@@ -58,7 +58,7 @@ jobs:
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
           set +e
-          timeout 40s "$chrome" \
+          timeout --kill-after=5s 40s "$chrome" \
             --headless --no-sandbox --disable-gpu --disable-background-networking \
             --disable-component-update --no-first-run --enable-logging=stderr \
             --virtual-time-budget=8000 --dump-dom \
@@ -101,7 +101,7 @@ jobs:
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
           set +e
-          timeout 40s "$chrome" --headless --no-sandbox --disable-gpu --disable-background-networking --disable-component-update --no-first-run --virtual-time-budget=8000 --dump-dom https://heruahmose.github.io/trai-portfolio/ > /tmp/public-dom.html 2>/tmp/public-chrome.log
+          timeout --kill-after=5s 40s "$chrome" --headless --no-sandbox --disable-gpu --disable-background-networking --disable-component-update --no-first-run --virtual-time-budget=8000 --dump-dom https://heruahmose.github.io/trai-portfolio/ > /tmp/public-dom.html 2>/tmp/public-chrome.log
           chrome_rc=$?
           set -e
           echo "PUBLIC_CHROME_EXIT=$chrome_rc"
