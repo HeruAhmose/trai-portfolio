@@ -268,10 +268,10 @@ async function setViewport(viewport) {
     deviceScaleFactor: 1,
     mobile: viewport.mobile,
   });
-  await send("Emulation.setTouchEmulationEnabled", {
-    enabled: viewport.mobile,
-    maxTouchPoints: viewport.mobile ? 5 : 0,
-  });
+  await send(
+    "Emulation.setTouchEmulationEnabled",
+    viewport.mobile ? { enabled: true, maxTouchPoints: 5 } : { enabled: false }
+  );
 }
 
 async function visibleButton(label) {
