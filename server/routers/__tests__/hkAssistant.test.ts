@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
-describe('H.K. Assistant Router', () => {
-  it('should validate query input structure', () => {
+describe("H.K. Assistant Router", () => {
+  it("should validate query input structure", () => {
     const validQuery = {
-      question: 'What is the AMC hypothesis?',
+      question: "What is the AMC hypothesis?",
       conversationHistory: [],
     };
 
@@ -12,70 +12,72 @@ describe('H.K. Assistant Router', () => {
     expect(Array.isArray(validQuery.conversationHistory)).toBe(true);
   });
 
-  it('should validate conversation history format', () => {
+  it("should validate conversation history format", () => {
     const history = [
-      { role: 'user' as const, content: 'Hello' },
-      { role: 'assistant' as const, content: 'Hi there!' },
+      { role: "user" as const, content: "Hello" },
+      { role: "assistant" as const, content: "Hi there!" },
     ];
 
     expect(history).toHaveLength(2);
-    expect(history[0].role).toBe('user');
-    expect(history[1].role).toBe('assistant');
+    expect(history[0].role).toBe("user");
+    expect(history[1].role).toBe("assistant");
   });
 
-  it('should provide AMC context data', () => {
+  it("should provide AMC context data", () => {
     const amcContext = {
-      title: 'Advanced Material Composite (AMC) Hypothesis',
-      overview: 'Multi-functional composite from hemp-derived carbon',
+      title: "Advanced Material Composite (AMC) Hypothesis",
+      overview: "Multi-functional composite from hemp-derived carbon",
       keyProperties: {
-        conductivity: '10²–10⁶ S/m',
-        energyHarvesting: 'Piezoelectric + Thermoelectric + Spin-Seebeck',
-        quantumSensing: 'Room-temperature, T₂ > 5 μs',
+        conductivity: "10²–10⁶ S/m",
+        energyHarvesting: "Piezoelectric + Thermoelectric + Spin-Seebeck",
+        quantumSensing:
+          "Coherence hypothesis >500 ns at 300 K; 1–10 μs target; not confirmed",
       },
       patentClaims: {
         total: 25,
-        composition: '1–15',
-        manufacturing: '16–18',
-        device: '19–25',
+        composition: "1–15",
+        manufacturing: "16–18",
+        device: "19–25",
       },
     };
 
-    expect(amcContext.title).toContain('AMC');
+    expect(amcContext.title).toContain("AMC");
     expect(amcContext.patentClaims.total).toBe(25);
     expect(amcContext.keyProperties.conductivity).toBeTruthy();
+    expect(amcContext.keyProperties.quantumSensing).toContain("not confirmed");
   });
 
-  it('should provide triage guidance for all topics', () => {
+  it("should provide triage guidance for all topics", () => {
     const topics = [
-      'digital-access',
-      'amc-hypothesis',
-      'cybersecurity',
-      'material-science',
-      'research',
-      'community-impact',
+      "digital-access",
+      "amc-hypothesis",
+      "cybersecurity",
+      "material-science",
+      "research",
+      "community-impact",
     ];
 
     expect(topics).toHaveLength(6);
-    expect(topics).toContain('amc-hypothesis');
-    expect(topics).toContain('cybersecurity');
+    expect(topics).toContain("amc-hypothesis");
+    expect(topics).toContain("cybersecurity");
   });
 
-  it('should structure triage response correctly', () => {
+  it("should structure triage response correctly", () => {
     const triageResponse = {
-      title: 'AMC Hypothesis Information',
+      title: "AMC Hypothesis Information",
       steps: [
-        'Review the preprint publication',
-        'Explore the 25 patent claims',
-        'Understand the 7-step manufacturing process',
-        'Learn about applications',
+        "Review the unreviewed preprint and 51 cited papers",
+        "Explore the 25 patent claims",
+        "Understand the 7-step manufacturing process",
+        "Learn about applications",
       ],
       resources: [
-        'AMC Preprint',
-        'Patent Claims Explorer',
-        'Manufacturing Process Visualization',
-        'Research Lab Section',
+        "AMC Preprint",
+        "Patent Claims Explorer",
+        "Manufacturing Process Visualization",
+        "Research Lab Section",
       ],
-      escalation: 'Contact research team for technical questions',
+      escalation: "Contact research team for technical questions",
     };
 
     expect(triageResponse.title).toBeTruthy();
@@ -84,23 +86,23 @@ describe('H.K. Assistant Router', () => {
     expect(triageResponse.escalation).toBeTruthy();
   });
 
-  it('should handle query response structure', () => {
+  it("should handle query response structure", () => {
     const response = {
       success: true,
-      response: 'This is an assistant response.',
-      conversationId: 'hk-1234567890',
+      response: "This is an assistant response.",
+      conversationId: "hk-1234567890",
     };
 
     expect(response.success).toBe(true);
     expect(response.response).toBeTruthy();
-    expect(response.conversationId).toContain('hk-');
+    expect(response.conversationId).toContain("hk-");
   });
 
-  it('should handle error responses', () => {
+  it("should handle error responses", () => {
     const errorResponse = {
       success: false,
-      response: 'I encountered an issue processing your question.',
-      error: 'API Error',
+      response: "I encountered an issue processing your question.",
+      error: "API Error",
     };
 
     expect(errorResponse.success).toBe(false);
@@ -108,21 +110,21 @@ describe('H.K. Assistant Router', () => {
     expect(errorResponse.error).toBeTruthy();
   });
 
-  it('should include H.K. system prompt guidance', () => {
+  it("should include H.K. system prompt guidance", () => {
     const systemPromptGuidance = [
-      'NEVER GUESS',
-      'NEVER ASK FOR CREDENTIALS',
-      'DETERMINISTIC ROUTING',
-      'STEP-BY-STEP GUIDANCE',
-      'HUMAN ESCALATION',
+      "NEVER GUESS",
+      "NEVER ASK FOR CREDENTIALS",
+      "DETERMINISTIC ROUTING",
+      "STEP-BY-STEP GUIDANCE",
+      "HUMAN ESCALATION",
     ];
 
     expect(systemPromptGuidance).toHaveLength(5);
-    expect(systemPromptGuidance).toContain('NEVER GUESS');
-    expect(systemPromptGuidance).toContain('STEP-BY-STEP GUIDANCE');
+    expect(systemPromptGuidance).toContain("NEVER GUESS");
+    expect(systemPromptGuidance).toContain("STEP-BY-STEP GUIDANCE");
   });
 
-  it('should validate AMC patent claims structure', () => {
+  it("should validate AMC patent claims structure", () => {
     const patentClaims = {
       total: 25,
       categories: {

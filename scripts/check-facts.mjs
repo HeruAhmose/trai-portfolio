@@ -14,54 +14,86 @@
  *               number or a coherence figure quietly drifting is exactly the
  *               kind of error nobody catches by reading.
  */
-import { readFileSync } from 'node:fs';
-import { readdirSync, statSync } from 'node:fs';
-import { join, extname } from 'node:path';
+import { readFileSync } from "node:fs";
+import { readdirSync, statSync } from "node:fs";
+import { join, extname } from "node:path";
 
-const ROOTS = ['client/src', 'patched'].filter((d) => {
-  try { return statSync(d).isDirectory(); } catch { return false; }
+const ROOTS = ["client/src", "patched"].filter(d => {
+  try {
+    return statSync(d).isDirectory();
+  } catch {
+    return false;
+  }
 });
 
 const FORBIDDEN = [
-  { re: /\b(Oak Ridge|ORNL|Argonne|Sandia|Los Alamos|Lawrence Livermore)\b/i,
-    why: 'no national laboratory has validated this work' },
+  {
+    re: /\b(Oak Ridge|ORNL|Argonne|Sandia|Los Alamos|Lawrence Livermore)\b/i,
+    why: "no national laboratory has validated this work",
+  },
   // NIST is legitimate as a named compliance framework; it is not legitimate
   // as a validating body for this work.
-  { re: /\bNIST\b/i,
-    allowedBy: /NIST\s+(Cybersecurity Framework|CSF|SP\s*800|800-\d+|guidelines?|standards?|compliance)/i,
-    why: 'NIST has not validated this work (naming the compliance framework is fine)' },
+  {
+    re: /\bNIST\b/i,
+    allowedBy:
+      /NIST\s+(Cybersecurity Framework|CSF|SP\s*800|800-\d+|guidelines?|standards?|compliance)/i,
+    why: "NIST has not validated this work (naming the compliance framework is fine)",
+  },
   // "Not peer reviewed" is the honest disclosure we want to keep.
   // Citing other people's peer-reviewed literature is legitimate and is the
   // normal shape of a references section. What is not legitimate is claiming
   // that OUR work has been peer reviewed.
-  { re: /\bpeer[- ]reviewed\b/i,
-    allowedBy: /\b(not|non|pre|awaiting|pending|prior to|yet to be)[- ]?peer[- ]reviewed\b|peer[- ]reviewed\s*(publication)?\s*(is )?(pending|planned|forthcoming)|\d+\s+peer[- ]reviewed\s+(papers?|studies|articles|sources|references)|peer[- ]reviewed\s+(papers?|studies|literature|sources|references)\s+(cited|referenced|reviewed|surveyed)/i,
-    why: 'no peer-reviewed publication of this work exists yet (citing others is fine)' },
-  { re: /\bpost[- ]doctoral dissertation\b/i,
-    why: 'implies credentials and institutional review that do not exist' },
-  { re: /\bpatent(ed)?\s+(technology|process|material)\b/i,
-    why: 'the application is filed, not granted — say "patent filed"' },
-  { re: /\bpatent[- ]granted\b/i, why: 'the application is filed, not granted' },
-  { re: /\broom[- ]temperature superconduct/i,
-    why: 'not demonstrated; would be a Nobel-level claim' },
-  { re: /\bzero[- ]point energy\b/i, why: 'not demonstrated' },
+  {
+    re: /\bpeer[- ]reviewed\b/i,
+    allowedBy:
+      /\b(not|non|pre|awaiting|pending|prior to|yet to be)[- ]?peer[- ]reviewed\b|peer[- ]reviewed\s*(publication)?\s*(is )?(pending|planned|forthcoming)|\d+\s+peer[- ]reviewed\s+(papers?|studies|articles|sources|references)|peer[- ]reviewed\s+(papers?|studies|literature|sources|references)\s+(cited|referenced|reviewed|surveyed)/i,
+    why: "no peer-reviewed publication of this work exists yet (citing others is fine)",
+  },
+  {
+    re: /\bpost[- ]doctoral dissertation\b/i,
+    why: "implies credentials and institutional review that do not exist",
+  },
+  {
+    re: /\bpatent(ed)?\s+(technology|process|material)\b/i,
+    why: 'the application is filed, not granted — say "patent filed"',
+  },
+  {
+    re: /\bpatent[- ]granted\b/i,
+    why: "the application is filed, not granted",
+  },
+  {
+    re: /\broom[- ]temperature superconduct/i,
+    why: "not demonstrated; would be a Nobel-level claim",
+  },
+  { re: /\bzero[- ]point energy\b/i, why: "not demonstrated" },
   // Allowed inside an explicit prohibited-claims list, or a negation.
-  { re: /\bFDA[- ]approved\b/i,
-    allowedBy: /(never|not|no|avoid|prohibit|do not|cannot|must not|unless it actually is)[^.]{0,90}FDA[- ]approved|FDA[- ]approved[^.]{0,40}(unless|is prohibited|not permitted)|["'“]FDA[- ]approved["'”]/i,
-    why: 'nothing here is FDA-approved' },
-  { re: /\[(Institution Name|Advisor Name|Insert Date|Insert Contact Info)\]/i,
-    why: 'unfilled template placeholder' },
-  { re: /\blorem ipsum\b/i, why: 'placeholder copy' },
+  {
+    re: /\bFDA[- ]approved\b/i,
+    allowedBy:
+      /(never|not|no|avoid|prohibit|do not|cannot|must not|unless it actually is)[^.]{0,90}FDA[- ]approved|FDA[- ]approved[^.]{0,40}(unless|is prohibited|not permitted)|["'“]FDA[- ]approved["'”]/i,
+    why: "nothing here is FDA-approved",
+  },
+  {
+    re: /\[(Institution Name|Advisor Name|Insert Date|Insert Contact Info)\]/i,
+    why: "unfilled template placeholder",
+  },
+  { re: /\blorem ipsum\b/i, why: "placeholder copy" },
 ];
 
 /** [pattern that may appear, the only acceptable surrounding form, reason] */
 const ANCHORED = [
-  { find: /63\/934,?269/g, must: /63\/934,269/, why: 'patent application number must be exact' },
+  {
+    find: /63\/934,?269/g,
+    must: /63\/934,269/,
+    why: "patent application number must be exact",
+  },
   // Only prose claims about coherence need the qualifier. `T2: 8.5` as an
   // object key inside a physics simulation is data, not an assertion.
-  { find: /T[₂2]\s*(coherence\s*)?[>≥]\s*\d[\d.]*\s*(μs|us|ns)/gi,
+  {
+    find: /T[₂2]\s*(coherence\s*)?[>≥]\s*\d[\d.]*\s*(μs|us|ns)/gi,
     must: /HYPOTHESIS|hypothesis|not confirmed|target|projected/i,
-    why: 'a stated coherence figure must carry its hypothesis label' },
+    why: "a stated coherence figure must carry its hypothesis label",
+  },
 ];
 
 function walk(dir, out = []) {
@@ -69,14 +101,120 @@ function walk(dir, out = []) {
     const p = join(dir, e);
     const st = statSync(p);
     if (st.isDirectory()) {
-      if (['node_modules', 'dist', '.git'].includes(e)) continue;
+      if (["node_modules", "dist", ".git"].includes(e)) continue;
       walk(p, out);
-    } else if (['.tsx', '.ts', '.html', '.md'].includes(extname(p))) {
+    } else if ([".tsx", ".ts", ".html", ".md"].includes(extname(p))) {
       out.push(p);
     }
   }
   return out;
 }
+
+const PROJECTION_RULES = [
+  {
+    file: "client/src/pages/HomeSovereign.tsx",
+    required: [
+      "Mandate of Mistrust",
+      "Deterministic H.K. triage",
+      "Operating position: §508(c)(1)(A)",
+      "https://heruahmose.github.io/QueenCalifia-CyberAI/",
+    ],
+    forbidden: [
+      "queencalifia-cyberai.web.app",
+      "H.K. AI triage",
+      "federal tax-exempt status pending",
+    ],
+  },
+  {
+    file: "client/src/pages/PeoplesFoundation.tsx",
+    required: ["§508(c)(1)(A)", "IRS determination", "Not represented"],
+    forbidden: [
+      "Application Pending",
+      "tax-exempt status application is pending",
+    ],
+  },
+  {
+    file: "client/src/components/PremiumFooter.tsx",
+    required: [
+      "https://github.com/HeruAhmose",
+      "mailto:aitconsult22@gmail.com",
+    ],
+    forbidden: [
+      "href: 'https://github.com',",
+      "https://linkedin.com",
+      "https://twitter.com",
+      "contact@example.com",
+      'href="/privacy"',
+      'href="/terms"',
+      'href="/sitemap"',
+    ],
+  },
+  {
+    file: "client/src/components/NewsletterSubscription.tsx",
+    required: [
+      "This static site has no subscription backend",
+      "No address is collected or stored",
+    ],
+    forbidden: ["Successfully subscribed!", "Simulate API call"],
+  },
+  {
+    file: "client/src/components/HKAssistant.tsx",
+    required: [
+      "Verified public context · no external model",
+      'aria-label="Close H.K. assistant"',
+    ],
+    forbidden: [
+      "Powered by Claude · Memory enabled",
+      "Your conversation is remembered across sessions",
+    ],
+  },
+  {
+    file: "client/src/components/HKPortalWidget.tsx",
+    required: [
+      "Verified public context · no external model",
+      'aria-label="Send message to H.K."',
+    ],
+    forbidden: ["TechBridge AI · Claude API"],
+  },
+  {
+    file: "client/src/components/QuantumComputingViz.tsx",
+    required: ["Research Targets — Not Measured", "target, not confirmed"],
+    forbidden: [
+      "Quantum Coherence Data",
+      "Quantum Gate Fidelity: 99.7%",
+      "Entanglement Entropy: 0.95",
+    ],
+  },
+  {
+    file: "server/routers/hkAssistant.ts",
+    required: [
+      "51 peer-reviewed papers cited",
+      "Integrated performance has not been independently validated",
+    ],
+    forbidden: [
+      "150+ experiments conducted",
+      "Validation rate: 92%",
+      "ISO 10993-5 compliant",
+    ],
+  },
+  {
+    file: "client/public/trai-organism-v5.json",
+    required: [
+      "Operating under §508(c)(1)(A)",
+      "https://heruahmose.github.io/QueenCalifia-CyberAI/",
+    ],
+    forbidden: ["queencalifia-cyberai.web.app", "exemption pending"],
+  },
+  {
+    file: "VERIFIED_FACTS.md",
+    required: [
+      "Mandate of Mistrust",
+      "Public H.K. uses bounded static guidance",
+      "§508(c)(1)(A)",
+    ],
+    forbidden: ["H.K. powered by Claude AI", "federal tax-exempt pending"],
+  },
+];
 
 let fail = 0;
 let scanned = 0;
@@ -85,7 +223,7 @@ for (const root of ROOTS) {
   for (const file of walk(root)) {
     // The guard itself and the facts record must be able to name what is banned.
     if (/check-facts|VERIFIED_FACTS|SECURITY\.md|LICENSE/.test(file)) continue;
-    const src = readFileSync(file, 'utf8');
+    const src = readFileSync(file, "utf8");
     scanned++;
 
     for (const { re, why, allowedBy } of FORBIDDEN) {
@@ -98,8 +236,12 @@ for (const root of ROOTS) {
           const around = src.slice(Math.max(0, m.index - 140), m.index + 180);
           if (allowedBy.test(around)) continue;
         }
-        const at = src.slice(Math.max(0, m.index - 70), m.index + 90).replace(/\s+/g, ' ');
-        console.error(`✗ ${file}\n    matched: "${m[0]}"\n    reason:  ${why}\n    context: …${at}…\n`);
+        const at = src
+          .slice(Math.max(0, m.index - 70), m.index + 90)
+          .replace(/\s+/g, " ");
+        console.error(
+          `✗ ${file}\n    matched: "${m[0]}"\n    reason:  ${why}\n    context: …${at}…\n`
+        );
         fail++;
       }
     }
@@ -108,7 +250,9 @@ for (const root of ROOTS) {
       for (const m of src.matchAll(find)) {
         const around = src.slice(Math.max(0, m.index - 200), m.index + 260);
         if (!must.test(around)) {
-          console.error(`✗ ${file}\n    "${m[0]}" appears without its required qualifier\n    reason:  ${why}\n`);
+          console.error(
+            `✗ ${file}\n    "${m[0]}" appears without its required qualifier\n    reason:  ${why}\n`
+          );
           fail++;
         }
       }
@@ -116,8 +260,37 @@ for (const root of ROOTS) {
   }
 }
 
+for (const { file, required, forbidden } of PROJECTION_RULES) {
+  const src = readFileSync(file, "utf8");
+  scanned++;
+
+  for (const phrase of required) {
+    if (!src.includes(phrase)) {
+      console.error(
+        "✗ " + file + '\n    required public fact missing: "' + phrase + '"\n'
+      );
+      fail++;
+    }
+  }
+
+  for (const phrase of forbidden) {
+    if (src.includes(phrase)) {
+      console.error(
+        "✗ " +
+          file +
+          '\n    stale or false public fact present: "' +
+          phrase +
+          '"\n'
+      );
+      fail++;
+    }
+  }
+}
+
 if (fail) {
-  console.error(`\nfacts guard: ${fail} violation(s) across ${scanned} files. Build blocked.`);
+  console.error(
+    `\nfacts guard: ${fail} violation(s) across ${scanned} files. Build blocked.`
+  );
   process.exit(1);
 }
 console.log(`facts guard: ${scanned} files clean.`);

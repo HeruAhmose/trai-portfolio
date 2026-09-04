@@ -89,6 +89,16 @@ jobs:
           grep -Fq '"sha":"'$GITHUB_SHA'"' dist/public/deployment-meta.json
           grep -q '/trai-portfolio/trai-organism-v5.js' dist/public/index.html
           grep -q '/trai-portfolio/trai-cinematic.js' dist/public/index.html
+          grep -R -Fq 'Mandate of Mistrust' dist/public/assets
+          grep -R -Fq 'Operating position: §508(c)(1)(A)' dist/public/assets
+          grep -R -Fq 'Verified public context · no external model' dist/public/assets
+          grep -R -Fq 'Research Targets — Not Measured' dist/public/assets
+          grep -R -Fq 'https://heruahmose.github.io/QueenCalifia-CyberAI/' dist/public
+
+          if grep -RInE 'queencalifia-cyberai\.web\.app|H\.K\. AI triage|Powered by Claude · Memory enabled|Successfully subscribed!|Quantum Gate Fidelity: 99\.7%|federal tax-exempt status pending' dist/public; then
+            echo "::error::Stale endpoint, false runtime, synthetic metric, or outdated legal status detected."
+            exit 1
+          fi
 
       - name: Execute built Pages artifact in Chrome
         shell: bash

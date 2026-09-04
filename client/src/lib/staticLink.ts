@@ -39,8 +39,8 @@ function staticFixture(path: string, input: unknown): unknown {
         typeof payload.question === "string" ? payload.question.trim() : "";
       return {
         response: question
-          ? "H.K. is running in the public static portfolio. Explore the verified TRAI pages for the seven-organ architecture, research record, and venture status."
-          : "H.K. is running in the public static portfolio.",
+          ? "H.K. is running as a bounded static guide with no external model. Explore the verified TRAI pages for the seven-organ architecture, research record, and organ status."
+          : "H.K. is running as a bounded static guide with no external model.",
       };
     }
 
