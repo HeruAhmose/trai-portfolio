@@ -1,9 +1,9 @@
-import { z } from 'zod';
-import { publicProcedure, router } from '../_core/trpc';
-import { invokeLLM } from '../_core/llm';
-import * as db from '../db';
+import { z } from "zod";
+import { publicProcedure, router } from "../_core/trpc";
+import { invokeLLM } from "../_core/llm";
+import * as db from "../db";
 
-const HK_SYSTEM_PROMPT = `You are H.K., the TechBridge AI Triage Assistant named after Horace King, the master bridge builder.
+const HK_SYSTEM_PROMPT = `You are H.K., the TRAI portfolio and TechBridge support assistant named after Horace King, the master bridge builder.
 
 Your core principles:
 1. NEVER GUESS - If you don't know something, say so clearly
@@ -35,32 +35,25 @@ Format your responses with:
 const AMC_CONTEXT = `
 Advanced Material Composite (AMC) Hypothesis Overview:
 
-The AMC is a multi-functional composite material developed from hemp-derived carbon with integrated crystalline phases (quartz, tourmaline, magnetite, rare-earth elements).
+Tamerian proposes a bio-derived multifunctional composite for self-powered sensing. The architecture combines hemp-derived carbon with specified crystalline phases (quartz, tourmaline, magnetite, and rare-earth-doped particles) in a polymer binder.
 
-Key Properties:
-- Electrical Conductivity: 10²–10⁶ S/m
-- Multi-Modal Energy Harvesting: Piezoelectric + Thermoelectric + Spin-Seebeck
-- Quantum Sensing: Room-temperature operation with T₂ coherence >5 μs
-- Biocompatibility: ISO 10993-5 compliant
-- Thermal Stability: -50°C to +500°C
+Claimed ranges and research targets — not achieved measurements:
+- Electrical conductivity: patent range 10²–10⁶ S/m
+- Energy harvesting: proposed piezoelectric + thermoelectric + spin-Seebeck coupling
+- Quantum sensing: coherence hypothesis >500 ns at 300 K, with a 1–10 μs research target; not confirmed
+- Biocompatibility: ISO 10993-5 testing is part of the validation plan; compliance is not established
+- Thermal stability: patent target -50°C to +500°C; not independently validated
 
-Patent Claims (25 total):
-- Composition & Material Claims (1–15): Material properties, crystalline phases, electrical/thermal/optical properties
-- Manufacturing Method Claims (16–18): Fiber preparation, pyrolysis, composite assembly
-- Device & System Claims (19–25): Energy harvesting devices, quantum sensors, biomedical implants, DNA storage, environmental sensors, wearable generators, integrated systems
+Patent record:
+- U.S. provisional application 63/934,269
+- Filed Dec 11 2025
+- 25 claims
 
-Applications:
-1. Energy Harvesting: Self-powered devices, wearable generators
-2. Quantum Sensing: Magnetic field sensors, precision measurements
-3. Biomedical: Implantable devices, biocompatible substrates
-4. Data Storage: DNA storage on hemp-derived substrates
-5. Environmental Monitoring: Multi-parameter sensors
-
-Research Status:
-- Preprint published with comprehensive validation
-- 2 USPTO patent applications filed (63/934,269)
-- Experimental validation: 150+ experiments conducted
-- Validation rate: 92% of core hypothesis claims
+Research status:
+- 2026 preprint; not peer reviewed
+- 51 peer-reviewed papers cited for constituent mechanisms
+- Integrated performance has not been independently validated
+- The prescribed validation program covers constituent characterization, coupled-system testing, manufacturing scale-up, durability, and field validation
 `;
 
 export const hkAssistantRouter = router({
@@ -72,7 +65,7 @@ export const hkAssistantRouter = router({
         conversationHistory: z
           .array(
             z.object({
-              role: z.enum(['user', 'assistant']),
+              role: z.enum(["user", "assistant"]),
               content: z.string(),
             })
           )
@@ -83,27 +76,34 @@ export const hkAssistantRouter = router({
     .mutation(async ({ input }) => {
       try {
         // Load persistent memory if sessionId provided
-        let persistentHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
+        let persistentHistory: Array<{
+          role: "user" | "assistant";
+          content: string;
+        }> = [];
         if (input.sessionId) {
-          const memoryEntries = await db.getConversationHistory(input.sessionId, 10);
+          const memoryEntries = await db.getConversationHistory(
+            input.sessionId,
+            10
+          );
           persistentHistory = memoryEntries.reverse().map(m => ({
-            role: m.role as 'user' | 'assistant',
+            role: m.role as "user" | "assistant",
             content: m.content,
           }));
         }
-        const combinedHistory = persistentHistory.length > 0
-          ? persistentHistory
-          : (input.conversationHistory || []);
+        const combinedHistory =
+          persistentHistory.length > 0
+            ? persistentHistory
+            : input.conversationHistory || [];
 
         // Build conversation with context
         const messages = [
           {
-            role: 'system' as const,
+            role: "system" as const,
             content: `${HK_SYSTEM_PROMPT}\n\n${AMC_CONTEXT}`,
           },
           ...combinedHistory,
           {
-            role: 'user' as const,
+            role: "user" as const,
             content: input.question,
           },
         ];
@@ -119,34 +119,44 @@ export const hkAssistantRouter = router({
            the client and broke its typing. */
         const raw = response.choices[0]?.message?.content;
         const assistantMessage: string =
-          typeof raw === 'string'
+          typeof raw === "string"
             ? raw
             : Array.isArray(raw)
               ? raw
                   .map((part: unknown) =>
-                    typeof part === 'string'
+                    typeof part === "string"
                       ? part
-                      : (part && typeof part === 'object' && 'text' in part
-                          ? String((part as { text?: unknown }).text ?? '')
-                          : '')
+                      : part && typeof part === "object" && "text" in part
+                        ? String((part as { text?: unknown }).text ?? "")
+                        : ""
                   )
-                  .join('')
-              : '';
+                  .join("")
+              : "";
         const finalMessage: string =
-          assistantMessage.trim() || 'I apologize, but I was unable to process your question.';
+          assistantMessage.trim() ||
+          "I apologize, but I was unable to process your question.";
 
         // Save to persistent memory and award points
         if (input.sessionId) {
-          await db.saveConversationMessage(input.sessionId, 'user', input.question);
-          await db.saveConversationMessage(input.sessionId, 'assistant', finalMessage);
+          await db.saveConversationMessage(
+            input.sessionId,
+            "user",
+            input.question
+          );
+          await db.saveConversationMessage(
+            input.sessionId,
+            "assistant",
+            finalMessage
+          );
           const history = await db.getConversationHistory(input.sessionId, 5);
           if (history.length <= 2) {
-            await db.addPoints(input.sessionId, 15, 'hk-conversationalist');
+            await db.addPoints(input.sessionId, 15, "hk-conversationalist");
             await db.createNotification({
               sessionId: input.sessionId,
-              type: 'achievement',
-              title: 'H.K. Conversationalist',
-              message: 'You started a conversation with H.K. Assistant! +15 points',
+              type: "achievement",
+              title: "H.K. Conversationalist",
+              message:
+                "You started a conversation with H.K. Assistant! +15 points",
             });
           } else {
             await db.addPoints(input.sessionId, 2);
@@ -160,12 +170,12 @@ export const hkAssistantRouter = router({
           sessionId: input.sessionId,
         };
       } catch (error) {
-        console.error('[H.K. Assistant] Error:', error);
+        console.error("[H.K. Assistant] Error:", error);
         return {
           success: false,
           response:
-            'I encountered an issue processing your question. Please try again or escalate to a Digital Navigator.',
-          error: error instanceof Error ? error.message : 'Unknown error',
+            "I encountered an issue processing your question. Please try again or escalate to a Digital Navigator.",
+          error: error instanceof Error ? error.message : "Unknown error",
         };
       }
     }),
@@ -187,34 +197,38 @@ export const hkAssistantRouter = router({
   // Get AMC hypothesis context
   getAMCContext: publicProcedure.query(() => {
     return {
-      title: 'Advanced Material Composite (AMC) Hypothesis',
+      title: "Advanced Material Composite (AMC) Hypothesis",
       overview:
-        'Multi-functional composite from hemp-derived carbon with integrated crystalline phases',
+        "Bio-derived multifunctional composite proposed for self-powered sensing",
       keyProperties: {
-        conductivity: '10²–10⁶ S/m',
-        energyHarvesting: 'Piezoelectric + Thermoelectric + Spin-Seebeck',
-        quantumSensing: 'Room-temperature, T₂ > 5 μs',
-        biocompatibility: 'ISO 10993-5 compliant',
-        thermalStability: '-50°C to +500°C',
+        conductivity: "Patent range 10²–10⁶ S/m; not an achieved measurement",
+        energyHarvesting:
+          "Proposed piezoelectric + thermoelectric + spin-Seebeck coupling",
+        quantumSensing:
+          "Coherence hypothesis >500 ns at 300 K; 1–10 μs research target; not confirmed",
+        biocompatibility:
+          "ISO 10993-5 testing planned; compliance is not established",
+        thermalStability:
+          "Patent target -50°C to +500°C; not independently validated",
       },
       patentClaims: {
         total: 25,
-        composition: '1–15',
-        manufacturing: '16–18',
-        device: '19–25',
+        composition: "1–15",
+        manufacturing: "16–18",
+        device: "19–25",
       },
       applications: [
-        'Energy Harvesting',
-        'Quantum Sensing',
-        'Biomedical Implants',
-        'DNA Storage',
-        'Environmental Monitoring',
+        "Energy Harvesting",
+        "Quantum Sensing",
+        "Biomedical Implants",
+        "DNA Storage",
+        "Environmental Monitoring",
       ],
       researchStatus: {
-        preprint: 'Published',
-        patents: '2 USPTO applications filed',
-        experiments: '150+ conducted',
-        validationRate: '92%',
+        preprint: "2026 preprint; not peer reviewed",
+        patents: "U.S. provisional application 63/934,269 filed; 25 claims",
+        literature: "51 peer-reviewed papers cited for constituent mechanisms",
+        integratedValidation: "Not independently validated",
       },
     };
   }),
@@ -224,115 +238,115 @@ export const hkAssistantRouter = router({
     .input(
       z.object({
         topic: z.enum([
-          'digital-access',
-          'amc-hypothesis',
-          'cybersecurity',
-          'material-science',
-          'research',
-          'community-impact',
+          "digital-access",
+          "amc-hypothesis",
+          "cybersecurity",
+          "material-science",
+          "research",
+          "community-impact",
         ]),
       })
     )
     .query(({ input }) => {
       const triageGuides: Record<string, Record<string, unknown>> = {
-        'digital-access': {
-          title: 'Digital Access Support',
+        "digital-access": {
+          title: "Digital Access Support",
           steps: [
-            'Identify your specific need (email, job search, education, etc.)',
-            'Visit your nearest TechBridge hub',
-            'Meet with a Digital Navigator',
-            'Get step-by-step guidance',
+            "Identify your specific need (email, job search, education, etc.)",
+            "Visit your nearest TechBridge hub",
+            "Meet with a Digital Navigator",
+            "Get step-by-step guidance",
           ],
           resources: [
-            'TechBridge Hub Locator',
-            'H.K. AI 24/7 Triage',
-            'Digital Navigator Network',
+            "TechBridge Hub Locator",
+            "H.K. AI 24/7 Triage",
+            "Digital Navigator Network",
           ],
-          escalation: 'Contact local hub for complex issues',
+          escalation: "Contact local hub for complex issues",
         },
-        'amc-hypothesis': {
-          title: 'AMC Hypothesis Information',
+        "amc-hypothesis": {
+          title: "AMC Hypothesis Information",
           steps: [
-            'Review the preprint publication',
-            'Explore the 25 patent claims',
-            'Understand the 7-step manufacturing process',
-            'Learn about applications',
+            "Review the preprint publication",
+            "Explore the 25 patent claims",
+            "Understand the 7-step manufacturing process",
+            "Learn about applications",
           ],
           resources: [
-            'AMC Preprint',
-            'Patent Claims Explorer',
-            'Manufacturing Process Visualization',
-            'Research Lab Section',
+            "AMC Preprint",
+            "Patent Claims Explorer",
+            "Manufacturing Process Visualization",
+            "Research Lab Section",
           ],
-          escalation: 'Contact research team for technical questions',
+          escalation: "Contact research team for technical questions",
         },
         cybersecurity: {
-          title: 'Cybersecurity Support',
+          title: "Cybersecurity Support",
           steps: [
-            'Identify your security concern',
-            'Review relevant case studies',
-            'Understand best practices',
-            'Implement recommendations',
+            "Identify your security concern",
+            "Review relevant case studies",
+            "Understand best practices",
+            "Implement recommendations",
           ],
           resources: [
-            'Case Studies Section',
-            'Security Resources',
-            'Threat Intelligence',
-            'Compliance Guides',
+            "Case Studies Section",
+            "Security Resources",
+            "Threat Intelligence",
+            "Compliance Guides",
           ],
-          escalation: 'Escalate to security team for incidents',
+          escalation: "Escalate to security team for incidents",
         },
-        'material-science': {
-          title: 'Material Science Resources',
+        "material-science": {
+          title: "Material Science Resources",
           steps: [
-            'Explore the AMC composite architecture',
-            'Review patent claims (1–15 for composition)',
-            'Understand manufacturing methods (16–18)',
-            'Learn device applications (19–25)',
+            "Explore the AMC composite architecture",
+            "Review patent claims (1–15 for composition)",
+            "Understand manufacturing methods (16–18)",
+            "Learn device applications (19–25)",
           ],
           resources: [
-            'Material Science Section',
-            'Patent Explorer',
-            'Manufacturing Visualization',
-            'Research Publications',
+            "Material Science Section",
+            "Patent Explorer",
+            "Manufacturing Visualization",
+            "Research Publications",
           ],
-          escalation: 'Contact material science team',
+          escalation: "Contact material science team",
         },
         research: {
-          title: 'Research & Academic Support',
+          title: "Research & Academic Support",
           steps: [
-            'Review published preprint',
-            'Explore experimental methodology',
-            'Understand validation results',
-            'Access research data',
+            "Review published preprint",
+            "Explore experimental methodology",
+            "Understand validation results",
+            "Access research data",
           ],
           resources: [
-            'Research Lab Section',
-            'Preprint Publication',
-            'Experimental Data',
-            'Patent Applications',
+            "Research Lab Section",
+            "Preprint Publication",
+            "Experimental Data",
+            "Patent Applications",
           ],
-          escalation: 'Contact research team for collaboration',
+          escalation: "Contact research team for collaboration",
         },
-        'community-impact': {
-          title: 'Community Impact Initiatives',
+        "community-impact": {
+          title: "Community Impact Initiatives",
           steps: [
-            'Learn about TechBridge model',
-            'Explore hub network',
-            'Understand impact metrics',
-            'Get involved',
+            "Learn about TechBridge model",
+            "Explore hub network",
+            "Understand impact metrics",
+            "Get involved",
           ],
           resources: [
-            'Community Impact Section',
-            'Hub Network Map',
-            'TechMinutes Dashboard',
-            'Impact Reports',
+            "Community Impact Section",
+            "Hub Network Map",
+            "TechMinutes Dashboard",
+            "Impact Reports",
           ],
-          escalation: 'Contact community team for participation',
+          escalation: "Contact community team for participation",
         },
       };
 
-      return triageGuides[input.topic] || triageGuides['digital-access'];
+      return triageGuides[input.topic] || triageGuides["digital-access"];
     }),
 });
 

@@ -110,7 +110,8 @@
   },
   "overrides": {
     "esbuild@<=0.24.2": "0.28.2",
-    "nanoid@<4": "3.3.18"
+    "nanoid@<4": "3.3.18",
+    "qs": "6.16.0"
   },
   "packageManager": "npm@10.9.3",
   "private": true

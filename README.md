@@ -16,18 +16,18 @@ organs of one regenerative organism. `HeruAhmose/peoples-portfolio` is the
 **entry gate**: a deliberately curated 8-page cut of overlapping material. A
 visitor lands there first; two organs have a page on the gate, the rest open
 outward. This repo is **the estate** — the unpruned counterpart — and it is
-where organs 04, 05, and 07 actually live as pages, since those three ventures
+where organs 04, 05, and 07 actually live as pages, since those three organs
 have no site of their own yet.
 
-| #   | Organ · role                    | Venture                | Status                           | Where it lives                                                                                                                                                                                                                              |
-| --- | ------------------------------- | ---------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 01  | Skeleton — material sovereignty | Tamerian Materials     | U.S. provisional filed           | own repo: [tamerian-materials](https://github.com/HeruAhmose/tamerian-materials) → [tamerian-materials.com](https://tamerian-materials.com/) · deeper content here: [`/materials`](client/src/pages/MaterialsScience.tsx)                   |
-| 02  | Heart — biological sovereignty  | True Mélange Φ         | Formulation set · entity pending | own repo: [blue-gold-daily](https://github.com/HeruAhmose/blue-gold-daily) → [blue-gold-daily site](https://heruahmose.github.io/blue-gold-daily/layers.html) · deeper content here: [`/true-melange`](client/src/pages/TrueMelangePhi.tsx) |
-| 03  | Brain — cognitive sovereignty   | Queen Califia          | Demo standing                    | own repo: [QueenCalifia-CyberAI](https://github.com/HeruAhmose/QueenCalifia-CyberAI) → [queencalifia-cyberai.web.app](https://queencalifia-cyberai.web.app/) · deeper content here: [`/queen-califia`](client/src/pages/QueenCalifia.tsx)   |
-| 04  | Vessels — mobility sovereignty  | Mela Nation            | EIN filed · early development    | **lives here** — [`/mela-nation`](client/src/pages/MelaNation.tsx) — no separate repo                                                                                                                                                       |
-| 05  | Skin — identity sovereignty     | MeLaNiNa               | EIN filed · early development    | **lives here** — [`/melanina`](client/src/pages/MeLaNiNa.tsx) — no separate repo                                                                                                                                                            |
-| 06  | Hands — community reach         | TechBridge Collective  | Designed · not yet operating     | own repo: [techbridge-collective](https://github.com/HeruAhmose/techbridge-collective) → [techbridge-collective.org](https://techbridge-collective.org/) · deeper content here: [`/community`](client/src/pages/CommunityImpact.tsx)        |
-| 07  | Lymphatic — regenerative return | The Peoples Foundation | EIN obtained · exemption pending | **lives here** — [`/peoples-foundation`](client/src/pages/PeoplesFoundation.tsx) — no separate repo                                                                                                                                         |
+| #   | Organ · role                    | Organ                  | Status                           | Where it lives                                                                                                                                                                                                                                |
+| --- | ------------------------------- | ---------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 01  | Skeleton — material sovereignty | Tamerian Materials     | U.S. provisional filed           | own repo: [tamerian-materials](https://github.com/HeruAhmose/tamerian-materials) → [tamerian-materials.com](https://tamerian-materials.com/) · deeper content here: [`/materials`](client/src/pages/MaterialsScience.tsx)                     |
+| 02  | Heart — biological sovereignty  | True Mélange Φ         | Formulation set · entity pending | own repo: [blue-gold-daily](https://github.com/HeruAhmose/blue-gold-daily) → [blue-gold-daily site](https://heruahmose.github.io/blue-gold-daily/layers.html) · deeper content here: [`/true-melange`](client/src/pages/TrueMelangePhi.tsx)   |
+| 03  | Brain — cognitive sovereignty   | Queen Califia          | Demo standing                    | own repo: [QueenCalifia-CyberAI](https://github.com/HeruAhmose/QueenCalifia-CyberAI) → [Queen Califia Pages](https://heruahmose.github.io/QueenCalifia-CyberAI/) · deeper content here: [`/queen-califia`](client/src/pages/QueenCalifia.tsx) |
+| 04  | Vessels — mobility sovereignty  | Mela Nation            | EIN filed · early development    | **lives here** — [`/mela-nation`](client/src/pages/MelaNation.tsx) — no separate repo                                                                                                                                                         |
+| 05  | Skin — identity sovereignty     | MeLaNiNa               | EIN filed · early development    | **lives here** — [`/melanina`](client/src/pages/MeLaNiNa.tsx) — no separate repo                                                                                                                                                              |
+| 06  | Hands — community reach         | TechBridge Collective  | Designed · not yet operating     | own repo: [techbridge-collective](https://github.com/HeruAhmose/techbridge-collective) → [techbridge-collective.org](https://techbridge-collective.org/) · deeper content here: [`/community`](client/src/pages/CommunityImpact.tsx)          |
+| 07  | Lymphatic — regenerative return | The Peoples Foundation | Operating under §508(c)(1)(A)    | **lives here** — [`/peoples-foundation`](client/src/pages/PeoplesFoundation.tsx) — no separate repo                                                                                                                                           |
 
 **TRAI Coin is not an eighth organ.** It is represented in this estate as a
 proposed cross-organ governance and participation layer. Its dedicated
@@ -97,10 +97,11 @@ root-relative `"/assets/"` references.
   (`drizzle/schema.ts`) via the `gamification` tRPC router
   (`server/routers/features.ts`). A `GamificationHUD` widget surfaces live
   points/badges/level across the site.
-- **H.K. Assistant** — a chat assistant ("named after Horace King, the master
-  bridge builder") powered by Claude, with conversation memory, wired through
-  `server/routers/hkAssistant.ts` and rendered by
-  `client/src/components/HKAssistant.tsx`.
+- **H.K. Assistant** — the deployed Pages build is a bounded static guide using
+  verified portfolio context, with no external model or persisted conversation
+  history. The optional server-connected implementation is wired through
+  `server/routers/hkAssistant.ts` and may use an external model and session
+  history only when that server is explicitly configured.
 - **TRAI Coin** (`/trai-coin`) — a first-class, cross-organ governance and
   participation concept experience, explicitly separated from claims of token
   issuance, public sale, smart-contract deployment, or investment performance.

@@ -92,7 +92,7 @@ export default function Home() {
       year: "2025",
       status: "ACTIVE",
       description:
-        "Bridging the digital divide across North Carolina with H.K. AI and human navigators.",
+        "Bridging the digital divide across North Carolina with deterministic H.K. triage and human Navigators.",
     },
     {
       icon: Infinity,
@@ -111,7 +111,7 @@ export default function Home() {
       description:
         "Advanced threat detection, quantum-ready encryption, and sovereign security architecture.",
       delay: 0,
-      url: "https://queencalifia-cyberai.web.app/",
+      url: "https://heruahmose.github.io/QueenCalifia-CyberAI/",
     },
     {
       icon: <Layers className="w-10 h-10" />,
