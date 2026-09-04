@@ -1,302 +1,277 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { AudioSystem } from '../components/AudioSystem';
-import { CinematicIntro } from '../components/CinematicIntro';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { CinematicIntro } from "../components/CinematicIntro";
 
-interface Application {
+interface ApplicationDirection {
   id: string;
   name: string;
   description: string;
   icon: string;
-  technologies: string[];
-  impact: string;
-  status: 'active' | 'development' | 'research';
+  enablingIdeas: string[];
+  validationNeed: string;
+  status: "Concept only" | "Research hypothesis";
 }
+
+const applications: ApplicationDirection[] = [
+  {
+    id: "structural-monitoring",
+    name: "Structural Monitoring",
+    description:
+      "A proposed self-powered sensing direction for strain, vibration, and damage signals.",
+    icon: "🌉",
+    enablingIdeas: [
+      "Piezoelectric response",
+      "Signal electrodes",
+      "Energy harvesting",
+    ],
+    validationNeed:
+      "Requires calibrated prototypes, environmental testing, and comparison with established sensors.",
+    status: "Concept only",
+  },
+  {
+    id: "wearables",
+    name: "Wearable Sensors",
+    description:
+      "A proposed device direction using motion or thermal gradients as local energy inputs.",
+    icon: "⌚",
+    enablingIdeas: [
+      "Thermal gradients",
+      "Mechanical input",
+      "Low-power electronics",
+    ],
+    validationNeed:
+      "Requires measured output, durability, skin-contact safety, and application-specific review.",
+    status: "Concept only",
+  },
+  {
+    id: "ambient-sensors",
+    name: "Ambient Sensor Nodes",
+    description:
+      "A research direction for reduced-battery environmental or industrial monitoring.",
+    icon: "◉",
+    enablingIdeas: [
+      "Multi-modal inputs",
+      "Energy management",
+      "Wireless telemetry",
+    ],
+    validationNeed:
+      "Requires a power budget, duty-cycle data, field durability, and a working integrated prototype.",
+    status: "Concept only",
+  },
+  {
+    id: "thermal-vibration",
+    name: "Thermal & Vibration Harvesting",
+    description:
+      "A proposed use of waste heat and mechanical motion as inputs to an integrated harvester.",
+    icon: "⚡",
+    enablingIdeas: [
+      "Thermoelectric target",
+      "Piezoelectric target",
+      "Storage interface",
+    ],
+    validationNeed:
+      "Requires controlled measurements of the integrated composite and end-to-end conversion efficiency.",
+    status: "Concept only",
+  },
+  {
+    id: "quantum-sensing",
+    name: "Quantum Sensing",
+    description:
+      "A hypothesis involving rare-earth-doped crystalline constituents at room temperature.",
+    icon: "⚛️",
+    enablingIdeas: ["Rare-earth candidates", "Optical pumping", "Spin readout"],
+    validationNeed:
+      "T₂ >500 ns at 300 K is a target and hypothesis—not a confirmed measurement.",
+    status: "Research hypothesis",
+  },
+  {
+    id: "biomedical",
+    name: "Biomedical Research Direction",
+    description:
+      "A long-horizon concept for devices influenced by body heat or motion.",
+    icon: "✚",
+    enablingIdeas: [
+      "Low-power sensing",
+      "Encapsulation",
+      "Thermal or motion input",
+    ],
+    validationNeed:
+      "Requires material characterization, biocompatibility evidence, safety testing, and regulatory review.",
+    status: "Research hypothesis",
+  },
+];
 
 export const Applications: React.FC = () => {
   const [selectedApp, setSelectedApp] = useState(0);
   const [showIntro, setShowIntro] = useState(true);
-
-  const applications: Application[] = [
-    {
-      id: 'wearables',
-      name: 'Advanced Wearables',
-      description: 'Self-powered health monitoring devices using thermoelectric and piezoelectric energy harvesting',
-      icon: '⌚',
-      technologies: ['Thermoelectric Generation', 'Piezoelectric Sensors', 'Energy Harvesting'],
-      impact: 'Continuous health monitoring without battery replacement',
-      status: 'active',
-    },
-    {
-      id: 'aerospace',
-      name: 'Aerospace Systems',
-      description: 'Lightweight composite materials for aircraft with integrated energy harvesting',
-      icon: '✈️',
-      technologies: ['Hemp-Derived Carbon Fibers', 'Composite Materials', 'Thermal Management'],
-      impact: 'Reduced weight, improved efficiency, self-powered systems',
-      status: 'development',
-    },
-    {
-      id: 'quantum',
-      name: 'Quantum Computing',
-      description: 'Room-temperature quantum processors using rare-earth dopants in quartz',
-      icon: '⚛️',
-      technologies: ['Quantum Coherence', 'Rare-Earth Dopants', 'Quantum Gates'],
-      impact: 'Practical quantum computing without cryogenic cooling',
-      status: 'research',
-    },
-    {
-      id: 'renewable',
-      name: 'Renewable Energy',
-      description: 'Integrated thermoelectric and piezoelectric power generation systems',
-      icon: '⚡',
-      technologies: ['Thermoelectric Modules', 'Piezoelectric Generators', 'Energy Storage'],
-      impact: 'Harness waste heat and mechanical vibrations for power',
-      status: 'active',
-    },
-    {
-      id: 'biomedical',
-      name: 'Biomedical Devices',
-      description: 'Implantable medical devices powered by body heat and motion',
-      icon: '🏥',
-      technologies: ['Biocompatible Materials', 'Thermoelectric Harvesting', 'Wireless Power'],
-      impact: 'Eliminate need for surgical battery replacement procedures',
-      status: 'development',
-    },
-    {
-      id: 'iot',
-      name: 'IoT Networks',
-      description: 'Self-powered IoT sensors using ambient energy harvesting',
-      icon: '🌐',
-      technologies: ['Energy Harvesting', 'Wireless Communication', 'Low-Power Electronics'],
-      impact: 'Maintenance-free sensor networks for decades',
-      status: 'active',
-    },
-    {
-      id: 'automotive',
-      name: 'Automotive Integration',
-      description: 'Vehicle components with integrated energy harvesting from heat and vibration',
-      icon: '🚗',
-      technologies: ['Thermoelectric Harvesting', 'Vibration Sensing', 'Composite Integration'],
-      impact: 'Improved fuel efficiency and reduced emissions',
-      status: 'development',
-    },
-    {
-      id: 'defense',
-      name: 'Defense & Security',
-      description: 'Advanced materials for cybersecurity and quantum-resistant encryption',
-      icon: '🛡️',
-      technologies: ['Quantum Cryptography', 'Advanced Materials', 'Secure Computing'],
-      impact: 'Next-generation security infrastructure',
-      status: 'research',
-    },
-  ];
-
-  const statusColors = {
-    active: 'text-green-400',
-    development: 'text-yellow-400',
-    research: 'text-magenta-400',
-  };
-
-  const statusBgColors = {
-    active: 'bg-green-400/10 border-green-400/50',
-    development: 'bg-yellow-400/10 border-yellow-400/50',
-    research: 'bg-magenta-400/10 border-magenta-400/50',
-  };
+  const selected = applications[selectedApp];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-deep-blue to-black pt-20 pb-20">
-      <AudioSystem
-        soundscapeUrl="https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/UgWHTjVZwvkJrG87DtM3NE/applications-soundscape_1f487949.wav"
-        volume={0.3}
-        autoPlay={true}
-        loop={true}
-      />
-
+    <div className="min-h-screen bg-gradient-to-b from-black via-deep-blue to-black pb-20 pt-20">
       {showIntro && (
         <CinematicIntro
-          title="Applications"
-          subtitle="Transforming Industries with Advanced Technology"
+          title="Application Directions"
+          subtitle="Concepts that still require integrated evidence"
           color="#00ffff"
-          icon="🚀"
-          duration={2.5}
+          icon="◇"
           onComplete={() => setShowIntro(false)}
         />
       )}
-      {/* Cinematic Intro */}
-      <motion.div
-        initial={{ opacity: 0, y: -40 }}
+
+      <motion.header
+        initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2 }}
-        className="max-w-6xl mx-auto px-4 mb-12"
+        transition={{ duration: 0.8 }}
+        className="mx-auto mb-12 max-w-6xl px-4 text-center"
       >
-        <h1 className="text-6xl font-bold text-center mb-4">
+        <p className="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-cyan-300">
+          Application map · not a deployment record
+        </p>
+        <h1 className="mb-4 text-5xl font-bold sm:text-6xl">
           <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            Real-World Applications
+            Proposed Application Directions
           </span>
         </h1>
-        <p className="text-center text-cyan-400 text-lg mb-8">
-          Transforming Industries with Advanced Materials & Quantum Technology
+        <p className="mx-auto max-w-3xl text-lg leading-relaxed text-cyan-100/70">
+          These directions explain why the architecture may be worth testing.
+          TRAI represents no active deployment, commercialization timetable,
+          customer integration, or measured application outcome.
         </p>
-      </motion.div>
+      </motion.header>
 
-      {/* Application Grid */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-        className="max-w-6xl mx-auto px-4 mb-12 grid grid-cols-2 md:grid-cols-4 gap-4"
-      >
-        {applications.map((app, idx) => (
+      <div className="mx-auto mb-12 grid max-w-6xl grid-cols-2 gap-3 px-4 md:grid-cols-3 lg:grid-cols-6">
+        {applications.map((application, index) => (
           <motion.button
-            key={app.id}
-            onClick={() => setSelectedApp(idx)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4 + idx * 0.05 }}
-            className={`p-4 rounded-lg border-2 transition-all ${
-              selectedApp === idx
-                ? 'bg-cyan-400/20 border-cyan-400 shadow-lg shadow-cyan-400/50'
-                : 'bg-black/50 border-cyan-400/30 hover:border-cyan-400/60'
+            key={application.id}
+            type="button"
+            onClick={() => setSelectedApp(index)}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            aria-pressed={selectedApp === index}
+            className={`rounded-lg border p-4 text-left transition-all ${
+              selectedApp === index
+                ? "border-cyan-300 bg-cyan-300/15 shadow-lg shadow-cyan-400/20"
+                : "border-cyan-400/25 bg-black/45 hover:border-cyan-400/55"
             }`}
           >
-            <div className="text-3xl mb-2">{app.icon}</div>
-            <div className="text-xs font-bold text-cyan-400">{app.name}</div>
-            <div className={`text-xs mt-1 ${statusColors[app.status]}`}>
-              {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
-            </div>
+            <span className="mb-2 block text-3xl" aria-hidden="true">
+              {application.icon}
+            </span>
+            <span className="block text-sm font-bold text-cyan-200">
+              {application.name}
+            </span>
+            <span className="mt-2 block text-[10px] uppercase tracking-wider text-white/45">
+              {application.status}
+            </span>
           </motion.button>
         ))}
-      </motion.div>
+      </div>
 
-      {/* Selected Application Details */}
-      <motion.div
-        key={selectedApp}
-        initial={{ opacity: 0, y: 20 }}
+      <motion.section
+        key={selected.id}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-4xl mx-auto px-4 mb-12"
+        className="mx-auto mb-14 max-w-4xl px-4"
       >
-        <div
-          className={`p-8 rounded-lg border-2 ${statusBgColors[applications[selectedApp].status]}`}
-        >
-          <div className="flex items-start gap-6 mb-6">
-            <div className="text-6xl">{applications[selectedApp].icon}</div>
-            <div className="flex-1">
-              <h3 className="text-3xl font-bold text-cyan-400 mb-2">
-                {applications[selectedApp].name}
-              </h3>
-              <p className="text-cyan-400 text-lg mb-4">
-                {applications[selectedApp].description}
+        <div className="rounded-xl border border-cyan-400/40 bg-cyan-400/5 p-7 sm:p-9">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+            <span className="text-6xl" aria-hidden="true">
+              {selected.icon}
+            </span>
+            <div>
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-yellow-300">
+                {selected.status}
               </p>
-              <div className={`inline-block px-3 py-1 rounded text-sm font-bold ${statusColors[applications[selectedApp].status]}`}>
-                {applications[selectedApp].status.toUpperCase()}
-              </div>
+              <h2 className="text-3xl font-bold text-cyan-200">
+                {selected.name}
+              </h2>
+              <p className="mt-3 text-lg leading-relaxed text-cyan-50/75">
+                {selected.description}
+              </p>
             </div>
           </div>
 
-          {/* Technologies */}
-          <div className="mb-6">
-            <h4 className="font-bold text-gold-400 mb-3">Technologies</h4>
+          <div className="mt-7">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-yellow-300">
+              Enabling ideas
+            </h3>
             <div className="flex flex-wrap gap-2">
-              {applications[selectedApp].technologies.map((tech, idx) => (
-                <motion.span
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 + idx * 0.05 }}
-                  className="px-3 py-1 bg-black/50 border border-cyan-400/50 rounded text-xs text-cyan-400"
+              {selected.enablingIdeas.map(idea => (
+                <span
+                  key={idea}
+                  className="rounded-full border border-cyan-400/30 bg-black/35 px-3 py-1 text-xs text-cyan-200"
                 >
-                  {tech}
-                </motion.span>
+                  {idea}
+                </span>
               ))}
             </div>
           </div>
 
-          {/* Impact */}
-          <div className="p-4 bg-black/50 rounded border border-green-400/30">
-            <h4 className="font-bold text-green-400 mb-2">Impact</h4>
-            <p className="text-sm text-cyan-400">{applications[selectedApp].impact}</p>
+          <div className="mt-7 rounded-lg border border-yellow-300/30 bg-black/45 p-5">
+            <h3 className="font-bold text-yellow-300">Evidence required</h3>
+            <p className="mt-2 text-sm leading-relaxed text-cyan-50/70">
+              {selected.validationNeed}
+            </p>
           </div>
         </div>
-      </motion.div>
+      </motion.section>
 
-      {/* Application Categories */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8, duration: 0.8 }}
-        className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8"
-      >
-        {[
-          {
-            title: 'Active Deployments',
-            count: applications.filter((a) => a.status === 'active').length,
-            color: 'green',
-          },
-          {
-            title: 'In Development',
-            count: applications.filter((a) => a.status === 'development').length,
-            color: 'yellow',
-          },
-          {
-            title: 'Research Phase',
-            count: applications.filter((a) => a.status === 'research').length,
-            color: 'magenta',
-          },
-        ].map((category, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 + idx * 0.1 }}
-            className={`p-6 rounded-lg border-2 border-${category.color}-400/50 bg-${category.color}-400/10 text-center`}
-          >
-            <div className={`text-4xl font-bold text-${category.color}-400 mb-2`}>
-              {category.count}
-            </div>
-            <div className={`text-sm text-${category.color}-400`}>{category.title}</div>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* Implementation Roadmap */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
-        className="max-w-6xl mx-auto px-4 mt-12 p-8 bg-black/50 rounded-lg border border-cyan-400/30"
-      >
-        <h3 className="text-2xl font-bold text-cyan-400 mb-6 text-center">
-          Implementation Timeline
-        </h3>
-        <div className="space-y-4">
+      <section className="mx-auto max-w-6xl px-4">
+        <h2 className="mb-6 text-center text-2xl font-bold text-cyan-200">
+          VALIDATION SEQUENCE
+        </h2>
+        <div className="grid gap-4 md:grid-cols-4">
           {[
-            { year: '2024-2025', milestone: 'Active deployment in wearables and IoT' },
-            { year: '2025-2026', milestone: 'Aerospace and automotive integration' },
-            { year: '2026-2027', milestone: 'Biomedical device commercialization' },
-            { year: '2027-2028', milestone: 'Quantum computing system deployment' },
-          ].map((item, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.4 + idx * 0.1 }}
-              className="flex items-center gap-4 p-4 bg-black/70 rounded border border-cyan-400/20"
+            [
+              "01",
+              "Constituent evidence",
+              "Confirm inputs and baseline properties.",
+            ],
+            [
+              "02",
+              "Integrated prototype",
+              "Build and document a reproducible specimen.",
+            ],
+            [
+              "03",
+              "Controlled measurement",
+              "Record methods, controls, uncertainty, and raw data.",
+            ],
+            [
+              "04",
+              "Independent gate",
+              "Replicate before any deployment or outcome claim.",
+            ],
+          ].map(([number, title, copy]) => (
+            <article
+              key={number}
+              className="rounded-lg border border-cyan-400/25 bg-black/45 p-5"
             >
-              <div className="w-24 font-bold text-gold-400">{item.year}</div>
-              <div className="flex-1 text-cyan-400">{item.milestone}</div>
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-3 h-3 rounded-full bg-green-400"
-              />
-            </motion.div>
+              <p className="font-mono text-xs text-yellow-300">{number}</p>
+              <h3 className="mt-3 font-bold text-cyan-200">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/55">
+                {copy}
+              </p>
+            </article>
           ))}
         </div>
-      </motion.div>
+        <div className="mt-8 grid gap-4 sm:grid-cols-4">
+          {[
+            ["Directions mapped", applications.length],
+            ["Active deployments", 0],
+            ["Measured outcomes", 0],
+            ["Provisional filings", 1],
+          ].map(([label, value]) => (
+            <div
+              key={label}
+              className="rounded border border-white/10 bg-white/[0.03] p-4 text-center"
+            >
+              <p className="text-2xl font-bold text-cyan-300">{value}</p>
+              <p className="mt-1 text-xs text-white/45">{label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };
