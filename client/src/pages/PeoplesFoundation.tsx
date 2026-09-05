@@ -38,7 +38,7 @@ export default function PeoplesFoundation() {
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-end overflow-hidden">
         <SovereignNebulaGL />
-        <div className="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-12 py-32">
+        <div className="relative z-10 mx-auto max-w-[1200px] px-4 py-32 sm:px-6 lg:px-12">
           <motion.p
             className="ceremonial-label mb-6"
             initial={{ opacity: 0 }}
@@ -49,7 +49,7 @@ export default function PeoplesFoundation() {
           </motion.p>
           <div className="overflow-hidden mb-2">
             <motion.h1
-              className="display-heading text-[clamp(3rem,7vw,6rem)]"
+              className="display-heading break-words text-[clamp(2.625rem,12vw,6rem)]"
               initial={{ y: "110%" }}
               animate={{ y: 0 }}
               transition={{
@@ -63,7 +63,7 @@ export default function PeoplesFoundation() {
           </div>
           <div className="overflow-hidden mb-10">
             <motion.h1
-              className="display-heading text-[clamp(3rem,7vw,6rem)]"
+              className="display-heading break-words text-[clamp(2.625rem,12vw,6rem)]"
               style={{ color: C.gold, WebkitTextFillColor: C.gold }}
               initial={{ y: "110%" }}
               animate={{ y: 0 }}
