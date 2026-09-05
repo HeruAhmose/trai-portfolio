@@ -28,8 +28,10 @@ export default function MaterialsScience() {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground">
-              <span className="text-primary neon-text">TAMERIAN MATERIALS</span>
+            <h1 className="text-[clamp(2.5rem,12vw,3.75rem)] font-bold leading-none text-foreground">
+              <span className="neon-text break-words text-primary">
+                TAMERIAN MATERIALS
+              </span>
             </h1>
             <p className="text-2xl text-cyan mb-2">
               Bio-derived multifunctional composites for self-powered sensing
