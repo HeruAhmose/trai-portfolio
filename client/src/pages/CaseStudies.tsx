@@ -327,10 +327,14 @@ export default function CaseStudies() {
           className="mb-16 text-center"
         >
           <ShieldCheck className="mx-auto mb-4 text-primary" size={40} />
-          <h1 className="mb-4 text-5xl font-bold md:text-6xl">
-            <span className="text-primary">Validation Plans</span>
-            <span className="mx-2 text-foreground/60">·</span>
-            <span className="text-cyan-400">Evidence Before Claims</span>
+          <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl">
+            <span className="block text-primary sm:inline">
+              Validation Plans
+            </span>
+            <span className="mx-2 hidden text-foreground/60 sm:inline">·</span>
+            <span className="mt-2 block text-cyan-400 sm:mt-0 sm:inline">
+              Evidence Before Claims
+            </span>
           </h1>
           <p className="mx-auto max-w-3xl text-lg text-foreground/70">
             These are governed plans and documented public states—not customer
