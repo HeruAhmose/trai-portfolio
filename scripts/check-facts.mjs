@@ -18,7 +18,13 @@ import { readFileSync } from "node:fs";
 import { readdirSync, statSync } from "node:fs";
 import { join, extname } from "node:path";
 
-const ROOTS = ["client/src", "patched"].filter(d => {
+const ROOTS = [
+  "client/src",
+  "client/public",
+  "server",
+  "shared",
+  "patched",
+].filter(d => {
   try {
     return statSync(d).isDirectory();
   } catch {
@@ -52,6 +58,30 @@ const FORBIDDEN = [
   {
     re: /\bpost[- ]doctoral dissertation\b/i,
     why: "implies credentials and institutional review that do not exist",
+  },
+  {
+    re: /\b(Fortune 500|Government Defense Agency)\b/i,
+    why: "no such client or deployment is documented",
+  },
+  {
+    re: /\b(real quantum coherence data|Technology adopted by \d+\+ organizations)\b/i,
+    why: "synthetic validation or adoption language is not evidence",
+  },
+  {
+    re: /\bH\.K\. AI\b/i,
+    why: "public H.K. is bounded static guidance and TechBridge triage is deterministic",
+  },
+  {
+    re: /\bEINs? filed\b|\bEIN\b[^\n]{0,40}\bObtained\b/i,
+    why: "entity status must be evidenced per organ and is not established by this record",
+  },
+  {
+    re: /queencalifia-cyberai\.web\.app|qc\.tamerian-materials\.com/i,
+    why: "retired or unavailable Queen Califia endpoint",
+  },
+  {
+    re: /\b(?:Success Rate\s*[:=]\s*["']?(?:87|92)%|Threat Detection\s*[:=]\s*["']?99\.2%|95% threat detection accuracy)\b/i,
+    why: "synthetic performance metric has no supporting record",
   },
   {
     re: /\bpatent(ed)?\s+(technology|process|material)\b/i,
@@ -103,7 +133,7 @@ function walk(dir, out = []) {
     if (st.isDirectory()) {
       if (["node_modules", "dist", ".git"].includes(e)) continue;
       walk(p, out);
-    } else if ([".tsx", ".ts", ".html", ".md"].includes(extname(p))) {
+    } else if ([".tsx", ".ts", ".html", ".md", ".json"].includes(extname(p))) {
       out.push(p);
     }
   }
@@ -111,6 +141,135 @@ function walk(dir, out = []) {
 }
 
 const PROJECTION_RULES = [
+  {
+    file: "client/src/App.tsx",
+    required: [
+      'Route path="/case-studies"',
+      'Route path="/patent-claims"',
+      'Route path="/peoples-foundation"',
+    ],
+    forbidden: [
+      "AIInsightsPage",
+      "ProjectGallery",
+      "GamificationPage",
+      "TrainingDashboard",
+      'Route path="/admin"',
+    ],
+  },
+  {
+    file: "client/src/components/CeremonialIntro.tsx",
+    required: ["Skip intro", "User-paced", "Enter TRAI", "Mandate of Mistrust"],
+    forbidden: ["trai_visit_count", "watchdog", "autoAdvance"],
+  },
+  {
+    file: "client/src/components/CinematicIntro.tsx",
+    required: ["Skip intro", "User-paced", "Enter section"],
+    forbidden: ["duration * 1000", "auto-dismiss", "autoAdvance"],
+  },
+  {
+    file: "client/src/pages/CaseStudies.tsx",
+    required: [
+      "Evidence Before Claims",
+      "63/934,269",
+      "Measured outcomes",
+      "Designed · pilot not operating",
+    ],
+    forbidden: [
+      "Fortune 500 Financial Institution",
+      "Government Defense Agency",
+      "87%",
+      "99.2%",
+    ],
+  },
+  {
+    file: "client/src/components/InteractiveTimeline.tsx",
+    required: [
+      "Pilot not operating",
+      "Preprint; not peer reviewed",
+      "Measured outcomes represented",
+    ],
+    forbidden: ["450 pC/N", "5000+", "99.2%", "87%"],
+  },
+  {
+    file: "client/src/pages/CommunityImpact.tsx",
+    required: [
+      "Designed · not operating",
+      "No active hub",
+      "not a generative authority",
+    ],
+    forbidden: ["H.K. AI", "Hub Network Map", "Impact Reports"],
+  },
+  {
+    file: "client/src/components/TechMinutesDashboard.tsx",
+    required: [
+      "Planning data · no live outcomes",
+      "People targeted, not served",
+      "No credentials or personal information stored",
+    ],
+    forbidden: ["Success Rate", "Funding Secured", "Residents Served"],
+  },
+  {
+    file: "client/src/pages/Applications.tsx",
+    required: [
+      "not a deployment record",
+      "Active deployments",
+      "Measured outcomes",
+    ],
+    forbidden: ["Active deployment in wearables", "Commercialization: 2026"],
+  },
+  {
+    file: "client/src/components/InteractiveBlochSphere.tsx",
+    required: [
+      "no measured coherence values",
+      "hypothesis, not confirmed",
+      "integrated-composite coherence time",
+    ],
+    forbidden: ["Real quantum coherence data", "T2: 8.5", "T2: 5.2"],
+  },
+  {
+    file: "client/src/pages/EnergyHarvesting.tsx",
+    required: [
+      "Patent-application targets · not measured data",
+      "integrated TRAI device",
+    ],
+    forbidden: ["Measured Output", "proven output"],
+  },
+  {
+    file: "client/src/pages/Manufacturing.tsx",
+    required: [
+      "not a production record",
+      "does not represent a qualified line",
+      "Required next: documented specimen",
+    ],
+    forbidden: ["Production ready", "Yield achieved"],
+  },
+  {
+    file: "client/src/pages/ResearchLab.tsx",
+    required: [
+      "not peer reviewed",
+      "No phase is represented as complete",
+      "51 peer-reviewed references",
+    ],
+    forbidden: ["Validation complete", "Experimental Data"],
+  },
+  {
+    file: "client/src/pages/MaterialsScience.tsx",
+    required: [
+      "Bio-derived multifunctional composites for self-powered sensing",
+      "Application sequence · not executed",
+      "actual materials or devices",
+    ],
+    forbidden: ["carbon-negative material", "validated composite"],
+  },
+  {
+    file: "client/src/pages/QuantumResearchEnhanced.tsx",
+    required: [
+      "Quantum-Sensing Hypothesis",
+      "measured coherence data",
+      "unconfirmed for the integrated composite",
+    ],
+    forbidden: ["Quantum Gate Fidelity", "Real quantum coherence data"],
+  },
   {
     file: "client/src/pages/HomeSovereign.tsx",
     required: [
@@ -127,10 +286,64 @@ const PROJECTION_RULES = [
   },
   {
     file: "client/src/pages/PeoplesFoundation.tsx",
-    required: ["§508(c)(1)(A)", "IRS determination", "Not represented"],
+    required: [
+      "§508(c)(1)(A)",
+      "IRS determination",
+      "Not represented",
+      "adopted or automatic",
+    ],
     forbidden: [
       "Application Pending",
       "tax-exempt status application is pending",
+      '{ label: "EIN", status: "Obtained"',
+      "automatically, structurally, permanently",
+    ],
+  },
+  {
+    file: "client/src/pages/MelaNation.tsx",
+    required: [
+      "early-development North Carolina logistics concept",
+      "No current operations are represented",
+      "Documented launch plan",
+    ],
+    forbidden: ["operating venture", "Documented operating model"],
+  },
+  {
+    file: "client/src/pages/MeLaNiNa.tsx",
+    required: [
+      "MeLaNiNa remains in development",
+      "currently available products",
+    ],
+    forbidden: ["products available now", "EIN filed"],
+  },
+  {
+    file: "client/src/pages/NuTaMeri.tsx",
+    required: [
+      "early-development concept",
+      "not yet operating",
+      "https://heruahmose.github.io/QueenCalifia-CyberAI/",
+    ],
+    forbidden: ["operating venture", "qc.tamerian-materials.com"],
+  },
+  {
+    file: "client/src/pages/TrueMelangePhi.tsx",
+    required: [
+      "no shared approval or registration status is assumed",
+      "no manufacturing agreement is represented",
+      "pending counsel review",
+    ],
+    forbidden: ["EINs filed for all 4 entities", "Permitted claims"],
+  },
+  {
+    file: "client/src/pages/ContactPage.tsx",
+    required: [
+      "not a securities offering",
+      "no manufacturing agreement",
+      "No operating hub",
+    ],
+    forbidden: [
+      "Equity, SAFE, and grant structures available",
+      "TechBridge provides everything except the space",
     ],
   },
   {
@@ -202,8 +415,37 @@ const PROJECTION_RULES = [
     required: [
       "Operating under §508(c)(1)(A)",
       "https://heruahmose.github.io/QueenCalifia-CyberAI/",
+      "Early development · not operating",
+      "Designed · not yet operating",
     ],
-    forbidden: ["queencalifia-cyberai.web.app", "exemption pending"],
+    forbidden: [
+      "queencalifia-cyberai.web.app",
+      "exemption pending",
+      "EIN filed",
+    ],
+  },
+  {
+    file: "client/public/trai-ecosystem.json",
+    required: [
+      '"doctrine": "Mandate of Mistrust"',
+      '"stage": "pre-pilot"',
+      "pilot is not yet operating",
+      "https://heruahmose.github.io/QueenCalifia-CyberAI/",
+    ],
+    forbidden: [
+      "queencalifia-cyberai.web.app",
+      "qc.tamerian-materials.com",
+      '"id": "techbridge",\n      "name": "TechBridge",\n      "full": "TechBridge Collective",\n      "role": "Community reach",\n      "url": "https://techbridge-collective.org/",\n      "primary": false,\n      "stage": "live"',
+    ],
+  },
+  {
+    file: "README.md",
+    required: [
+      "Early development",
+      "Designed · not yet operating",
+      "Experimental dashboards",
+    ],
+    forbidden: ["EIN filed · early development", "48-page React"],
   },
   {
     file: "VERIFIED_FACTS.md",

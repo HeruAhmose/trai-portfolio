@@ -13,22 +13,22 @@ const PRINCIPLES = [
   {
     num: "01",
     title: "Regenerative Return",
-    copy: "A defined percentage of TRAI revenue flows to the Foundation. Not charity — architecture. The organism is designed to return value to the community that built it.",
+    copy: "The design calls for a defined community-return allocation from future TRAI revenue. The percentage, trigger, and enforcement mechanism require adopted governing documents and written agreements.",
   },
   {
     num: "02",
     title: "Community Ownership",
-    copy: "The Foundation covenant prevents any single investor from capturing the community-return mechanism. Sovereignty is structural, not rhetorical.",
+    copy: "The proposed covenant is intended to prevent unilateral capture of the community-return mechanism. That protection is a design objective until the governing documents are adopted.",
   },
   {
     num: "03",
     title: "Transparent Allocation",
-    copy: "All Foundation allocations are documented and publicly reported. The community has the right to see where the return flows.",
+    copy: "The allocation model is intended to require documented, publicly reported value flows. No allocation or reporting history is represented yet.",
   },
   {
     num: "04",
     title: "Long Horizon",
-    copy: "The Foundation is designed to outlast any single venture. It is the lymphatic system — it keeps the organism healthy across generations.",
+    copy: "The long-horizon design is meant to outlast any single venture. Its durability depends on governance, funding, compliance, and accountable execution that are still being developed.",
   },
 ];
 
@@ -38,7 +38,7 @@ export default function PeoplesFoundation() {
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-end overflow-hidden">
         <SovereignNebulaGL />
-        <div className="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-12 py-32">
+        <div className="relative z-10 mx-auto max-w-[1200px] px-4 py-32 sm:px-6 lg:px-12">
           <motion.p
             className="ceremonial-label mb-6"
             initial={{ opacity: 0 }}
@@ -49,7 +49,7 @@ export default function PeoplesFoundation() {
           </motion.p>
           <div className="overflow-hidden mb-2">
             <motion.h1
-              className="display-heading text-[clamp(3rem,7vw,6rem)]"
+              className="display-heading break-words text-[clamp(2.625rem,12vw,6rem)]"
               initial={{ y: "110%" }}
               animate={{ y: 0 }}
               transition={{
@@ -63,7 +63,7 @@ export default function PeoplesFoundation() {
           </div>
           <div className="overflow-hidden mb-10">
             <motion.h1
-              className="display-heading text-[clamp(3rem,7vw,6rem)]"
+              className="display-heading break-words text-[clamp(2.625rem,12vw,6rem)]"
               style={{ color: C.gold, WebkitTextFillColor: C.gold }}
               initial={{ y: "110%" }}
               animate={{ y: 0 }}
@@ -114,7 +114,6 @@ export default function PeoplesFoundation() {
               </p>
               <div className="space-y-3">
                 {[
-                  { label: "EIN", status: "Obtained", color: "#4ade80" },
                   {
                     label: "Federal operating position",
                     status: "§508(c)(1)(A)",
@@ -164,10 +163,12 @@ export default function PeoplesFoundation() {
                 Return is not optional.
               </h2>
               <p className="text-xl text-[#f4f0e6]/55 font-sans leading-relaxed">
-                The Foundation is not a marketing gesture. It is a legal
-                covenant built into the TRAI architecture from the beginning.
-                When the organism generates revenue, a defined percentage flows
-                to the Foundation — automatically, structurally, permanently.
+                The Foundation is intended to make regenerative return a
+                structural commitment rather than a marketing gesture. The
+                allocation percentage and enforcement mechanism are not
+                represented as adopted or automatic; they remain subject to
+                governing documents, written agreements, counsel, and applicable
+                law.
               </p>
             </motion.div>
           </div>

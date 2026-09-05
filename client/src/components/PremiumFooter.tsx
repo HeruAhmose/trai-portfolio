@@ -23,7 +23,7 @@ const SOCIAL_LINKS = [
 
 const FOOTER_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Projects", href: "/projects" },
+  { label: "Validation Plans", href: "/case-studies" },
   { label: "Research", href: "/research" },
   { label: "Timeline", href: "/timeline" },
   { label: "Contact", href: "/contact" },

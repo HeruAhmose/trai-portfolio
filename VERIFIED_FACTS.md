@@ -30,17 +30,17 @@
 - Hemp: hempseed oil + hemp seed protein only (GRAS GRN 765/771/778) — NO CBD, NO THC
 - Color: Galdieria extract blue (21 CFR 73.167) primary; butterfly pea flower (21 CFR 73.69) secondary; Gardenia excluded
 - Green tea + L-theanine sensory lift; cacao reserved for future line extension
-- Co-packer: Carolina Beverage Group (704.799.2337, Mooresville NC), Niche Beverage Company
-- Critical path: EINs pending for all 4 entities; trademark search on "Melange" pending
+- Prospective co-manufacturer outreach: Carolina Beverage Group (Mooresville, NC) and Niche Beverage Company; no manufacturing agreement is represented
+- Entity and trademark status must be stated per organ; this record does not generalize a shared approval or registration status
 
 ## TechBridge
 
 - techbridge-collective.org
 - 1.2M NC residents lack digital access (SPAN §9.1)
-- $250K total investment over 2 years
-- Year 1: 2 hubs, 4 Navigators; Year 2: 4 hubs
-- SOM: 3,200 residents served
-- Navigator pay: $20/hr
+- $250K planned investment model over 2 years
+- Targets: Year 1, 2 hubs and 4 Navigators; Year 2, 4 hubs
+- Two-year service target: 3,200 residents; not an achieved outcome
+- Navigator pay assumption: $20/hr
 - Public H.K. uses bounded static guidance with no external model; TechBridge's own runtime uses deterministic in-browser triage
 - Named for Horace King, enslaved master bridge builder
 
@@ -48,15 +48,14 @@
 
 - https://heruahmose.github.io/QueenCalifia-CyberAI/
 - Flask/React stack · Triple-core: Cyber Core, Identity Core, Markets Core
-- Sovereign Afrofuturist aesthetic · Generative AI training engine
-- Veteran-owned + Black-owned business designations
+- Human-authorized, evidence-bound public command demo; no autonomous operational authority is represented
 - Named for legendary Black warrior queen from 1510 novel
 
 ## Seven Organs
 
 1. Tamerian Materials — Skeleton — tamerian-materials.com
 2. True Mélange Φ — Heart — /true-melange
-3. Queen Califia — Brain — queencalifia-cyberai.web.app
+3. Queen Califia — Brain — https://heruahmose.github.io/QueenCalifia-CyberAI/
 4. Mela Nation — Vessels — early development
 5. MeLaNiNa — Skin — early development
 6. TechBridge — Hands — techbridge-collective.org

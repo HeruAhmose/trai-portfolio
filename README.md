@@ -1,7 +1,8 @@
 # TRAI Portfolio
 
-The full TRAI estate site — a 48-page React 19 + Vite + wouter + Tailwind app
-with an Express/tRPC server that does **not** run on the deployed site.
+The curated TRAI estate site — an evidence-bound React 19 + Vite + wouter +
+Tailwind app with an optional Express/tRPC development surface that does **not**
+run on the deployed site.
 Deployed static to GitHub Pages at
 [heruahmose.github.io/trai-portfolio](https://heruahmose.github.io/trai-portfolio/).
 
@@ -24,8 +25,8 @@ have no site of their own yet.
 | 01  | Skeleton — material sovereignty | Tamerian Materials     | U.S. provisional filed           | own repo: [tamerian-materials](https://github.com/HeruAhmose/tamerian-materials) → [tamerian-materials.com](https://tamerian-materials.com/) · deeper content here: [`/materials`](client/src/pages/MaterialsScience.tsx)                     |
 | 02  | Heart — biological sovereignty  | True Mélange Φ         | Formulation set · entity pending | own repo: [blue-gold-daily](https://github.com/HeruAhmose/blue-gold-daily) → [blue-gold-daily site](https://heruahmose.github.io/blue-gold-daily/layers.html) · deeper content here: [`/true-melange`](client/src/pages/TrueMelangePhi.tsx)   |
 | 03  | Brain — cognitive sovereignty   | Queen Califia          | Demo standing                    | own repo: [QueenCalifia-CyberAI](https://github.com/HeruAhmose/QueenCalifia-CyberAI) → [Queen Califia Pages](https://heruahmose.github.io/QueenCalifia-CyberAI/) · deeper content here: [`/queen-califia`](client/src/pages/QueenCalifia.tsx) |
-| 04  | Vessels — mobility sovereignty  | Mela Nation            | EIN filed · early development    | **lives here** — [`/mela-nation`](client/src/pages/MelaNation.tsx) — no separate repo                                                                                                                                                         |
-| 05  | Skin — identity sovereignty     | MeLaNiNa               | EIN filed · early development    | **lives here** — [`/melanina`](client/src/pages/MeLaNiNa.tsx) — no separate repo                                                                                                                                                              |
+| 04  | Vessels — mobility sovereignty  | Mela Nation            | Early development                | **lives here** — [`/mela-nation`](client/src/pages/MelaNation.tsx) — no separate repo                                                                                                                                                         |
+| 05  | Skin — identity sovereignty     | MeLaNiNa               | Early development                | **lives here** — [`/melanina`](client/src/pages/MeLaNiNa.tsx) — no separate repo                                                                                                                                                              |
 | 06  | Hands — community reach         | TechBridge Collective  | Designed · not yet operating     | own repo: [techbridge-collective](https://github.com/HeruAhmose/techbridge-collective) → [techbridge-collective.org](https://techbridge-collective.org/) · deeper content here: [`/community`](client/src/pages/CommunityImpact.tsx)          |
 | 07  | Lymphatic — regenerative return | The Peoples Foundation | Operating under §508(c)(1)(A)    | **lives here** — [`/peoples-foundation`](client/src/pages/PeoplesFoundation.tsx) — no separate repo                                                                                                                                           |
 
@@ -92,11 +93,9 @@ root-relative `"/assets/"` references.
 
 ## Notable features
 
-- **Gamification** (`/gamification`) — session-based explorer points, levels,
-  badges, and a leaderboard, persisted through a `userPoints` table
-  (`drizzle/schema.ts`) via the `gamification` tRPC router
-  (`server/routers/features.ts`). A `GamificationHUD` widget surfaces live
-  points/badges/level across the site.
+- **Public route discipline** — the deployed Pages experience exposes the
+  evidence-bound estate routes listed above. Experimental dashboards,
+  gamification, and other server-dependent prototypes are not public routes.
 - **H.K. Assistant** — the deployed Pages build is a bounded static guide using
   verified portfolio context, with no external model or persisted conversation
   history. The optional server-connected implementation is wired through
@@ -112,7 +111,7 @@ root-relative `"/assets/"` references.
 
 | Path       | Role                                                |
 | ---------- | --------------------------------------------------- |
-| `client/`  | Vite React app — 48 pages under `client/src/pages/` |
+| `client/`  | Vite React app and the curated public estate routes |
 | `server/`  | Express entry, tRPC routers, storage/db helpers     |
 | `shared/`  | Shared TS used by both client and server            |
 | `drizzle/` | Schema + SQL migrations (MySQL)                     |

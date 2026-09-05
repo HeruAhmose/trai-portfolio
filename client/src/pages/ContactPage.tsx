@@ -1,88 +1,134 @@
-import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { SovereignNebulaGL } from '@/components/SovereignNebulaGL';
+import React, { useEffect } from "react";
+import { motion } from "framer-motion";
+import { SovereignNebulaGL } from "@/components/SovereignNebulaGL";
 
-const C = { gold: '#d8aa43', cream: '#f4f0e6', dark: '#050709', mid: '#070b0f' };
+const C = {
+  gold: "#d8aa43",
+  cream: "#f4f0e6",
+  dark: "#050709",
+  mid: "#070b0f",
+};
 
 const CONTACT_METHODS = [
   {
-    icon: '📅',
-    label: 'Book a 30-Minute Call',
-    value: 'calendly.com/aitconsult22/30min',
-    href: 'https://calendly.com/aitconsult22/30min',
-    cta: 'Schedule Now',
+    icon: "📅",
+    label: "Book a 30-Minute Call",
+    value: "calendly.com/aitconsult22/30min",
+    href: "https://calendly.com/aitconsult22/30min",
+    cta: "Schedule Now",
     primary: true,
   },
   {
-    icon: '✉',
-    label: 'Email',
-    value: 'aitconsult22@gmail.com',
-    href: 'mailto:aitconsult22@gmail.com',
-    cta: 'Send Email',
+    icon: "✉",
+    label: "Email",
+    value: "aitconsult22@gmail.com",
+    href: "mailto:aitconsult22@gmail.com",
+    cta: "Send Email",
     primary: false,
   },
   {
-    icon: '☎',
-    label: 'Phone',
-    value: '(216) 307-0174',
-    href: 'tel:+12163070174',
-    cta: 'Call Now',
+    icon: "☎",
+    label: "Phone",
+    value: "(216) 307-0174",
+    href: "tel:+12163070174",
+    cta: "Call Now",
     primary: false,
   },
   {
-    icon: '⌥',
-    label: 'GitHub',
-    value: 'github.com/HeruAhmose',
-    href: 'https://github.com/HeruAhmose',
-    cta: 'View Code',
+    icon: "⌥",
+    label: "GitHub",
+    value: "github.com/HeruAhmose",
+    href: "https://github.com/HeruAhmose",
+    cta: "View Code",
     primary: false,
   },
 ];
 
 const AUDIENCE = [
-  { role: 'Investors', copy: 'Seed-stage capital for Tamerian Materials, True Mélange Φ, and TechBridge. Equity, SAFE, and grant structures available.' },
-  { role: 'Co-packers & Manufacturers', copy: 'Seeking co-packing partners for Blue-Gold Daily RTD tea. Contact Carolina Beverage Group or reach out directly.' },
-  { role: 'Research Partners', copy: 'Collaboration on hemp-derived carbon composite characterization, quantum sensing, and thermoelectric measurement.' },
-  { role: 'Community Partners', copy: 'Host a TechBridge Digital Navigator hub in your facility. Low-lift partnership — TechBridge provides everything except the space.' },
+  {
+    role: "Funding Conversations",
+    copy: "Discuss potential grant, research, or commercial pathways for the independently staged TRAI organs. This site is not a securities offering and does not represent an available equity or SAFE instrument.",
+  },
+  {
+    role: "Co-packers & Manufacturers",
+    copy: "Discuss prospective Blue-Gold Daily development and qualification. Planning materials identify outreach targets, but no manufacturing agreement or qualified production run is represented.",
+  },
+  {
+    role: "Research Partners",
+    copy: "Discuss constituent characterization, integrated-composite validation, thermoelectric measurement, and the separately labeled quantum-sensing hypothesis.",
+  },
+  {
+    role: "Community Partners",
+    copy: "Explore the requirements for a proposed TechBridge Digital Navigator pilot hub. No operating hub, active Navigator roster, or host commitment is represented.",
+  },
 ];
 
 export default function ContactPage() {
   // Load Calendly widget script
   useEffect(() => {
-    const existing = document.getElementById('calendly-script');
+    const existing = document.getElementById("calendly-script");
     if (!existing) {
-      const script = document.createElement('script');
-      script.id = 'calendly-script';
-      script.src = 'https://assets.calendly.com/assets/external/widget.js';
+      const script = document.createElement("script");
+      script.id = "calendly-script";
+      script.src = "https://assets.calendly.com/assets/external/widget.js";
       script.async = true;
       document.head.appendChild(script);
     }
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://assets.calendly.com/assets/external/widget.css';
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://assets.calendly.com/assets/external/widget.css";
     document.head.appendChild(link);
   }, []);
 
   return (
     <div className="min-h-screen" style={{ background: C.dark }}>
-
       {/* Hero */}
       <section className="relative min-h-[55vh] flex items-end overflow-hidden">
         <div className="absolute inset-0 pointer-events-none z-0 opacity-60">
           <SovereignNebulaGL />
         </div>
-        <div className="absolute inset-0 z-[1]" style={{ background: 'linear-gradient(to top, #050709 20%, transparent 100%)' }} />
+        <div
+          className="absolute inset-0 z-[1]"
+          style={{
+            background:
+              "linear-gradient(to top, #050709 20%, transparent 100%)",
+          }}
+        />
         <div className="relative z-[2] max-w-[1200px] mx-auto px-6 lg:px-12 py-28">
-          <motion.p className="ceremonial-label mb-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+          <motion.p
+            className="ceremonial-label mb-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
             Reach the Organism
           </motion.p>
           <div className="overflow-hidden mb-2">
-            <motion.h1 className="display-heading text-[clamp(3rem,7vw,6rem)]" initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 1.1, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}>
+            <motion.h1
+              className="display-heading text-[clamp(3rem,7vw,6rem)]"
+              initial={{ y: "110%" }}
+              animate={{ y: 0 }}
+              transition={{
+                duration: 1.1,
+                delay: 0.3,
+                ease: [0.23, 1, 0.32, 1],
+              }}
+            >
               Let's build
             </motion.h1>
           </div>
           <div className="overflow-hidden mb-10">
-            <motion.h1 className="display-heading text-[clamp(3rem,7vw,6rem)]" style={{ color: C.gold, WebkitTextFillColor: C.gold }} initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 1.1, delay: 0.5, ease: [0.23, 1, 0.32, 1] }}>
+            <motion.h1
+              className="display-heading text-[clamp(3rem,7vw,6rem)]"
+              style={{ color: C.gold, WebkitTextFillColor: C.gold }}
+              initial={{ y: "110%" }}
+              animate={{ y: 0 }}
+              transition={{
+                duration: 1.1,
+                delay: 0.5,
+                ease: [0.23, 1, 0.32, 1],
+              }}
+            >
               something sovereign.
             </motion.h1>
           </div>
@@ -99,19 +145,35 @@ export default function ContactPage() {
               <motion.a
                 key={m.label}
                 href={m.href}
-                target={m.href.startsWith('http') ? '_blank' : undefined}
-                rel={m.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                target={m.href.startsWith("http") ? "_blank" : undefined}
+                rel={
+                  m.href.startsWith("http") ? "noopener noreferrer" : undefined
+                }
                 className="block border p-6 group transition-all duration-300 gold-shimmer depth-card-3d"
-                style={{ borderColor: m.primary ? 'rgba(216,170,67,0.5)' : 'rgba(216,170,67,0.12)', background: m.primary ? 'rgba(216,170,67,0.05)' : 'transparent' }}
+                style={{
+                  borderColor: m.primary
+                    ? "rgba(216,170,67,0.5)"
+                    : "rgba(216,170,67,0.12)",
+                  background: m.primary
+                    ? "rgba(216,170,67,0.05)"
+                    : "transparent",
+                }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                whileHover={{ borderColor: 'rgba(216,170,67,0.6)', background: 'rgba(216,170,67,0.08)' }}
+                whileHover={{
+                  borderColor: "rgba(216,170,67,0.6)",
+                  background: "rgba(216,170,67,0.08)",
+                }}
               >
                 <div className="text-2xl mb-4 text-[#d8aa43]">{m.icon}</div>
-                <p className="text-xs font-mono text-[#f4f0e6]/40 tracking-[0.15em] uppercase mb-2">{m.label}</p>
-                <p className="text-sm font-sans text-[#f4f0e6]/70 mb-4 break-all">{m.value}</p>
+                <p className="text-xs font-mono text-[#f4f0e6]/40 tracking-[0.15em] uppercase mb-2">
+                  {m.label}
+                </p>
+                <p className="text-sm font-sans text-[#f4f0e6]/70 mb-4 break-all">
+                  {m.value}
+                </p>
                 <span className="text-xs font-mono text-[#d8aa43] tracking-[0.12em] uppercase group-hover:text-[#f4f0e6] transition-colors">
                   {m.cta} →
                 </span>
@@ -141,7 +203,12 @@ export default function ContactPage() {
       {/* Audience Gateways */}
       <section className="py-24 sovereign-bg">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
-          <motion.p className="ceremonial-label mb-12" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+          <motion.p
+            className="ceremonial-label mb-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
             Who Should Reach Out
           </motion.p>
           <div className="grid sm:grid-cols-2 gap-8">
@@ -154,8 +221,15 @@ export default function ContactPage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <h3 className="display-heading text-xl mb-4" style={{ color: C.gold, WebkitTextFillColor: C.gold }}>{a.role}</h3>
-                <p className="text-[#f4f0e6]/55 font-sans leading-relaxed text-sm">{a.copy}</p>
+                <h3
+                  className="display-heading text-xl mb-4"
+                  style={{ color: C.gold, WebkitTextFillColor: C.gold }}
+                >
+                  {a.role}
+                </h3>
+                <p className="text-[#f4f0e6]/55 font-sans leading-relaxed text-sm">
+                  {a.copy}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -167,19 +241,39 @@ export default function ContactPage() {
       {/* Footer CTA */}
       <section className="py-24 text-center" style={{ background: C.dark }}>
         <div className="max-w-[600px] mx-auto px-6">
-          <motion.p className="ceremonial-label mb-6" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+          <motion.p
+            className="ceremonial-label mb-6"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
             Jonathan Peoples
           </motion.p>
-          <motion.p className="text-[#f4f0e6]/40 font-sans text-sm leading-relaxed" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-            U.S. Navy Veteran (OEF) · CompTIA A+ · CompTIA Tech+ · 14+ Certifications<br />
+          <motion.p
+            className="text-[#f4f0e6]/40 font-sans text-sm leading-relaxed"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            U.S. Navy Veteran (OEF) · CompTIA A+ · CompTIA Tech+ · 14+
+            Certifications
+            <br />
             Concord, NC · Tamerian Renaissance Alliance Initiative
           </motion.p>
-          <motion.div className="mt-12 pt-12 border-t border-[#d8aa43]/10" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
-            <p className="text-[#f4f0e6]/25 text-xs font-mono tracking-[0.15em] uppercase mb-4">Experience Controls</p>
+          <motion.div
+            className="mt-12 pt-12 border-t border-[#d8aa43]/10"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <p className="text-[#f4f0e6]/25 text-xs font-mono tracking-[0.15em] uppercase mb-4">
+              Experience Controls
+            </p>
             <button
               onClick={() => {
-                try { localStorage.removeItem('trai_visit_count'); } catch {}
-                window.location.href = '/';
+                window.location.href = import.meta.env.BASE_URL;
               }}
               className="text-xs font-mono text-[#d8aa43]/50 tracking-[0.12em] uppercase hover:text-[#d8aa43] transition-colors border border-[#d8aa43]/15 px-4 py-2 hover:border-[#d8aa43]/40"
             >

@@ -3,7 +3,7 @@ import { publicProcedure, router } from "../_core/trpc";
 import { invokeLLM } from "../_core/llm";
 import * as db from "../db";
 
-const HK_SYSTEM_PROMPT = `You are H.K., the TRAI portfolio and TechBridge support assistant named after Horace King, the master bridge builder.
+const HK_SYSTEM_PROMPT = `You are the optional server-connected H.K. prototype for TRAI and TechBridge, named after Horace King, the master bridge builder. The deployed public portfolio uses a separate bounded static guide and does not call this model.
 
 Your core principles:
 1. NEVER GUESS - If you don't know something, say so clearly
@@ -11,6 +11,8 @@ Your core principles:
 3. DETERMINISTIC ROUTING - Guide users to the correct portal/resource
 4. STEP-BY-STEP GUIDANCE - Walk through each step clearly
 5. HUMAN ESCALATION - Know when to escalate to a Digital Navigator
+6. STATUS DISCIPLINE - Never imply that TechBridge hubs, Navigators, sessions, or measured outcomes currently exist; the pilot is designed but not operating
+7. AUTHORITY BOUNDARY - Never represent Queen Califia or any model as having autonomous operational authority
 
 Your expertise includes:
 - Digital access and technology support
@@ -24,7 +26,7 @@ When a user asks a question:
 2. Provide clear, step-by-step guidance
 3. Use simple language, avoid jargon
 4. Offer next steps and escalation paths
-5. Remember context from the conversation
+5. Use supplied context only when it is relevant and never treat model memory as verified evidence
 
 Format your responses with:
 - Clear sections using markdown
@@ -57,7 +59,7 @@ Research status:
 `;
 
 export const hkAssistantRouter = router({
-  // Query H.K. Assistant with Claude API
+  // Query the optional server-connected H.K. prototype through invokeLLM.
   query: publicProcedure
     .input(
       z.object({
@@ -108,7 +110,7 @@ export const hkAssistantRouter = router({
           },
         ];
 
-        // Call Claude API via invokeLLM
+        // Call the configured external model through the provider-agnostic boundary.
         const response = await invokeLLM({
           messages,
         });
@@ -253,16 +255,17 @@ export const hkAssistantRouter = router({
           title: "Digital Access Support",
           steps: [
             "Identify your specific need (email, job search, education, etc.)",
-            "Visit your nearest TechBridge hub",
-            "Meet with a Digital Navigator",
-            "Get step-by-step guidance",
+            "Use the bounded public guidance for a safe first step",
+            "Contact the project team about the proposed pilot if additional help is needed",
+            "Use established local service providers for needs that cannot wait for the pilot",
           ],
           resources: [
-            "TechBridge Hub Locator",
-            "H.K. AI 24/7 Triage",
-            "Digital Navigator Network",
+            "TechBridge public pilot design",
+            "Deterministic H.K. browser triage",
+            "Public project contact",
           ],
-          escalation: "Contact local hub for complex issues",
+          escalation:
+            "TechBridge is not yet operating hubs; contact an established local provider or the project team",
         },
         "amc-hypothesis": {
           title: "AMC Hypothesis Information",
@@ -284,17 +287,17 @@ export const hkAssistantRouter = router({
           title: "Cybersecurity Support",
           steps: [
             "Identify your security concern",
-            "Review relevant case studies",
-            "Understand best practices",
-            "Implement recommendations",
+            "Preserve evidence and avoid disclosing credentials",
+            "Review the public command demo and validation plan without treating it as an operational security service",
+            "Use a qualified incident-response provider for an active incident",
           ],
           resources: [
-            "Case Studies Section",
-            "Security Resources",
-            "Threat Intelligence",
-            "Compliance Guides",
+            "Queen Califia public command demo",
+            "Validation Plans section",
+            "NIST Cybersecurity Framework",
           ],
-          escalation: "Escalate to security team for incidents",
+          escalation:
+            "For an active incident, use a qualified security professional or the relevant service provider",
         },
         "material-science": {
           title: "Material Science Resources",
@@ -315,34 +318,35 @@ export const hkAssistantRouter = router({
         research: {
           title: "Research & Academic Support",
           steps: [
-            "Review published preprint",
-            "Explore experimental methodology",
-            "Understand validation results",
-            "Access research data",
+            "Review the 2026 preprint with its not-peer-reviewed status",
+            "Explore the proposed experimental methodology",
+            "Separate application ranges from achieved measurements",
+            "Use the 51-paper citation record for constituent mechanisms",
           ],
           resources: [
             "Research Lab Section",
-            "Preprint Publication",
-            "Experimental Data",
+            "Preprint and evidence boundary",
+            "Proposed validation methods",
             "Patent Applications",
           ],
           escalation: "Contact research team for collaboration",
         },
         "community-impact": {
-          title: "Community Impact Initiatives",
+          title: "Community Pilot Design",
           steps: [
-            "Learn about TechBridge model",
-            "Explore hub network",
-            "Understand impact metrics",
-            "Get involved",
+            "Learn about the proposed TechBridge model",
+            "Review the planned hub and Navigator targets",
+            "Understand the TechMinutes measurement design",
+            "Contact the project team about pilot participation",
           ],
           resources: [
             "Community Impact Section",
-            "Hub Network Map",
-            "TechMinutes Dashboard",
-            "Impact Reports",
+            "Proposed hub regions",
+            "TechMinutes measurement plan",
+            "Public project contact",
           ],
-          escalation: "Contact community team for participation",
+          escalation:
+            "Contact the project team; no operating hub or Navigator network is represented",
         },
       };
 

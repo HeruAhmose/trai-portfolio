@@ -1,43 +1,318 @@
-import React, { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Link } from "wouter";
 
 const SYSTEMS = [
-  { id: '01', name: 'Ecological Integration', signal: 'LAND', copy: 'The proposal calls for tree-supported structures, floating terraces, hempcrete, living walls, wildlife-sensitive development, and minimal soil disturbance. These are design intentions for a proposed city, not evidence of constructed infrastructure.' },
-  { id: '02', name: 'Living Walkways & Waterways', signal: 'WATER', copy: 'Canopy-level circulation, floating water gardens, waterways, and low-impact public movement are explicit proposal elements intended to keep the ground plane ecologically legible.' },
-  { id: '03', name: 'Zero-Emission Transit Concept', signal: 'MOBILITY', copy: 'The proposal imagines ZPE-powered hovercraft and wireless energy-supported movement. Those technologies are presented here as proposal architecture and research ambition, not as currently validated transit systems.' },
-  { id: '04', name: 'Distributed Energy Concept', signal: 'ENERGY', copy: 'Decentralized ZPE hubs, Tamerian Engine infrastructure, a proposed superconducting-grid concept, and wireless transmission appear in the proposal as planned technical systems. The public experience labels them as speculative/proposed rather than operational fact.' },
-  { id: '05', name: 'Queen Califia Management Concept', signal: 'INTELLIGENCE', copy: 'The proposal assigns Q.C. a future role in energy optimization, infrastructure sensing, transportation, water, waste, and emergency response. The current live Queen Califia system is not represented here as already operating a city.' },
+  {
+    id: "01",
+    name: "Ecological Integration",
+    signal: "LAND",
+    copy: "The proposal calls for tree-supported structures, floating terraces, hempcrete, living walls, wildlife-sensitive development, and minimal soil disturbance. These are design intentions for a proposed city, not evidence of constructed infrastructure.",
+  },
+  {
+    id: "02",
+    name: "Living Walkways & Waterways",
+    signal: "WATER",
+    copy: "Canopy-level circulation, floating water gardens, waterways, and low-impact public movement are explicit proposal elements intended to keep the ground plane ecologically legible.",
+  },
+  {
+    id: "03",
+    name: "Zero-Emission Transit Concept",
+    signal: "MOBILITY",
+    copy: "The proposal imagines ZPE-powered hovercraft and wireless energy-supported movement. Those technologies are presented here as proposal architecture and research ambition, not as currently validated transit systems.",
+  },
+  {
+    id: "04",
+    name: "Distributed Energy Concept",
+    signal: "ENERGY",
+    copy: "Decentralized ZPE hubs, Tamerian Engine infrastructure, a proposed superconducting-grid concept, and wireless transmission appear in the proposal as planned technical systems. The public experience labels them as speculative/proposed rather than operational fact.",
+  },
+  {
+    id: "05",
+    name: "Queen Califia Management Concept",
+    signal: "INTELLIGENCE",
+    copy: "The proposal assigns Q.C. a future role in energy optimization, infrastructure sensing, transportation, water, waste, and emergency response. The current public Queen Califia command demo is not represented here as already operating a city.",
+  },
 ] as const;
 
 function CityField({ active }: { active: number }) {
-  return <div className="relative aspect-[16/10] overflow-hidden border border-[#d8aa43]/20 bg-[#03101c]">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(216,170,67,.14),transparent_24%),linear-gradient(180deg,#061b2f_0%,#05243a_45%,#03111c_100%)]" />
-    <div className="absolute bottom-0 left-0 right-0 h-[31%] bg-[linear-gradient(180deg,rgba(13,104,129,.38),rgba(4,31,46,.92))]" />
-    {Array.from({length:13}).map((_,i)=><motion.div key={i} className="absolute bottom-[28%] border border-[#d8aa43]/25 bg-[linear-gradient(180deg,rgba(216,170,67,.11),rgba(5,20,31,.92))]" style={{left:`${4+i*7.4}%`,width:`${4.2+(i%3)*1.8}%`,height:`${18+(i*11)%38}%`,clipPath:i%4===0?'polygon(50% 0,100% 18%,88% 100%,12% 100%,0 18%)':i%3===0?'polygon(20% 0,80% 0,100% 100%,0 100%)':'none'}} animate={{borderColor:i===active*2?['rgba(216,170,67,.25)','rgba(216,170,67,.8)','rgba(216,170,67,.25)']:'rgba(216,170,67,.2)'}} transition={{duration:3.5,repeat:Infinity}} />)}
-    <motion.div className="absolute left-[8%] right-[8%] top-[50%] h-[3px] bg-gradient-to-r from-transparent via-[#7cc7ff]/80 to-transparent" animate={{opacity:[.35,.9,.35],scaleX:[.9,1,.92]}} transition={{duration:4,repeat:Infinity}} />
-    <motion.div className="absolute left-[15%] right-[15%] top-[57%] h-px bg-[#d8aa43]/55" animate={{x:['-2%','2%','-2%']}} transition={{duration:8,repeat:Infinity}} />
-    {Array.from({length:18}).map((_,i)=><span key={i} className="absolute h-1.5 w-1.5 rounded-full bg-[#63c583]/70" style={{left:`${5+(i*17)%90}%`,bottom:`${6+(i*13)%22}%`}}/>)}
-    <div className="absolute bottom-5 left-6 right-6 flex justify-between text-[9px] uppercase tracking-[.22em] text-white/30"><span>Nu Ta Meri /// proposal field</span><span>ecology · water · movement · intelligence</span></div>
-  </div>;
+  return (
+    <div className="relative aspect-[16/10] overflow-hidden border border-[#d8aa43]/20 bg-[#03101c]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(216,170,67,.14),transparent_24%),linear-gradient(180deg,#061b2f_0%,#05243a_45%,#03111c_100%)]" />
+      <div className="absolute bottom-0 left-0 right-0 h-[31%] bg-[linear-gradient(180deg,rgba(13,104,129,.38),rgba(4,31,46,.92))]" />
+      {Array.from({ length: 13 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute bottom-[28%] border border-[#d8aa43]/25 bg-[linear-gradient(180deg,rgba(216,170,67,.11),rgba(5,20,31,.92))]"
+          style={{
+            left: `${4 + i * 7.4}%`,
+            width: `${4.2 + (i % 3) * 1.8}%`,
+            height: `${18 + ((i * 11) % 38)}%`,
+            clipPath:
+              i % 4 === 0
+                ? "polygon(50% 0,100% 18%,88% 100%,12% 100%,0 18%)"
+                : i % 3 === 0
+                  ? "polygon(20% 0,80% 0,100% 100%,0 100%)"
+                  : "none",
+          }}
+          animate={{
+            borderColor:
+              i === active * 2
+                ? [
+                    "rgba(216,170,67,.25)",
+                    "rgba(216,170,67,.8)",
+                    "rgba(216,170,67,.25)",
+                  ]
+                : "rgba(216,170,67,.2)",
+          }}
+          transition={{ duration: 3.5, repeat: Infinity }}
+        />
+      ))}
+      <motion.div
+        className="absolute left-[8%] right-[8%] top-[50%] h-[3px] bg-gradient-to-r from-transparent via-[#7cc7ff]/80 to-transparent"
+        animate={{ opacity: [0.35, 0.9, 0.35], scaleX: [0.9, 1, 0.92] }}
+        transition={{ duration: 4, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute left-[15%] right-[15%] top-[57%] h-px bg-[#d8aa43]/55"
+        animate={{ x: ["-2%", "2%", "-2%"] }}
+        transition={{ duration: 8, repeat: Infinity }}
+      />
+      {Array.from({ length: 18 }).map((_, i) => (
+        <span
+          key={i}
+          className="absolute h-1.5 w-1.5 rounded-full bg-[#63c583]/70"
+          style={{
+            left: `${5 + ((i * 17) % 90)}%`,
+            bottom: `${6 + ((i * 13) % 22)}%`,
+          }}
+        />
+      ))}
+      <div className="absolute bottom-5 left-6 right-6 flex justify-between text-[9px] uppercase tracking-[.22em] text-white/30">
+        <span>Nu Ta Meri /// proposal field</span>
+        <span>ecology · water · movement · intelligence</span>
+      </div>
+    </div>
+  );
 }
 
 export default function NuTaMeri() {
   const [active, setActive] = useState(0);
-  return <div className="min-h-screen bg-[#020b13] text-[#f4f0e6]">
-    <section className="relative min-h-[94vh] overflow-hidden border-b border-white/10">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(216,170,67,.13),transparent_25%),radial-gradient(circle_at_16%_70%,rgba(45,139,177,.17),transparent_28%),linear-gradient(135deg,#02080e,#061a2a_62%,#02070c)]" />
-      <div className="relative z-10 mx-auto grid min-h-[94vh] max-w-[1560px] items-center gap-16 px-6 py-28 lg:grid-cols-[.86fr_1.14fr] lg:px-14">
-        <div><p className="mb-8 text-[10px] uppercase tracking-[.34em] text-[#d8aa43]">Civilization layer /// proposed city system</p><h1 className="mb-8 text-[clamp(4.2rem,9vw,9rem)] leading-[.78] tracking-[-.05em]" style={{fontFamily:'"Cormorant Garamond",serif'}}>Nu Ta Meri<br/><span className="text-[#7cc7ff]">as proposition.</span></h1><p className="max-w-[700px] border-l border-[#d8aa43]/35 pl-6 text-[clamp(1.15rem,2vw,1.65rem)] leading-[1.5] text-white/64">The supplied government proposal describes a carbon-negative, energy-independent smart-city concept in North Carolina that combines ecological integration, advanced infrastructure, future mobility, and Queen Califia management concepts. This page presents that proposal architecture without treating unbuilt systems as deployed fact.</p><div className="mt-10 flex flex-wrap gap-3 text-[9px] uppercase tracking-[.19em] text-white/38"><span className="border border-white/10 px-4 py-2">proposed Pisgah site</span><span className="border border-white/10 px-4 py-2">carbon-negative objective</span><span className="border border-white/10 px-4 py-2">conceptual infrastructure</span></div></div>
-        <CityField active={active}/>
-      </div>
-    </section>
+  return (
+    <div className="min-h-screen bg-[#020b13] text-[#f4f0e6]">
+      <section className="relative min-h-[94vh] overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(216,170,67,.13),transparent_25%),radial-gradient(circle_at_16%_70%,rgba(45,139,177,.17),transparent_28%),linear-gradient(135deg,#02080e,#061a2a_62%,#02070c)]" />
+        <div className="relative z-10 mx-auto grid min-h-[94vh] max-w-[1560px] items-center gap-16 px-6 py-28 lg:grid-cols-[.86fr_1.14fr] lg:px-14">
+          <div>
+            <p className="mb-8 text-[10px] uppercase tracking-[.34em] text-[#d8aa43]">
+              Civilization layer /// proposed city system
+            </p>
+            <h1
+              className="mb-8 text-[clamp(4.2rem,9vw,9rem)] leading-[.78] tracking-[-.05em]"
+              style={{ fontFamily: '"Cormorant Garamond",serif' }}
+            >
+              Nu Ta Meri
+              <br />
+              <span className="text-[#7cc7ff]">as proposition.</span>
+            </h1>
+            <p className="max-w-[700px] border-l border-[#d8aa43]/35 pl-6 text-[clamp(1.15rem,2vw,1.65rem)] leading-[1.5] text-white/64">
+              The supplied government proposal describes a carbon-negative,
+              energy-independent smart-city concept in North Carolina that
+              combines ecological integration, advanced infrastructure, future
+              mobility, and Queen Califia management concepts. This page
+              presents that proposal architecture without treating unbuilt
+              systems as deployed fact.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-3 text-[9px] uppercase tracking-[.19em] text-white/38">
+              <span className="border border-white/10 px-4 py-2">
+                proposed Pisgah site
+              </span>
+              <span className="border border-white/10 px-4 py-2">
+                carbon-negative objective
+              </span>
+              <span className="border border-white/10 px-4 py-2">
+                conceptual infrastructure
+              </span>
+            </div>
+          </div>
+          <CityField active={active} />
+        </div>
+      </section>
 
-    <section className="border-b border-white/10 py-28"><div className="mx-auto max-w-[1560px] px-6 lg:px-14"><div className="mb-14 grid gap-8 lg:grid-cols-[.72fr_1.28fr] lg:items-end"><div><p className="mb-4 text-[10px] uppercase tracking-[.3em] text-[#7cc7ff]">Five proposal systems</p><h2 className="text-[clamp(2.7rem,5vw,5.2rem)] leading-[.94]" style={{fontFamily:'"Cormorant Garamond",serif'}}>The city is read through systems, not spectacle.</h2></div><p className="max-w-[700px] text-lg leading-8 text-white/48 lg:justify-self-end">The supplied visual boards establish the artistic scale—monumental, green, water-rich, elevated, blue-gold, and ceremonial. The government proposal supplies the documented systems language underneath that imagery. The site keeps those two source layers distinct.</p></div>
-      <div className="grid gap-8 lg:grid-cols-[.82fr_1.18fr]"><div className="space-y-2">{SYSTEMS.map((d,i)=><button key={d.id} onClick={()=>setActive(i)} className={`w-full border px-5 py-5 text-left transition ${active===i?'border-[#d8aa43]/45 bg-[#d8aa43]/[.05]':'border-white/10 hover:border-white/20'}`}><div className="flex justify-between text-[9px] uppercase tracking-[.2em] text-white/30"><span>{d.id}</span><span>{d.signal}</span></div><div className="mt-2 text-2xl" style={{fontFamily:'"Cormorant Garamond",serif'}}>{d.name}</div></button>)}</div><div className="border border-[#7cc7ff]/15 bg-[#041421] p-8 md:p-12"><AnimatePresence mode="wait"><motion.div key={active} initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}}><p className="mb-4 text-[10px] uppercase tracking-[.25em] text-[#7cc7ff]">{SYSTEMS[active].signal}</p><h3 className="mb-6 text-[clamp(2.7rem,5vw,5rem)] leading-[.92]" style={{fontFamily:'"Cormorant Garamond",serif'}}>{SYSTEMS[active].name}</h3><p className="max-w-[760px] text-lg leading-8 text-white/55">{SYSTEMS[active].copy}</p></motion.div></AnimatePresence></div></div>
-    </div></section>
+      <section className="border-b border-white/10 py-28">
+        <div className="mx-auto max-w-[1560px] px-6 lg:px-14">
+          <div className="mb-14 grid gap-8 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
+            <div>
+              <p className="mb-4 text-[10px] uppercase tracking-[.3em] text-[#7cc7ff]">
+                Five proposal systems
+              </p>
+              <h2
+                className="text-[clamp(2.7rem,5vw,5.2rem)] leading-[.94]"
+                style={{ fontFamily: '"Cormorant Garamond",serif' }}
+              >
+                The city is read through systems, not spectacle.
+              </h2>
+            </div>
+            <p className="max-w-[700px] text-lg leading-8 text-white/48 lg:justify-self-end">
+              The supplied visual boards establish the artistic
+              scale—monumental, green, water-rich, elevated, blue-gold, and
+              ceremonial. The government proposal supplies the documented
+              systems language underneath that imagery. The site keeps those two
+              source layers distinct.
+            </p>
+          </div>
+          <div className="grid gap-8 lg:grid-cols-[.82fr_1.18fr]">
+            <div className="space-y-2">
+              {SYSTEMS.map((d, i) => (
+                <button
+                  key={d.id}
+                  onClick={() => setActive(i)}
+                  className={`w-full border px-5 py-5 text-left transition ${active === i ? "border-[#d8aa43]/45 bg-[#d8aa43]/[.05]" : "border-white/10 hover:border-white/20"}`}
+                >
+                  <div className="flex justify-between text-[9px] uppercase tracking-[.2em] text-white/30">
+                    <span>{d.id}</span>
+                    <span>{d.signal}</span>
+                  </div>
+                  <div
+                    className="mt-2 text-2xl"
+                    style={{ fontFamily: '"Cormorant Garamond",serif' }}
+                  >
+                    {d.name}
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div className="border border-[#7cc7ff]/15 bg-[#041421] p-8 md:p-12">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={active}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <p className="mb-4 text-[10px] uppercase tracking-[.25em] text-[#7cc7ff]">
+                    {SYSTEMS[active].signal}
+                  </p>
+                  <h3
+                    className="mb-6 text-[clamp(2.7rem,5vw,5rem)] leading-[.92]"
+                    style={{ fontFamily: '"Cormorant Garamond",serif' }}
+                  >
+                    {SYSTEMS[active].name}
+                  </h3>
+                  <p className="max-w-[760px] text-lg leading-8 text-white/55">
+                    {SYSTEMS[active].copy}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section className="border-b border-white/10 bg-[#041421] py-28"><div className="mx-auto grid max-w-[1560px] gap-12 px-6 lg:grid-cols-3 lg:px-14"><div><p className="mb-3 text-[9px] uppercase tracking-[.25em] text-[#d8aa43]">Movement</p><h3 className="mb-4 text-3xl" style={{fontFamily:'"Cormorant Garamond",serif'}}>Mela Nation: operating venture → future interface</h3><p className="text-base leading-7 text-white/47">The current Mela Nation plan is a box-truck logistics model. Its role inside a future Nu Ta Meri circulation system is presented as an integration concept, not a current transit network.</p><a href="/mela-nation" className="mt-6 inline-block text-[9px] uppercase tracking-[.2em] text-[#7cc7ff]">Enter Mela Nation →</a></div><div><p className="mb-3 text-[9px] uppercase tracking-[.25em] text-[#d8aa43]">Identity</p><h3 className="mb-4 text-3xl" style={{fontFamily:'"Cormorant Garamond",serif'}}>MeLaNiNa as skin</h3><p className="text-base leading-7 text-white/47">Fashion, surface, cultural memory, and material identity remain the organism’s skin. City placement is a future context for that organ, not a redefinition of its function.</p><a href="/melanina" className="mt-6 inline-block text-[9px] uppercase tracking-[.2em] text-[#7cc7ff]">Enter MeLaNiNa →</a></div><div><p className="mb-3 text-[9px] uppercase tracking-[.25em] text-[#d8aa43]">Intelligence</p><h3 className="mb-4 text-3xl" style={{fontFamily:'"Cormorant Garamond",serif'}}>Queen Califia as proposed city intelligence</h3><p className="text-base leading-7 text-white/47">The proposal gives Q.C. a future city-management role. That proposed role is distinct from Queen Califia’s current software/runtime state and deployment status.</p><a href="https://qc.tamerian-materials.com" className="mt-6 inline-block text-[9px] uppercase tracking-[.2em] text-[#7cc7ff]">Queen Califia runtime context →</a></div></div></section>
+      <section className="border-b border-white/10 bg-[#041421] py-28">
+        <div className="mx-auto grid max-w-[1560px] gap-12 px-6 lg:grid-cols-3 lg:px-14">
+          <div>
+            <p className="mb-3 text-[9px] uppercase tracking-[.25em] text-[#d8aa43]">
+              Movement
+            </p>
+            <h3
+              className="mb-4 text-3xl"
+              style={{ fontFamily: '"Cormorant Garamond",serif' }}
+            >
+              Mela Nation: early-development concept → future interface
+            </h3>
+            <p className="text-base leading-7 text-white/47">
+              The Mela Nation plan describes a box-truck logistics model that is
+              not yet operating. Its role inside a future Nu Ta Meri circulation
+              system is an integration concept, not a current transit network.
+            </p>
+            <Link
+              href="/mela-nation"
+              className="mt-6 inline-block text-[9px] uppercase tracking-[.2em] text-[#7cc7ff]"
+            >
+              Enter Mela Nation →
+            </Link>
+          </div>
+          <div>
+            <p className="mb-3 text-[9px] uppercase tracking-[.25em] text-[#d8aa43]">
+              Identity
+            </p>
+            <h3
+              className="mb-4 text-3xl"
+              style={{ fontFamily: '"Cormorant Garamond",serif' }}
+            >
+              MeLaNiNa as skin
+            </h3>
+            <p className="text-base leading-7 text-white/47">
+              Fashion, surface, cultural memory, and material identity remain
+              the organism’s skin. City placement is a future context for that
+              organ, not a redefinition of its function.
+            </p>
+            <Link
+              href="/melanina"
+              className="mt-6 inline-block text-[9px] uppercase tracking-[.2em] text-[#7cc7ff]"
+            >
+              Enter MeLaNiNa →
+            </Link>
+          </div>
+          <div>
+            <p className="mb-3 text-[9px] uppercase tracking-[.25em] text-[#d8aa43]">
+              Intelligence
+            </p>
+            <h3
+              className="mb-4 text-3xl"
+              style={{ fontFamily: '"Cormorant Garamond",serif' }}
+            >
+              Queen Califia as proposed city intelligence
+            </h3>
+            <p className="text-base leading-7 text-white/47">
+              The proposal gives Q.C. a future city-management role. That
+              proposed role is distinct from Queen Califia’s current public
+              command demo and has no operational city authority.
+            </p>
+            <a
+              href="https://heruahmose.github.io/QueenCalifia-CyberAI/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-block text-[9px] uppercase tracking-[.2em] text-[#7cc7ff]"
+            >
+              Queen Califia command demo →
+            </a>
+          </div>
+        </div>
+      </section>
 
-    <section className="py-24"><div className="mx-auto grid max-w-[1200px] gap-10 px-6 lg:grid-cols-[.7fr_1.3fr] lg:px-14"><div><p className="mb-4 text-[9px] uppercase tracking-[.28em] text-[#d8aa43]">Evidence posture</p><h2 className="text-[clamp(2.6rem,4vw,4.4rem)] leading-[.94]" style={{fontFamily:'"Cormorant Garamond",serif'}}>Vision stays powerful when its status stays clear.</h2></div><div className="space-y-5 text-base leading-7 text-white/48"><p>The supplied proposal names Pisgah National Forest, North Carolina as the proposed location and describes a future development timeline, funding request, energy systems, transit, ecological infrastructure, and AI management architecture. None of that is presented here as approved construction or completed infrastructure.</p><p>The visual boards are used for artistic direction—scale, color, landscape integration, ceremonial architecture, elevated transit, and water-rich composition. They are not treated as photographic evidence of a built city.</p></div></div></section>
-  </div>;
+      <section className="py-24">
+        <div className="mx-auto grid max-w-[1200px] gap-10 px-6 lg:grid-cols-[.7fr_1.3fr] lg:px-14">
+          <div>
+            <p className="mb-4 text-[9px] uppercase tracking-[.28em] text-[#d8aa43]">
+              Evidence posture
+            </p>
+            <h2
+              className="text-[clamp(2.6rem,4vw,4.4rem)] leading-[.94]"
+              style={{ fontFamily: '"Cormorant Garamond",serif' }}
+            >
+              Vision stays powerful when its status stays clear.
+            </h2>
+          </div>
+          <div className="space-y-5 text-base leading-7 text-white/48">
+            <p>
+              The supplied proposal names Pisgah National Forest, North Carolina
+              as the proposed location and describes a future development
+              timeline, funding request, energy systems, transit, ecological
+              infrastructure, and AI management architecture. None of that is
+              presented here as approved construction or completed
+              infrastructure.
+            </p>
+            <p>
+              The visual boards are used for artistic direction—scale, color,
+              landscape integration, ceremonial architecture, elevated transit,
+              and water-rich composition. They are not treated as photographic
+              evidence of a built city.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }

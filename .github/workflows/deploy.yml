@@ -3,13 +3,15 @@ name: Deploy
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: deploy-production
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -42,6 +44,7 @@ jobs:
 
           BASE_PATH="/trai-portfolio/"
           echo "Building with Vite base: $BASE_PATH"
+          rm -rf dist/public
           npm exec -- vite build --base "$BASE_PATH"
 
           printf '%s\n' "$GITHUB_SHA" > dist/public/deploy-commit.txt
@@ -52,12 +55,9 @@ jobs:
           cp dist/public/index.html dist/public/404.html
           touch dist/public/.nojekyll
 
-          SPA_ROUTES="cinematic case-studies materials community research timeline
-            patent-claims advanced-features energy manufacturing quantum
-            applications dashboard annotations gesture-control sound-preferences
-            projects career-timeline quantum-enhanced neural-training domain admin
-            projects-showcase video-showcase gamification search api-docs
-            ai-insights showcase true-melange queen-califia mela-nation melanina
+          SPA_ROUTES="case-studies materials community research timeline
+            patent-claims energy manufacturing quantum applications
+            true-melange queen-califia mela-nation melanina nu-ta-meri
             trai-coin founder peoples-foundation contact"
 
           for route in $SPA_ROUTES; do
@@ -93,9 +93,13 @@ jobs:
           grep -R -Fq 'Operating position: §508(c)(1)(A)' dist/public/assets
           grep -R -Fq 'Verified public context · no external model' dist/public/assets
           grep -R -Fq 'Research Targets — Not Measured' dist/public/assets
+          grep -R -Fq 'User-paced' dist/public/assets
+          grep -R -Fq 'Evidence Before Claims' dist/public/assets
+          grep -R -Fq 'Designed · not operating' dist/public/assets
+          grep -R -Fq 'Planning data · no live outcomes' dist/public/assets
           grep -R -Fq 'https://heruahmose.github.io/QueenCalifia-CyberAI/' dist/public
 
-          if grep -RInE 'queencalifia-cyberai\.web\.app|H\.K\. AI triage|Powered by Claude · Memory enabled|Successfully subscribed!|Quantum Gate Fidelity: 99\.7%|federal tax-exempt status pending' dist/public; then
+          if grep -RInE 'queencalifia-cyberai\.web\.app|qc\.tamerian-materials\.com|Autonomous cybersecurity|H\.K\. AI|Powered by Claude|Successfully subscribed!|Quantum Gate Fidelity: 99\.7%|Real quantum coherence data|federal tax-exempt status pending|Fortune 500 Financial Institution|Government Defense Agency|Technology adopted by [0-9]+\+ organizations|8,500\+ triage|150\+ experiments conducted|ISO 10993-5 compliance achieved|EINs? filed|99\.2% threat detection|Success Rate.{0,20}(87|92)%' dist/public; then
             echo "::error::Stale endpoint, false runtime, synthetic metric, or outdated legal status detected."
             exit 1
           fi
@@ -115,6 +119,7 @@ jobs:
           test -n "$chrome"
           "$chrome" \
             --headless --no-sandbox --no-first-run \
+            --remote-allow-origins='*' \
             --remote-debugging-port=9222 --user-data-dir=/tmp/trai-chrome \
             --disable-background-networking --disable-component-update \
             --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader \
@@ -174,31 +179,67 @@ jobs:
           }
 
           await send('Runtime.enable');
-          let snapshot = null;
-          for (let attempt = 0; attempt < 34; attempt += 1) {
-            await sleep(500);
+          async function evaluate(expression) {
             const evaluated = await send('Runtime.evaluate', {
-              expression: `JSON.stringify({
-                rootChildren: document.getElementById('root')?.childElementCount || 0,
-                text: (document.body?.innerText || '').slice(0, 12000),
-                skipVisible: [...document.querySelectorAll('button')].some(button =>
-                  button.textContent?.trim() === 'Skip' && button.getClientRects().length > 0
-                )
-              })`,
+              expression,
               returnByValue: true,
             });
-            const raw = evaluated?.result?.value;
-            if (!raw) continue;
-            snapshot = JSON.parse(raw);
-            const hasTRAI = /TRAI|Tamerian Renaissance Alliance Initiative/i.test(snapshot.text);
-            if (snapshot.rootChildren > 0 && hasTRAI && !snapshot.skipVisible) break;
+            return evaluated?.result?.value;
           }
 
-          console.log(JSON.stringify(snapshot, null, 2));
-          if (!snapshot) throw new Error('No DOM snapshot returned');
-          if (snapshot.rootChildren <= 0) throw new Error('React root has no committed children');
-          if (!/TRAI|Tamerian Renaissance Alliance Initiative/i.test(snapshot.text)) throw new Error('Expected TRAI content not found');
-          if (snapshot.skipVisible) throw new Error('Ceremonial intro remained visible past watchdog window');
+          async function snapshot() {
+            const raw = await evaluate(`JSON.stringify({
+              rootChildren: document.getElementById('root')?.childElementCount || 0,
+              text: (document.body?.innerText || '').slice(0, 12000),
+              dialogVisible: Boolean(document.querySelector('[role="dialog"][aria-label="TRAI ceremonial introduction"]')?.getClientRects().length),
+              skipVisible: [...document.querySelectorAll('button')].some(button =>
+                button.textContent?.trim() === 'Skip intro' && button.getClientRects().length > 0
+              )
+            })`);
+            return raw ? JSON.parse(raw) : null;
+          }
+
+          let intro = null;
+          for (let attempt = 0; attempt < 30; attempt += 1) {
+            await sleep(250);
+            intro = await snapshot();
+            if (intro?.rootChildren > 0 && intro.dialogVisible && intro.skipVisible) break;
+          }
+          if (!intro?.dialogVisible) throw new Error('User-paced ceremonial intro did not appear');
+          if (!intro.skipVisible) throw new Error('Ceremonial intro has no visible Skip control');
+
+          await sleep(3000);
+          const held = await snapshot();
+          if (!held?.dialogVisible || !held.skipVisible) {
+            throw new Error('Ceremonial intro advanced or closed without user input');
+          }
+
+          for (const expected of ['Continue', 'Continue', 'Enter TRAI']) {
+            const clicked = await evaluate(`(() => {
+              const button = [...document.querySelectorAll('button')].find(candidate =>
+                candidate.textContent?.trim() === ${JSON.stringify(expected)} && candidate.getClientRects().length > 0
+              );
+              if (!button) return false;
+              button.click();
+              return true;
+            })()`);
+            if (!clicked) throw new Error('Missing intro action: ' + expected);
+            await sleep(450);
+          }
+
+          let finalSnapshot = null;
+          for (let attempt = 0; attempt < 24; attempt += 1) {
+            await sleep(250);
+            finalSnapshot = await snapshot();
+            const hasTRAI = /TRAI|Tamerian Renaissance Alliance Initiative/i.test(finalSnapshot?.text || '');
+            if (finalSnapshot?.rootChildren > 0 && hasTRAI && !finalSnapshot.dialogVisible) break;
+          }
+
+          console.log(JSON.stringify({ intro, held, finalSnapshot }, null, 2));
+          if (!finalSnapshot) throw new Error('No final DOM snapshot returned');
+          if (finalSnapshot.rootChildren <= 0) throw new Error('React root has no committed children');
+          if (!/TRAI|Tamerian Renaissance Alliance Initiative/i.test(finalSnapshot.text)) throw new Error('Expected TRAI content not found');
+          if (finalSnapshot.dialogVisible) throw new Error('Ceremonial intro did not close after explicit input');
           ws.close();
           NODE
 
@@ -211,7 +252,15 @@ jobs:
           echo 'STATIC_RUNTIME_API_LEAK=PASS'
           echo 'LOCAL_BROWSER_RENDER=PASS'
 
+          TRAI_CDP_URL='http://127.0.0.1:9222' \
+          TRAI_BASE_URL='http://127.0.0.1:4173/trai-portfolio/' \
+          TRAI_AUDIT_REPORT='/tmp/trai-local-browser-audit.json' \
+            timeout --kill-after=5s 180s npm run audit:built
+          cat /tmp/trai-local-browser-audit.json
+          echo 'LOCAL_CANONICAL_ROUTE_MATRIX=PASS'
+
       - name: Package Pages artifact once
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist/public
@@ -219,6 +268,7 @@ jobs:
   pages:
     name: GitHub Pages
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -235,9 +285,13 @@ jobs:
   certify:
     name: Public Pages certification
     needs: pages
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
@@ -258,8 +312,12 @@ jobs:
           grep -Fq '"sha":"'$GITHUB_SHA'"' /tmp/deployment-meta.json
           curl --fail --silent --show-error --location "$base/trai-coin/" > /tmp/trai-coin.html
           grep -qi '<html' /tmp/trai-coin.html
+          for route in case-studies materials community research timeline patent-claims energy manufacturing quantum applications true-melange queen-califia mela-nation melanina nu-ta-meri trai-coin founder peoples-foundation contact; do
+            curl --fail --silent --show-error --location "$base/$route/" > "/tmp/trai-$route.html"
+            grep -qi '<html' "/tmp/trai-$route.html"
+          done
           echo 'PUBLIC_DEPLOYMENT_IDENTITY=PASS'
-          echo 'PUBLIC_TRAI_COIN_ROUTE=PASS'
+          echo 'PUBLIC_ROUTE_MATERIALIZATION=PASS'
 
       - name: Execute public URL in Chrome
         shell: bash
@@ -270,6 +328,7 @@ jobs:
           test -n "$chrome"
           "$chrome" \
             --headless --no-sandbox --no-first-run \
+            --remote-allow-origins='*' \
             --remote-debugging-port=9223 --user-data-dir=/tmp/trai-public-chrome \
             --disable-background-networking --disable-component-update \
             --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader \
@@ -318,31 +377,67 @@ jobs:
             });
           }
           await send('Runtime.enable');
-          let snapshot = null;
-          for (let attempt = 0; attempt < 34; attempt += 1) {
-            await sleep(500);
+          async function evaluate(expression) {
             const evaluated = await send('Runtime.evaluate', {
-              expression: `JSON.stringify({
-                rootChildren: document.getElementById('root')?.childElementCount || 0,
-                text: (document.body?.innerText || '').slice(0, 12000),
-                skipVisible: [...document.querySelectorAll('button')].some(button =>
-                  button.textContent?.trim() === 'Skip' && button.getClientRects().length > 0
-                )
-              })`,
+              expression,
               returnByValue: true,
             });
-            const raw = evaluated?.result?.value;
-            if (!raw) continue;
-            snapshot = JSON.parse(raw);
-            const hasTRAI = /TRAI|Tamerian Renaissance Alliance Initiative/i.test(snapshot.text);
-            if (snapshot.rootChildren > 0 && hasTRAI && !snapshot.skipVisible) break;
+            return evaluated?.result?.value;
           }
-          console.log(JSON.stringify(snapshot, null, 2));
-          if (!snapshot || snapshot.rootChildren <= 0) throw new Error('Public React root did not commit');
-          if (!/TRAI|Tamerian Renaissance Alliance Initiative/i.test(snapshot.text)) throw new Error('Public TRAI content not found');
-          if (snapshot.skipVisible) throw new Error('Public ceremonial intro remained visible past watchdog window');
+
+          async function snapshot() {
+            const raw = await evaluate(`JSON.stringify({
+              rootChildren: document.getElementById('root')?.childElementCount || 0,
+              text: (document.body?.innerText || '').slice(0, 12000),
+              dialogVisible: Boolean(document.querySelector('[role="dialog"][aria-label="TRAI ceremonial introduction"]')?.getClientRects().length),
+              skipVisible: [...document.querySelectorAll('button')].some(button =>
+                button.textContent?.trim() === 'Skip intro' && button.getClientRects().length > 0
+              )
+            })`);
+            return raw ? JSON.parse(raw) : null;
+          }
+
+          let intro = null;
+          for (let attempt = 0; attempt < 34; attempt += 1) {
+            await sleep(250);
+            intro = await snapshot();
+            if (intro?.rootChildren > 0 && intro.dialogVisible && intro.skipVisible) break;
+          }
+          if (!intro?.dialogVisible || !intro.skipVisible) throw new Error('Public user-paced intro or Skip control missing');
+
+          await sleep(3000);
+          const held = await snapshot();
+          if (!held?.dialogVisible || !held.skipVisible) throw new Error('Public intro advanced without user input');
+
+          const clicked = await evaluate(`(() => {
+            const button = [...document.querySelectorAll('button')].find(candidate =>
+              candidate.textContent?.trim() === 'Skip intro' && candidate.getClientRects().length > 0
+            );
+            if (!button) return false;
+            button.click();
+            return true;
+          })()`);
+          if (!clicked) throw new Error('Public Skip intro control could not be activated');
+
+          let finalSnapshot = null;
+          for (let attempt = 0; attempt < 24; attempt += 1) {
+            await sleep(250);
+            finalSnapshot = await snapshot();
+            if (finalSnapshot?.rootChildren > 0 && !finalSnapshot.dialogVisible) break;
+          }
+          console.log(JSON.stringify({ intro, held, finalSnapshot }, null, 2));
+          if (!finalSnapshot || finalSnapshot.rootChildren <= 0) throw new Error('Public React root did not commit');
+          if (!/TRAI|Tamerian Renaissance Alliance Initiative/i.test(finalSnapshot.text)) throw new Error('Public TRAI content not found');
+          if (finalSnapshot.dialogVisible) throw new Error('Public intro did not close after explicit Skip input');
           ws.close();
           NODE
 
           timeout --kill-after=5s 30s node /tmp/assert-trai-public.mjs
           echo 'PUBLIC_BROWSER_RENDER=PASS'
+
+          TRAI_CDP_URL='http://127.0.0.1:9223' \
+          TRAI_BASE_URL='https://heruahmose.github.io/trai-portfolio/' \
+          TRAI_AUDIT_REPORT='/tmp/trai-public-browser-audit.json' \
+            timeout --kill-after=5s 180s node scripts/audit-built-site.mjs
+          cat /tmp/trai-public-browser-audit.json
+          echo 'PUBLIC_CANONICAL_ROUTE_MATRIX=PASS'

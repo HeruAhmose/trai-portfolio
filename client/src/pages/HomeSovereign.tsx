@@ -36,7 +36,7 @@ const ORGANS = [
     num: "01",
     role: "Skeleton",
     name: "Tamerian Materials",
-    desc: "Material sovereignty — hemp-derived carbon composite, energy harvesting, quantum sensing. Patent App 63/934,269 · 25 claims.",
+    desc: "Material sovereignty — bio-derived multifunctional composites for self-powered sensing. U.S. provisional App 63/934,269 · 25 claims; integrated performance unvalidated.",
     route: "/materials",
     external: "https://tamerian-materials.com/",
   },
@@ -76,7 +76,7 @@ const ORGANS = [
     num: "06",
     role: "Hands",
     name: "TechBridge",
-    desc: "Community reach — Digital Navigator hubs in Raleigh-Durham. Deterministic H.K. triage.",
+    desc: "Community reach — a planned Digital Navigator hub model for Raleigh-Durham with Deterministic H.K. triage.",
     route: "/community",
     external: "https://techbridge-collective.org/",
   },
@@ -635,9 +635,11 @@ export default function HomeSovereign() {
                 Six programs. One substrate.
               </h2>
               <p className="text-[#f4f0e6]/55 font-sans leading-relaxed max-w-[58ch]">
-                Every card states its stage. One is a filed patent, one is
-                deployed and running, and the rest are research. Nothing here is
-                presented as further along than it is.
+                Every card states its stage. Tamerian has a U.S. provisional
+                application, Queen Califia has a live human-authorized command
+                demo, and the remaining work is labeled as research, design, or
+                pre-launch. A published interface is not proof of operating
+                maturity.
               </p>
             </motion.div>
             <motion.div
@@ -987,7 +989,7 @@ export default function HomeSovereign() {
               <button
                 onClick={() => {
                   sound.navigate();
-                  navigate("/patents");
+                  navigate("/patent-claims");
                 }}
                 onMouseEnter={() => sound.hover()}
                 className="text-sm font-sans text-[#d8aa43]/70 hover:text-[#d8aa43] transition-colors tracking-wide"
@@ -1014,9 +1016,10 @@ export default function HomeSovereign() {
                 The hands that build bridges.
               </h2>
               <p className="text-xl text-[#f4f0e6]/55 font-sans leading-relaxed mb-8">
-                TechBridge Collective — Digital Navigator hubs in
-                Raleigh-Durham. 1.2M NC residents lack adequate broadband
-                access. Deterministic H.K. triage, named for Horace King.
+                TechBridge Collective — a planned Digital Navigator hub model
+                for Raleigh-Durham. The two-year service figures are targets,
+                not recorded outcomes. H.K. is deterministic triage named for
+                Horace King.
               </p>
               <div className="flex gap-4 flex-wrap">
                 <button
@@ -1065,9 +1068,10 @@ export default function HomeSovereign() {
                 Return is not optional.
               </h2>
               <p className="text-xl text-[#f4f0e6]/55 font-sans leading-relaxed mb-8">
-                The Peoples Foundation operates under §508(c)(1)(A) as the
-                regenerative-return organ of the TRAI organism, routing value
-                back to the community that built it.
+                The Peoples Foundation states that it operates under
+                §508(c)(1)(A) as TRAI's intended regenerative-return organ. No
+                IRS determination or recognition letter is represented here;
+                future value flows require written governance and evidence.
               </p>
               <button
                 onClick={() => handleOrganClick(ORGANS[6])}
