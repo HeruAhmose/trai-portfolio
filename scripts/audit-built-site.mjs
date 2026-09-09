@@ -3,13 +3,26 @@ import { writeFileSync } from "node:fs";
 const sleep = milliseconds =>
   new Promise(resolve => setTimeout(resolve, milliseconds));
 
-const cdpEndpoint = (
-  process.env.TRAI_CDP_URL || "http://127.0.0.1:9222"
-).replace(/\/$/, "");
-const baseUrl = new URL(
-  process.env.TRAI_BASE_URL || "http://127.0.0.1:4173/trai-portfolio/"
-);
-const reportPath = process.env.TRAI_AUDIT_REPORT || "trai-browser-audit.json";
+// The workflow owns these endpoints. Keeping the CDP target and report path
+// unconditional prevents the audit harness from becoming an SSRF or
+// arbitrary-file-write surface.
+const cdpEndpoint = "http://127.0.0.1:9222";
+const reportPath = "/tmp/trai-browser-audit.json";
+const allowedBaseUrls = Object.freeze([
+  "http://127.0.0.1:4173/trai-portfolio/",
+  "https://heruahmose.github.io/trai-portfolio/",
+]);
+
+let baseUrl;
+
+function allowedBaseUrl(value) {
+  try {
+    const href = new URL(value).href;
+    return allowedBaseUrls.includes(href) ? href : null;
+  } catch {
+    return null;
+  }
+}
 
 const canonicalRoutes = [
   {
@@ -93,7 +106,11 @@ const canonicalRoutes = [
   },
   {
     path: "peoples-foundation",
-    required: ["The Peoples", "§508(c)(1)(A)"],
+    required: [
+      "The Peoples",
+      "EIN obtained",
+      "tax-exempt status pending counsel confirmation",
+    ],
   },
   {
     path: "contact",
@@ -107,7 +124,7 @@ const viewports = [
 ];
 
 const report = {
-  baseUrl: baseUrl.href,
+  baseUrl: null,
   startedAt: new Date().toISOString(),
   checks: [],
   failures: [],
@@ -641,13 +658,19 @@ async function main() {
       return response.json();
     });
     target = targets.find(
-      candidate => candidate.type === "page" && candidate.webSocketDebuggerUrl
+      candidate =>
+        candidate.type === "page" &&
+        candidate.webSocketDebuggerUrl &&
+        allowedBaseUrl(candidate.url)
     );
     if (target) break;
     await sleep(250);
   }
   if (!target?.webSocketDebuggerUrl)
-    throw new Error("Browser page target not found");
+    throw new Error("Allowlisted browser page target not found");
+
+  baseUrl = new URL(allowedBaseUrl(target.url));
+  report.baseUrl = baseUrl.href;
 
   await connectSocket(target.webSocketDebuggerUrl);
   await send("Page.enable");

@@ -388,8 +388,13 @@ const SEARCH_CONTENT = [
     type: "page",
     title: "The Peoples Foundation",
     description:
-      "Regenerative-return organ stating a section 508(c)(1)(A) operating position; no IRS determination represented",
-    tags: ["foundation", "regenerative return", "508(c)(1)(A)"],
+      "Separate regenerative-beneficiary affiliate and intended regenerative-return organ; EIN obtained, with tax-exempt status pending counsel confirmation",
+    tags: [
+      "foundation",
+      "regenerative return",
+      "EIN obtained",
+      "entity formed",
+    ],
     url: "/peoples-foundation",
     icon: "∞",
   },

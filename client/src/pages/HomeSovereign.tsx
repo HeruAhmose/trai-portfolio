@@ -84,7 +84,7 @@ const ORGANS = [
     num: "07",
     role: "Lymphatic",
     name: "The Peoples Foundation",
-    desc: "Regenerative return — operating under §508(c)(1)(A) for community programs.",
+    desc: "Regenerative return — separate affiliate; EIN obtained; tax-exempt status pending counsel confirmation.",
     route: "/peoples-foundation",
     external: null,
   },
@@ -1068,9 +1068,10 @@ export default function HomeSovereign() {
                 Return is not optional.
               </h2>
               <p className="text-xl text-[#f4f0e6]/55 font-sans leading-relaxed mb-8">
-                The Peoples Foundation states that it operates under
-                §508(c)(1)(A) as TRAI's intended regenerative-return organ. No
-                IRS determination or recognition letter is represented here;
+                The Peoples Foundation is a separate regenerative-beneficiary
+                affiliate and TRAI's intended regenerative-return organ. EIN
+                obtained; tax-exempt status pending counsel confirmation. No
+                tax-exempt determination or recognition is represented here;
                 future value flows require written governance and evidence.
               </p>
               <button
@@ -1108,10 +1109,11 @@ export default function HomeSovereign() {
                   </motion.div>
                 ))}
                 <p className="text-xs font-sans text-[#f4f0e6]/30 mt-4 pt-4 border-t border-[#d8aa43]/10">
-                  Operating position: §508(c)(1)(A). This public site does not
-                  represent an IRS determination or recognition letter.
-                  Allocations remain subject to governing documents, written
-                  agreements, counsel review, and applicable law.
+                  Entity status: EIN obtained. Tax-exempt status pending counsel
+                  confirmation. This public site does not represent a tax-exempt
+                  determination or recognition. Allocations remain subject to
+                  governing documents, written agreements, counsel review, and
+                  applicable law.
                 </p>
               </div>
             </motion.div>

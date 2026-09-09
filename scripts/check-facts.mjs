@@ -72,8 +72,12 @@ const FORBIDDEN = [
     why: "public H.K. is bounded static guidance and TechBridge triage is deterministic",
   },
   {
-    re: /\bEINs? filed\b|\bEIN\b[^\n]{0,40}\bObtained\b/i,
-    why: "entity status must be evidenced per organ and is not established by this record",
+    re: /\bEINs?\s+filed\b/i,
+    why: 'an EIN may be described as "obtained" only where the record supports it; "filed" is not a status',
+  },
+  {
+    re: /§508\s*\(c\)\s*\(1\)\s*\(A\)|section\s+508\s*\(c\)\s*\(1\)\s*\(A\)/i,
+    why: "the prior Foundation tax-status claim is superseded and unsupported by the current record",
   },
   {
     re: /queencalifia-cyberai\.web\.app|qc\.tamerian-materials\.com/i,
@@ -275,29 +279,52 @@ const PROJECTION_RULES = [
     required: [
       "Mandate of Mistrust",
       "Deterministic H.K. triage",
-      "Operating position: §508(c)(1)(A)",
+      "EIN obtained",
+      "tax-exempt status pending counsel confirmation",
+      "separate regenerative-beneficiary",
       "https://heruahmose.github.io/QueenCalifia-CyberAI/",
     ],
     forbidden: [
       "queencalifia-cyberai.web.app",
       "H.K. AI triage",
       "federal tax-exempt status pending",
+      "§508(c)(1)(A)",
     ],
   },
   {
     file: "client/src/pages/PeoplesFoundation.tsx",
     required: [
-      "§508(c)(1)(A)",
-      "IRS determination",
-      "Not represented",
+      "regenerative-beneficiary",
+      "EIN obtained",
+      "tax-exempt status pending counsel confirmation",
+      "No tax-exempt determination",
       "adopted or automatic",
     ],
     forbidden: [
       "Application Pending",
       "tax-exempt status application is pending",
-      '{ label: "EIN", status: "Obtained"',
       "automatically, structurally, permanently",
+      "§508(c)(1)(A)",
     ],
+  },
+  {
+    file: "client/src/components/SovereignWorldMap.tsx",
+    required: [
+      "Separate regenerative-beneficiary affiliate",
+      "EIN obtained",
+      "tax-exempt status pending counsel confirmation",
+    ],
+    forbidden: ["§508(c)(1)(A)"],
+  },
+  {
+    file: "client/src/components/OrganPortal.tsx",
+    required: [
+      "Separate regenerative-beneficiary affiliate",
+      "EIN obtained · tax-exempt status pending counsel confirmation",
+      "No tax-exempt determination or recognition is represented",
+      "Entity Formed · Tax-Exempt Status Pending Counsel Confirmation",
+    ],
+    forbidden: ["§508(c)(1)(A)"],
   },
   {
     file: "client/src/pages/MelaNation.tsx",
@@ -411,9 +438,21 @@ const PROJECTION_RULES = [
     ],
   },
   {
+    file: "server/routers/features.ts",
+    required: [
+      "Separate regenerative-beneficiary affiliate",
+      "EIN obtained",
+      "tax-exempt status pending counsel confirmation",
+      '"entity formed"',
+    ],
+    forbidden: ["508(c)(1)(A)"],
+  },
+  {
     file: "client/public/trai-organism-v5.json",
     required: [
-      "Operating under §508(c)(1)(A)",
+      "separate regenerative-beneficiary affiliate",
+      "EIN obtained · tax-exempt status pending counsel confirmation",
+      "does not represent a tax-exempt determination or recognition",
       "https://heruahmose.github.io/QueenCalifia-CyberAI/",
       "Early development · not operating",
       "Designed · not yet operating",
@@ -422,6 +461,7 @@ const PROJECTION_RULES = [
       "queencalifia-cyberai.web.app",
       "exemption pending",
       "EIN filed",
+      "§508(c)(1)(A)",
     ],
   },
   {
@@ -429,12 +469,15 @@ const PROJECTION_RULES = [
     required: [
       '"doctrine": "Mandate of Mistrust"',
       '"stage": "pre-pilot"',
+      '"stage": "entity-formed"',
       "pilot is not yet operating",
+      "EIN obtained; tax-exempt status pending counsel confirmation",
       "https://heruahmose.github.io/QueenCalifia-CyberAI/",
     ],
     forbidden: [
       "queencalifia-cyberai.web.app",
       "qc.tamerian-materials.com",
+      "§508(c)(1)(A)",
       '"id": "techbridge",\n      "name": "TechBridge",\n      "full": "TechBridge Collective",\n      "role": "Community reach",\n      "url": "https://techbridge-collective.org/",\n      "primary": false,\n      "stage": "live"',
     ],
   },
@@ -444,17 +487,61 @@ const PROJECTION_RULES = [
       "Early development",
       "Designed · not yet operating",
       "Experimental dashboards",
+      "EIN obtained · tax-exempt status pending counsel confirmation",
+      "separate regenerative-beneficiary affiliate",
     ],
-    forbidden: ["EIN filed · early development", "48-page React"],
+    forbidden: [
+      "EIN filed · early development",
+      "48-page React",
+      "§508(c)(1)(A)",
+    ],
   },
   {
     file: "VERIFIED_FACTS.md",
     required: [
       "Mandate of Mistrust",
       "Public H.K. uses bounded static guidance",
+      "separate regenerative-beneficiary affiliate",
+      "EIN obtained",
+      "tax-exempt status pending counsel confirmation",
+    ],
+    forbidden: [
+      "H.K. powered by Claude AI",
+      "federal tax-exempt pending",
       "§508(c)(1)(A)",
     ],
-    forbidden: ["H.K. powered by Claude AI", "federal tax-exempt pending"],
+  },
+  {
+    file: "scripts/audit-built-site.mjs",
+    required: [
+      'const cdpEndpoint = "http://127.0.0.1:9222"',
+      'const reportPath = "/tmp/trai-browser-audit.json"',
+      '"http://127.0.0.1:4173/trai-portfolio/"',
+      '"https://heruahmose.github.io/trai-portfolio/"',
+      "allowedBaseUrl(candidate.url)",
+      "tax-exempt status pending counsel confirmation",
+    ],
+    forbidden: [
+      "TRAI_AUDIT_MODE",
+      "TRAI_CDP_URL",
+      "TRAI_BASE_URL",
+      "TRAI_AUDIT_REPORT",
+    ],
+  },
+  {
+    file: ".github/workflows/deploy.yml",
+    required: [
+      "cat /tmp/trai-browser-audit.json",
+      "--remote-debugging-port=9222",
+      "tax-exempt status pending counsel confirmation",
+    ],
+    forbidden: [
+      "TRAI_AUDIT_MODE",
+      "TRAI_CDP_URL",
+      "TRAI_BASE_URL",
+      "TRAI_AUDIT_REPORT",
+      "Operating position: §508(c)(1)(A)",
+    ],
   },
 ];
 

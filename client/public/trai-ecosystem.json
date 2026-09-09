@@ -1,7 +1,7 @@
 {
   "$comment": "Canonical registry of every TRAI web property. Both stacks read this file to build their cross-site navigation, so a URL is changed in one place and every property follows. Stage values use the same vocabulary as the venture documents so nothing reads as further along than it is.",
-  "version": "1.2.0",
-  "updated": "2026-09-04",
+  "version": "1.3.0",
+  "updated": "2026-09-09",
   "organization": {
     "name": "Tamerian Renaissance Alliance Initiative",
     "short": "TRAI",
@@ -103,8 +103,8 @@
       "role": "Regenerative return",
       "url": "https://heruahmose.github.io/trai-portfolio/peoples-foundation",
       "primary": false,
-      "stage": "building",
-      "blurb": "States that it operates under §508(c)(1)(A); no IRS determination or recognition is represented."
+      "stage": "entity-formed",
+      "blurb": "Separate regenerative-beneficiary affiliate. EIN obtained; tax-exempt status pending counsel confirmation. No tax-exempt determination or recognition is represented."
     }
   ]
 }

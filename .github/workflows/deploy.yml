@@ -90,7 +90,8 @@ jobs:
           grep -q '/trai-portfolio/trai-organism-v5.js' dist/public/index.html
           grep -q '/trai-portfolio/trai-cinematic.js' dist/public/index.html
           grep -R -Fq 'Mandate of Mistrust' dist/public/assets
-          grep -R -Fq 'Operating position: §508(c)(1)(A)' dist/public/assets
+          grep -R -Fq 'EIN obtained' dist/public/assets
+          grep -R -Fq 'tax-exempt status pending counsel confirmation' dist/public/assets
           grep -R -Fq 'Verified public context · no external model' dist/public/assets
           grep -R -Fq 'Research Targets — Not Measured' dist/public/assets
           grep -R -Fq 'User-paced' dist/public/assets
@@ -99,7 +100,7 @@ jobs:
           grep -R -Fq 'Planning data · no live outcomes' dist/public/assets
           grep -R -Fq 'https://heruahmose.github.io/QueenCalifia-CyberAI/' dist/public
 
-          if grep -RInE 'queencalifia-cyberai\.web\.app|qc\.tamerian-materials\.com|Autonomous cybersecurity|H\.K\. AI|Powered by Claude|Successfully subscribed!|Quantum Gate Fidelity: 99\.7%|Real quantum coherence data|federal tax-exempt status pending|Fortune 500 Financial Institution|Government Defense Agency|Technology adopted by [0-9]+\+ organizations|8,500\+ triage|150\+ experiments conducted|ISO 10993-5 compliance achieved|EINs? filed|99\.2% threat detection|Success Rate.{0,20}(87|92)%' dist/public; then
+          if grep -RInE 'queencalifia-cyberai\.web\.app|qc\.tamerian-materials\.com|Autonomous cybersecurity|H\.K\. AI|Powered by Claude|Successfully subscribed!|Quantum Gate Fidelity: 99\.7%|Real quantum coherence data|federal tax-exempt status pending|Fortune 500 Financial Institution|Government Defense Agency|Technology adopted by [0-9]+\+ organizations|8,500\+ triage|150\+ experiments conducted|ISO 10993-5 compliance achieved|EINs? filed|§508\(c\)\(1\)\(A\)|section 508\(c\)\(1\)\(A\)|99\.2% threat detection|Success Rate.{0,20}(87|92)%' dist/public; then
             echo "::error::Stale endpoint, false runtime, synthetic metric, or outdated legal status detected."
             exit 1
           fi
@@ -252,11 +253,8 @@ jobs:
           echo 'STATIC_RUNTIME_API_LEAK=PASS'
           echo 'LOCAL_BROWSER_RENDER=PASS'
 
-          TRAI_CDP_URL='http://127.0.0.1:9222' \
-          TRAI_BASE_URL='http://127.0.0.1:4173/trai-portfolio/' \
-          TRAI_AUDIT_REPORT='/tmp/trai-local-browser-audit.json' \
-            timeout --kill-after=5s 180s npm run audit:built
-          cat /tmp/trai-local-browser-audit.json
+          timeout --kill-after=5s 180s npm run audit:built
+          cat /tmp/trai-browser-audit.json
           echo 'LOCAL_CANONICAL_ROUTE_MATRIX=PASS'
 
       - name: Package Pages artifact once
@@ -329,7 +327,7 @@ jobs:
           "$chrome" \
             --headless --no-sandbox --no-first-run \
             --remote-allow-origins='*' \
-            --remote-debugging-port=9223 --user-data-dir=/tmp/trai-public-chrome \
+            --remote-debugging-port=9222 --user-data-dir=/tmp/trai-public-chrome \
             --disable-background-networking --disable-component-update \
             --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader \
             https://heruahmose.github.io/trai-portfolio/ \
@@ -338,7 +336,7 @@ jobs:
           trap 'kill "$chrome_pid" 2>/dev/null || true; wait "$chrome_pid" 2>/dev/null || true' EXIT
 
           for _ in $(seq 1 40); do
-            curl --fail --silent http://127.0.0.1:9223/json >/tmp/public-targets.json && break
+            curl --fail --silent http://127.0.0.1:9222/json >/tmp/public-targets.json && break
             sleep 0.5
           done
           test -s /tmp/public-targets.json
@@ -347,7 +345,7 @@ jobs:
           const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
           let target;
           for (let attempt = 0; attempt < 40; attempt += 1) {
-            const targets = await fetch('http://127.0.0.1:9223/json').then(r => r.json());
+            const targets = await fetch('http://127.0.0.1:9222/json').then(r => r.json());
             target = targets.find(t => t.type === 'page' && t.url.includes('/trai-portfolio/'));
             if (target) break;
             await sleep(250);
@@ -435,9 +433,6 @@ jobs:
           timeout --kill-after=5s 30s node /tmp/assert-trai-public.mjs
           echo 'PUBLIC_BROWSER_RENDER=PASS'
 
-          TRAI_CDP_URL='http://127.0.0.1:9223' \
-          TRAI_BASE_URL='https://heruahmose.github.io/trai-portfolio/' \
-          TRAI_AUDIT_REPORT='/tmp/trai-public-browser-audit.json' \
-            timeout --kill-after=5s 180s node scripts/audit-built-site.mjs
-          cat /tmp/trai-public-browser-audit.json
+          timeout --kill-after=5s 180s node scripts/audit-built-site.mjs
+          cat /tmp/trai-browser-audit.json
           echo 'PUBLIC_CANONICAL_ROUTE_MATRIX=PASS'
