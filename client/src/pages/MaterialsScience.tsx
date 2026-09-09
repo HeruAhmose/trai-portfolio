@@ -89,8 +89,8 @@ export default function MaterialsScience() {
                 {/* Constituents Info */}
                 <motion.div
                   className="space-y-4"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
                   <h3 className="font-bold text-foreground text-lg">
@@ -121,8 +121,8 @@ export default function MaterialsScience() {
                     <motion.div
                       key={idx}
                       className="p-4 rounded border border-border bg-card hover:border-primary transition-colors"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + idx * 0.1 }}
                       whileHover={{ x: 4 }}
                     >
