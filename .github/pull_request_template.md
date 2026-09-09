@@ -9,6 +9,6 @@ new number is true — that part is on the author.
 - [ ] No institutional validation implied that has not occurred
 - [ ] Patent language says "filed", not "granted" or "patented technology"
 - [ ] The coherence figure keeps its HYPOTHESIS label
-- [ ] Venture stage language matches reality (built / EIN filed / deployed)
+- [ ] Venture stage language matches reality (planned / built / entity-formed / deployed)
 - [ ] Media carries the correct provenance tag (photograph / rendering / concept)
 - [ ] `npm run check` passes locally

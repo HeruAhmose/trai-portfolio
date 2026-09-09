@@ -59,7 +59,7 @@
 4. Mela Nation — Vessels — early development
 5. MeLaNiNa — Skin — early development
 6. TechBridge — Hands — techbridge-collective.org
-7. The Peoples Foundation — Lymphatic — operating under §508(c)(1)(A); no IRS determination represented
+7. The Peoples Foundation — Lymphatic — separate regenerative-beneficiary affiliate; EIN obtained; tax-exempt status pending counsel confirmation; no tax-exempt determination or recognition represented
 
 ## Operating Doctrine
 

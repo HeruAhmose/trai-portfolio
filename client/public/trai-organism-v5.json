@@ -1,7 +1,7 @@
 {
   "protocol": "TRAI Organism Protocol",
-  "version": "5.4.1",
-  "updated": "2026-09-03",
+  "version": "5.4.2",
+  "updated": "2026-09-09",
   "worlds": [
     {
       "id": "peoples",
@@ -150,13 +150,13 @@
       "accent": "#f0cc79",
       "secondary": "#D6A33A",
       "thesis": "The return organ: surplus routed back into the community that produced it.",
-      "synopsis": "The Peoples Foundation is the lymphatic system of the organism, the channel through which value returns rather than accumulates. It states that it operates under §508(c)(1)(A); this registry does not represent an IRS determination or recognition letter.",
+      "synopsis": "The Peoples Foundation is a separate regenerative-beneficiary affiliate and the lymphatic system of the organism, the intended channel through which value returns rather than accumulates. EIN obtained; tax-exempt status pending counsel confirmation. This registry does not represent a tax-exempt determination or recognition.",
       "transitionLine": "The circuit closes and what was carried outward returns.",
       "kind": "organ",
       "index": "07",
       "organ": "Lymphatic",
       "domain": "Regenerative return",
-      "status": "Operating under §508(c)(1)(A) · no IRS determination represented",
+      "status": "EIN obtained · tax-exempt status pending counsel confirmation",
       "role": "Lymphatic · Regenerative return"
     }
   ]

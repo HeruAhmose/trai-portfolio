@@ -82,9 +82,9 @@ export default function PeoplesFoundation() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
           >
-            Operating under §508(c)(1)(A), the Foundation is the Sovereignty
-            Stack's regenerative-return organ, structured to route value back to
-            the community that built it.
+            The Peoples Foundation is a separate regenerative-beneficiary
+            affiliate and the Sovereignty Stack's intended regenerative-return
+            organ. EIN obtained; tax-exempt status pending counsel confirmation.
           </motion.p>
         </div>
       </section>
@@ -102,25 +102,35 @@ export default function PeoplesFoundation() {
             >
               <p className="ceremonial-label mb-6">Current Status</p>
               <h2 className="display-heading text-[clamp(2rem,4vw,3.2rem)] mb-8">
-                Operating position, stated precisely.
+                Entity status, stated precisely.
               </h2>
               <p className="text-xl text-[#f4f0e6]/55 font-sans leading-relaxed mb-8">
-                The Peoples Foundation states that it operates under
-                §508(c)(1)(A). This is the Foundation's operating position; this
-                public repository does not represent an IRS determination or
-                recognition letter. Its community-return architecture remains
-                subject to governing documents, written agreements, counsel, and
-                applicable law.
+                The Peoples Foundation is a separate regenerative-beneficiary
+                affiliate. Its EIN has been obtained; tax-exempt status remains
+                pending counsel confirmation. No tax-exempt determination or
+                recognition is represented. Its community-return architecture
+                remains subject to governing documents, written agreements,
+                counsel, and applicable law.
               </p>
               <div className="space-y-3">
                 {[
                   {
-                    label: "Federal operating position",
-                    status: "§508(c)(1)(A)",
+                    label: "Entity relationship",
+                    status: "Separate affiliate",
                     color: "#4ade80",
                   },
                   {
-                    label: "IRS determination",
+                    label: "EIN",
+                    status: "Obtained",
+                    color: "#4ade80",
+                  },
+                  {
+                    label: "Tax-exempt status",
+                    status: "Pending counsel confirmation",
+                    color: "#d8aa43",
+                  },
+                  {
+                    label: "Tax-exempt determination",
                     status: "Not represented",
                     color: "#94a3b8",
                   },
@@ -137,13 +147,13 @@ export default function PeoplesFoundation() {
                 ].map(item => (
                   <div
                     key={item.label}
-                    className="flex items-center justify-between border border-[#d8aa43]/10 px-5 py-3"
+                    className="flex items-center justify-between gap-4 border border-[#d8aa43]/10 px-5 py-3"
                   >
                     <span className="text-sm font-mono text-[#f4f0e6]/60">
                       {item.label}
                     </span>
                     <span
-                      className="text-xs font-mono"
+                      className="text-right text-xs font-mono"
                       style={{ color: item.color }}
                     >
                       {item.status}

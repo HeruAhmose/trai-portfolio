@@ -96,7 +96,7 @@ const REGIONS: Region[] = [
     name: "Foundation Hearth",
     role: "Lymphatic",
     organ: "The Peoples Foundation",
-    desc: "States that it operates under §508(c)(1)(A); no IRS determination is represented. Intended regenerative-return channel.",
+    desc: "Separate regenerative-beneficiary affiliate. EIN obtained; tax-exempt status pending counsel confirmation. Intended regenerative-return channel.",
     route: "/peoples-foundation",
     x: 18,
     y: 72,
