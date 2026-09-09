@@ -96,8 +96,8 @@ export default function PeoplesFoundation() {
         <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-20">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
               <p className="ceremonial-label mb-6">Current Status</p>
@@ -153,8 +153,8 @@ export default function PeoplesFoundation() {
               </div>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
             >
