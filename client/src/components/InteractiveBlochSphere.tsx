@@ -1,63 +1,44 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
-// Real quantum coherence data from research preprint (FIG. 10)
-const COHERENCE_DATA = {
-  'Eu³⁺ (Europium)': { T2: 8.5, color: '#ff6b6b', angle: 0 },
-  'Nd³⁺ (Neodymium)': { T2: 5.2, color: '#4ecdc4', angle: 72 },
-  'Er³⁺ (Erbium)': { T2: 3.8, color: '#95e1d3', angle: 144 },
-  'Yb³⁺ (Ytterbium)': { T2: 6.1, color: '#ffd93d', angle: 216 },
-  'Ce³⁺ (Cerium)': { T2: 2.9, color: '#ff6b9d', angle: 288 },
-};
+const DOPANT_CANDIDATES = [
+  { name: "Eu³⁺ · Europium", color: "#ff6b6b", angle: 0 },
+  { name: "Nd³⁺ · Neodymium", color: "#4ecdc4", angle: 72 },
+  { name: "Er³⁺ · Erbium", color: "#95e1d3", angle: 144 },
+  { name: "Yb³⁺ · Ytterbium", color: "#ffd93d", angle: 216 },
+  { name: "Ce³⁺ · Cerium", color: "#ff6b9d", angle: 288 },
+] as const;
 
-interface BlochState {
-  theta: number; // Polar angle (0 to π)
-  phi: number; // Azimuthal angle (0 to 2π)
-  name: string;
-  T2: number;
-}
-
-export const InteractiveBlochSphere: React.FC<{ className?: string }> = ({ className = '' }) => {
+export const InteractiveBlochSphere: React.FC<{ className?: string }> = ({
+  className = "",
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [selectedState, setSelectedState] = useState<BlochState | null>(null);
-  const [rotation, setRotation] = useState({ x: 0.5, y: 0.5 });
-  const [isAnimating, setIsAnimating] = useState(true);
-  const animationRef = useRef<number | undefined>(undefined);
+  const animationRef = useRef<number | null>(null);
+  const rotationRef = useRef({ x: 0.5, y: 0.5 });
   const timeRef = useRef(0);
+  const [selectedCandidate, setSelectedCandidate] = useState<string | null>(
+    null
+  );
+  const [isAnimating, setIsAnimating] = useState(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
-    const ctx = canvas.getContext('2d', {}) as CanvasRenderingContext2D | null;
-    if (!ctx) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
 
     canvas.width = 600;
     canvas.height = 600;
-
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = 150;
 
-    // Helper function to convert Bloch coordinates to 3D
-    const blochTo3D = (theta: number, phi: number) => {
-      return {
-        x: Math.sin(theta) * Math.cos(phi),
-        y: Math.sin(theta) * Math.sin(phi),
-        z: Math.cos(theta),
-      };
-    };
-
-    // Helper function to project 3D to 2D with perspective
-    const project3D = (x: number, y: number, z: number, rotX: number, rotY: number) => {
-      // Apply rotations
-      let rotatedY = y * Math.cos(rotX) - z * Math.sin(rotX);
-      let rotatedZ = y * Math.sin(rotX) + z * Math.cos(rotX);
-
-      let rotatedX = x * Math.cos(rotY) + rotatedZ * Math.sin(rotY);
-      rotatedZ = -x * Math.sin(rotY) + rotatedZ * Math.cos(rotY);
-
-      // Perspective projection
+    const project = (x: number, y: number, z: number) => {
+      const { x: rotationX, y: rotationY } = rotationRef.current;
+      const rotatedY = y * Math.cos(rotationX) - z * Math.sin(rotationX);
+      let rotatedZ = y * Math.sin(rotationX) + z * Math.cos(rotationX);
+      const rotatedX = x * Math.cos(rotationY) + rotatedZ * Math.sin(rotationY);
+      rotatedZ = -x * Math.sin(rotationY) + rotatedZ * Math.cos(rotationY);
       const scale = 1 / (1 + rotatedZ * 0.5);
       return {
         x: centerX + rotatedX * radius * scale,
@@ -66,210 +47,194 @@ export const InteractiveBlochSphere: React.FC<{ className?: string }> = ({ class
       };
     };
 
-    const animate = () => {
-      timeRef.current += 0.016;
+    const draw = () => {
+      context.fillStyle = "#05050f";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.strokeStyle = "rgba(0, 255, 255, 0.2)";
+      context.lineWidth = 1;
 
-      // Clear canvas
-      ctx.fillStyle = 'rgba(5, 5, 15, 0.1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw background sphere (wireframe)
-      ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)';
-      ctx.lineWidth = 1;
-
-      // Draw latitude lines
-      for (let lat = 0; lat < Math.PI; lat += Math.PI / 6) {
-        ctx.beginPath();
-        for (let lon = 0; lon < Math.PI * 2; lon += 0.1) {
-          const { x, y } = project3D(
-            Math.sin(lat) * Math.cos(lon),
-            Math.sin(lat) * Math.sin(lon),
-            Math.cos(lat),
-            rotation.x,
-            rotation.y
+      for (let latitude = 0; latitude <= Math.PI; latitude += Math.PI / 6) {
+        context.beginPath();
+        for (let longitude = 0; longitude <= Math.PI * 2; longitude += 0.1) {
+          const point = project(
+            Math.sin(latitude) * Math.cos(longitude),
+            Math.sin(latitude) * Math.sin(longitude),
+            Math.cos(latitude)
           );
-          if (lon === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+          if (longitude === 0) context.moveTo(point.x, point.y);
+          else context.lineTo(point.x, point.y);
         }
-        ctx.closePath();
-        ctx.stroke();
+        context.stroke();
       }
 
-      // Draw longitude lines
-      for (let lon = 0; lon < Math.PI * 2; lon += Math.PI / 6) {
-        ctx.beginPath();
-        for (let lat = 0; lat < Math.PI; lat += 0.1) {
-          const { x, y } = project3D(
-            Math.sin(lat) * Math.cos(lon),
-            Math.sin(lat) * Math.sin(lon),
-            Math.cos(lat),
-            rotation.x,
-            rotation.y
+      for (
+        let longitude = 0;
+        longitude < Math.PI * 2;
+        longitude += Math.PI / 6
+      ) {
+        context.beginPath();
+        for (let latitude = 0; latitude <= Math.PI; latitude += 0.1) {
+          const point = project(
+            Math.sin(latitude) * Math.cos(longitude),
+            Math.sin(latitude) * Math.sin(longitude),
+            Math.cos(latitude)
           );
-          if (lat === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+          if (latitude === 0) context.moveTo(point.x, point.y);
+          else context.lineTo(point.x, point.y);
         }
-        ctx.stroke();
+        context.stroke();
       }
 
-      // Draw axes
-      const axisLength = 180;
+      const points = DOPANT_CANDIDATES.map(candidate => {
+        const phi = (candidate.angle * Math.PI) / 180 + timeRef.current * 0.25;
+        const theta = Math.PI / 2.5;
+        const projected = project(
+          Math.sin(theta) * Math.cos(phi),
+          Math.sin(theta) * Math.sin(phi),
+          Math.cos(theta)
+        );
+        return { candidate, projected };
+      }).sort((a, b) => a.projected.z - b.projected.z);
 
-      // X-axis (red)
-      const xEnd = project3D(1, 0, 0, rotation.x, rotation.y);
-      ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(xEnd.x, xEnd.y);
-      ctx.stroke();
-
-      // Y-axis (green)
-      const yEnd = project3D(0, 1, 0, rotation.x, rotation.y);
-      ctx.strokeStyle = 'rgba(0, 255, 0, 0.5)';
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(yEnd.x, yEnd.y);
-      ctx.stroke();
-
-      // Z-axis (blue)
-      const zEnd = project3D(0, 0, 1, rotation.x, rotation.y);
-      ctx.strokeStyle = 'rgba(0, 150, 255, 0.8)';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(zEnd.x, zEnd.y);
-      ctx.stroke();
-
-      // Draw quantum states
-      const states: Array<[string, BlochState]> = Object.entries(COHERENCE_DATA).map(
-        ([name, data]) => [
-          name,
-          {
-            name,
-            T2: data.T2,
-            theta: Math.PI / 2.5, // Adjust height based on coherence
-            phi: (data.angle * Math.PI) / 180 + timeRef.current * 0.3,
-          },
-        ]
-      );
-
-      // Sort by z-depth for proper rendering
-      const projectedStates = states
-        .map(([name, state]) => {
-          const coords = blochTo3D(state.theta, state.phi);
-          const proj = project3D(coords.x, coords.y, coords.z, rotation.x, rotation.y);
-          return { name, state, proj, coords };
-        })
-        .sort((a, b) => a.proj.z - b.proj.z);
-
-      // Draw states
-      projectedStates.forEach(({ name, state, proj }) => {
-        const data = COHERENCE_DATA[name as keyof typeof COHERENCE_DATA];
-
-        // Draw glow
-        const gradient = ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, 15);
-        gradient.addColorStop(0, data.color + '80');
-        gradient.addColorStop(1, data.color + '00');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(proj.x - 15, proj.y - 15, 30, 30);
-
-        // Draw point
-        ctx.fillStyle = data.color;
-        ctx.beginPath();
-        ctx.arc(proj.x, proj.y, 6, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Draw label
-        ctx.fillStyle = data.color;
-        ctx.font = 'bold 12px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(name, proj.x, proj.y + 25);
-        ctx.fillText(`T₂: ${state.T2} µs`, proj.x, proj.y + 40);
+      points.forEach(({ candidate, projected }) => {
+        const glow = context.createRadialGradient(
+          projected.x,
+          projected.y,
+          0,
+          projected.x,
+          projected.y,
+          18
+        );
+        glow.addColorStop(0, `${candidate.color}90`);
+        glow.addColorStop(1, `${candidate.color}00`);
+        context.fillStyle = glow;
+        context.fillRect(projected.x - 18, projected.y - 18, 36, 36);
+        context.fillStyle = candidate.color;
+        context.beginPath();
+        context.arc(projected.x, projected.y, 6, 0, Math.PI * 2);
+        context.fill();
+        context.font = "bold 12px monospace";
+        context.textAlign = "center";
+        context.fillText(
+          candidate.name.split(" · ")[0],
+          projected.x,
+          projected.y + 24
+        );
       });
 
-      // Draw center point
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
-      ctx.fill();
+      context.fillStyle = "rgba(255,255,255,0.8)";
+      context.beginPath();
+      context.arc(centerX, centerY, 4, 0, Math.PI * 2);
+      context.fill();
 
-      // Update rotation for continuous animation
+      context.fillStyle = "rgba(255,255,255,0.55)";
+      context.font = "11px monospace";
+      context.textAlign = "center";
+      context.fillText(
+        "CONCEPTUAL STATE MAP · NO MEASURED COHERENCE DATA",
+        centerX,
+        565
+      );
+
       if (isAnimating) {
-        setRotation((prev) => ({
-          x: prev.x + 0.001,
-          y: prev.y + 0.0015,
-        }));
+        timeRef.current += 0.016;
+        rotationRef.current = {
+          x: rotationRef.current.x + 0.0007,
+          y: rotationRef.current.y + 0.0011,
+        };
+        animationRef.current = window.requestAnimationFrame(draw);
       }
-
-      animationRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
-
-    // Mouse interaction
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = (e.clientY - rect.top) / rect.height;
-      setRotation({ x: y * Math.PI, y: x * Math.PI * 2 });
+    const handlePointerMove = (event: PointerEvent) => {
+      const bounds = canvas.getBoundingClientRect();
+      rotationRef.current = {
+        x: ((event.clientY - bounds.top) / bounds.height) * Math.PI,
+        y: ((event.clientX - bounds.left) / bounds.width) * Math.PI * 2,
+      };
+      if (!isAnimating) draw();
     };
 
-    canvas.addEventListener('mousemove', handleMouseMove);
-
+    draw();
+    canvas.addEventListener("pointermove", handlePointerMove);
     return () => {
-      canvas.removeEventListener('mousemove', handleMouseMove);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      canvas.removeEventListener("pointermove", handlePointerMove);
+      if (animationRef.current !== null)
+        window.cancelAnimationFrame(animationRef.current);
     };
   }, [isAnimating]);
 
   return (
     <div className={`space-y-6 ${className}`}>
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-cyan-300">Quantum Coherence Visualization</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-2xl font-bold text-cyan-300">
+            Conceptual Quantum-State Map
+          </h2>
+          <p className="mt-1 text-sm text-cyan-100/55">
+            Interaction model only · not experimental data
+          </p>
+        </div>
         <button
-          onClick={() => setIsAnimating(!isAnimating)}
-          className="px-4 py-2 bg-cyan-500/20 border border-cyan-400 rounded text-cyan-300 hover:bg-cyan-500/40 transition"
+          type="button"
+          onClick={() => setIsAnimating(current => !current)}
+          className="rounded border border-cyan-400 bg-cyan-500/20 px-4 py-2 text-cyan-300 transition hover:bg-cyan-500/40"
         >
-          {isAnimating ? 'Pause' : 'Resume'}
+          {isAnimating ? "Pause motion" : "Resume motion"}
         </button>
       </div>
 
       <canvas
         ref={canvasRef}
-        className="w-full border border-cyan-400/50 rounded-lg bg-black/60 backdrop-blur-sm cursor-move"
-        style={{ maxWidth: '600px', margin: '0 auto', display: 'block' }}
+        role="img"
+        aria-label="Conceptual Bloch-sphere-style map of five candidate rare-earth dopants; no measured coherence values"
+        className="mx-auto block w-full cursor-move rounded-lg border border-cyan-400/50 bg-black/60 backdrop-blur-sm"
+        style={{ maxWidth: "600px" }}
       />
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {Object.entries(COHERENCE_DATA).map(([name, data]) => (
-          <motion.div
-            key={name}
-            whileHover={{ scale: 1.05 }}
-            className="p-3 rounded border border-current/30 bg-black/40 cursor-pointer hover:bg-black/60 transition"
-            style={{ borderColor: data.color, color: data.color }}
-            onClick={() => setSelectedState({ name, T2: data.T2, theta: 0, phi: 0 })}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+        {DOPANT_CANDIDATES.map(candidate => (
+          <motion.button
+            key={candidate.name}
+            type="button"
+            whileHover={{ scale: 1.04 }}
+            onClick={() => setSelectedCandidate(candidate.name)}
+            aria-pressed={selectedCandidate === candidate.name}
+            className="cursor-pointer rounded border bg-black/40 p-3 text-left transition hover:bg-black/60"
+            style={{ borderColor: candidate.color, color: candidate.color }}
           >
-            <div className="font-bold text-sm">{name}</div>
-            <div className="text-xs opacity-80">T₂: {data.T2} µs</div>
-          </motion.div>
+            <span className="block text-sm font-bold">{candidate.name}</span>
+            <span className="mt-1 block text-xs opacity-75">
+              Claim 7 candidate
+            </span>
+          </motion.button>
         ))}
       </div>
 
-      {selectedState && (
+      <div className="rounded-lg border border-yellow-300/30 bg-yellow-300/5 p-5">
+        <p className="font-semibold text-yellow-200">
+          Research target · hypothesis, not confirmed
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-cyan-50/70">
+          The application target is T₂ &gt;500 ns at 300 K, with a stated goal
+          of 1–10 μs. No dopant-specific or integrated-composite coherence time
+          has been measured or represented here.
+        </p>
+      </div>
+
+      {selectedCandidate && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 rounded border border-cyan-400/50 bg-cyan-500/10 backdrop-blur-sm"
+          className="rounded border border-cyan-400/50 bg-cyan-500/10 p-4"
         >
-          <h3 className="font-bold text-cyan-300 mb-2">Selected: {selectedState.name}</h3>
-          <p className="text-sm text-cyan-200">
-            Coherence Time (T₂): <span className="font-mono">{selectedState.T2} microseconds</span>
-          </p>
-          <p className="text-xs text-cyan-200/60 mt-2">
-            This represents the quantum decoherence time at 300K. Longer coherence times indicate better quantum state preservation.
+          <h3 className="font-bold text-cyan-300">
+            Selected candidate: {selectedCandidate}
+          </h3>
+          <p className="mt-2 text-sm text-cyan-100/65">
+            Listed in provisional Application 63/934,269. Inclusion in an
+            application is not evidence of synthesis, optical addressability, or
+            measured coherence.
           </p>
         </motion.div>
       )}

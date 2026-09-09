@@ -1,344 +1,249 @@
-import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
-/**
- * CeremonialIntro — a slow, elegant cinematic entrance.
- *
- * Sequence:
- * 0.0s — Deep black. Silence.
- * 0.8s — A single point of amber light appears at center.
- * 2.0s — The point slowly expands into the heart orb.
- * 3.5s — "TRAI" fades in, letter by letter.
- * 5.0s — Tagline fades in below.
- * 6.5s — The orb and text hold.
- * 7.5s — Everything dissolves to black.
- * 8.5s — Page fades in.
- *
- * Total: ~9 seconds. Skippable at any point.
- */
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface CeremonialIntroProps {
   onComplete: () => void;
 }
 
+type IntroPhase = 0 | 1 | 2;
+
+const phaseCopy = [
+  {
+    eyebrow: "The Sovereignty Stack",
+    title: "Seven organs. One living system.",
+    body: "Each organ is independently viable. Together they form a mutually reinforcing architecture.",
+  },
+  {
+    eyebrow: "Operating doctrine",
+    title: "Authority must be earned.",
+    body: "The Mandate of Mistrust requires evidence, provenance, and human authorization before a claim or system receives authority.",
+  },
+  {
+    eyebrow: "Tamerian Renaissance Alliance Initiative",
+    title: "TRAI",
+    body: "Enter the documented public record: current states, validation boundaries, and next gates.",
+  },
+] as const;
+
 export function CeremonialIntro({ onComplete }: CeremonialIntroProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [phase, setPhase] = useState<
-    "orb" | "text" | "tagline" | "hold" | "dissolve" | "done"
-  >("orb");
-  const [visible, setVisible] = useState(true);
-  const rafRef = useRef<number>(0);
-  const startRef = useRef<number>(0);
   const completedRef = useRef(false);
+  const exitTimerRef = useRef<number | null>(null);
+  const [phase, setPhase] = useState<IntroPhase>(0);
+  const [visible, setVisible] = useState(true);
 
-  // Visit-count speed tuning: first visit 9s, each subsequent visit 1.2x faster, min 4s
-  const getDuration = () => {
-    try {
-      const visits = parseInt(
-        localStorage.getItem("trai_visit_count") || "0",
-        10
-      );
-      const next = visits + 1;
-      localStorage.setItem("trai_visit_count", String(next));
-      const base = 9000;
-      const speed = Math.pow(1.2, visits); // 1x, 1.2x, 1.44x, 1.73x...
-      return Math.max(4000, Math.round(base / speed));
-    } catch {
-      return 9000;
-    }
-  };
+  const finish = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    setVisible(false);
+    exitTimerRef.current = window.setTimeout(onComplete, 260);
+  }, [onComplete]);
 
-  // Canvas orb animation
+  const advance = useCallback(() => {
+    setPhase(current => {
+      if (current === 2) {
+        finish();
+        return current;
+      }
+      return (current + 1) as IntroPhase;
+    });
+  }, [finish]);
+
+  useEffect(() => {
+    return () => {
+      if (exitTimerRef.current !== null)
+        window.clearTimeout(exitTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        finish();
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        advance();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [advance, finish]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    let animationFrame = 0;
+    let start = performance.now();
 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      start = performance.now();
     };
+
+    const draw = (timestamp: number) => {
+      const width = canvas.width;
+      const height = canvas.height;
+      const centerX = width / 2;
+      const centerY = height * 0.38;
+      const elapsed = reducedMotion ? 0 : timestamp - start;
+      const pulse = reducedMotion
+        ? 0.5
+        : 0.5 + Math.sin(elapsed * 0.0016) * 0.5;
+      const radius =
+        Math.min(width, height) * (0.11 + phase * 0.012) + pulse * 6;
+
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = "#050709";
+      context.fillRect(0, 0, width, height);
+
+      const outerGlow = context.createRadialGradient(
+        centerX,
+        centerY,
+        0,
+        centerX,
+        centerY,
+        radius * 3.4
+      );
+      outerGlow.addColorStop(0, `rgba(216, 170, 67, ${0.2 + pulse * 0.06})`);
+      outerGlow.addColorStop(0.45, "rgba(180, 130, 40, 0.08)");
+      outerGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
+      context.fillStyle = outerGlow;
+      context.beginPath();
+      context.arc(centerX, centerY, radius * 3.4, 0, Math.PI * 2);
+      context.fill();
+
+      const orb = context.createRadialGradient(
+        centerX - radius * 0.22,
+        centerY - radius * 0.22,
+        0,
+        centerX,
+        centerY,
+        radius
+      );
+      orb.addColorStop(0, "#ffe69a");
+      orb.addColorStop(0.3, "#d8aa43");
+      orb.addColorStop(0.67, "#96691c");
+      orb.addColorStop(0.9, "#3c2608");
+      orb.addColorStop(1, "#080602");
+      context.fillStyle = orb;
+      context.beginPath();
+      context.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      context.fill();
+
+      context.save();
+      context.translate(centerX, centerY);
+      context.rotate(reducedMotion ? 0 : elapsed * 0.00018);
+      context.strokeStyle = "rgba(216, 170, 67, 0.48)";
+      context.lineWidth = 1;
+      context.beginPath();
+      context.ellipse(0, 0, radius * 1.75, radius * 0.72, 0.38, 0, Math.PI * 2);
+      context.stroke();
+      context.restore();
+
+      if (!reducedMotion) animationFrame = window.requestAnimationFrame(draw);
+    };
+
     resize();
+    draw(performance.now());
     window.addEventListener("resize", resize);
 
-    const cx = () => canvas.width / 2;
-    const cy = () => canvas.height / 2;
-
-    let startTime = 0;
-    const TOTAL = getDuration();
-
-    const draw = (ts: number) => {
-      if (!startTime) {
-        startTime = ts;
-        startRef.current = ts;
-      }
-      const t = ts - startTime;
-      const progress = Math.min(t / TOTAL, 1);
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#050709";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Phase timing
-      const orbStart = 800;
-      const orbPeak = TOTAL * 0.39;
-      const dissolveStart = TOTAL * 0.83;
-
-      if (t > orbStart) {
-        const orbProgress = Math.min((t - orbStart) / (orbPeak - orbStart), 1);
-        // Eased expansion
-        const eased = 1 - Math.pow(1 - orbProgress, 3);
-        const maxRadius = Math.min(canvas.width, canvas.height) * 0.22;
-        const radius = 2 + eased * maxRadius;
-
-        // Dissolve fade
-        let alpha = 1;
-        if (t > dissolveStart) {
-          alpha = Math.max(0, 1 - (t - dissolveStart) / 1200);
-        }
-
-        // Outer glow
-        const glow = ctx.createRadialGradient(
-          cx(),
-          cy(),
-          0,
-          cx(),
-          cy(),
-          radius * 2.5
-        );
-        glow.addColorStop(0, `rgba(216, 170, 67, ${0.25 * alpha})`);
-        glow.addColorStop(0.4, `rgba(180, 130, 40, ${0.1 * alpha})`);
-        glow.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(cx(), cy(), radius * 2.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Second outer glow pulse (breathing)
-        const pulse = 0.5 + 0.5 * Math.sin(t * 0.002);
-        const glow2 = ctx.createRadialGradient(
-          cx(),
-          cy(),
-          0,
-          cx(),
-          cy(),
-          radius * 4.0
-        );
-        glow2.addColorStop(0, `rgba(216, 170, 67, ${0.08 * alpha * pulse})`);
-        glow2.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = glow2;
-        ctx.beginPath();
-        ctx.arc(cx(), cy(), radius * 4.0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Heart orb
-        const grad = ctx.createRadialGradient(
-          cx() - radius * 0.2,
-          cy() - radius * 0.2,
-          0,
-          cx(),
-          cy(),
-          radius
-        );
-        grad.addColorStop(0, `rgba(255, 230, 150, ${alpha})`);
-        grad.addColorStop(0.3, `rgba(216, 170, 67, ${alpha})`);
-        grad.addColorStop(0.65, `rgba(150, 105, 28, ${alpha})`);
-        grad.addColorStop(0.88, `rgba(60, 38, 8, ${alpha})`);
-        grad.addColorStop(1, `rgba(8, 6, 2, ${alpha})`);
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(cx(), cy(), radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Orbital ring — appears after orb is 60% grown
-        if (orbProgress > 0.6) {
-          const ringAlpha = Math.min((orbProgress - 0.6) / 0.4, 1) * alpha;
-          const ringRadius = radius * 1.6;
-          // Rotating ring
-          ctx.save();
-          ctx.translate(cx(), cy());
-          ctx.rotate(t * 0.0003);
-          ctx.translate(-cx(), -cy());
-          ctx.strokeStyle = `rgba(216, 170, 67, ${ringAlpha * 0.55})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.arc(cx(), cy(), ringRadius, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.restore();
-
-          // Second ring (counter-rotating)
-          ctx.save();
-          ctx.translate(cx(), cy());
-          ctx.rotate(-t * 0.0002);
-          ctx.translate(-cx(), -cy());
-          ctx.strokeStyle = `rgba(216, 170, 67, ${ringAlpha * 0.25})`;
-          ctx.lineWidth = 0.5;
-          ctx.beginPath();
-          ctx.arc(cx(), cy(), ringRadius * 1.4, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.restore();
-
-          // Gold tick marks on outer ring
-          if (ringAlpha > 0.5) {
-            for (let i = 0; i < 8; i++) {
-              const angle = (i / 8) * Math.PI * 2 + t * 0.0003;
-              const x1 = cx() + Math.cos(angle) * ringRadius * 1.35;
-              const y1 = cy() + Math.sin(angle) * ringRadius * 1.35;
-              const x2 = cx() + Math.cos(angle) * ringRadius * 1.45;
-              const y2 = cy() + Math.sin(angle) * ringRadius * 1.45;
-              ctx.strokeStyle = `rgba(216, 170, 67, ${ringAlpha * 0.6})`;
-              ctx.lineWidth = 1;
-              ctx.beginPath();
-              ctx.moveTo(x1, y1);
-              ctx.lineTo(x2, y2);
-              ctx.stroke();
-            }
-          }
-        }
-      }
-
-      if (t > dissolveStart + 1200) {
-        if (!completedRef.current) {
-          completedRef.current = true;
-          cancelAnimationFrame(rafRef.current);
-          setVisible(false);
-          window.setTimeout(onComplete, 400);
-        }
-        return;
-      }
-
-      rafRef.current = requestAnimationFrame(draw);
-    };
-
-    rafRef.current = requestAnimationFrame(draw);
-
-    // Phase transitions for text
-    const t1 = setTimeout(() => setPhase("text"), TOTAL * 0.39);
-    const t2 = setTimeout(() => setPhase("tagline"), TOTAL * 0.56);
-    const t3 = setTimeout(() => setPhase("dissolve"), TOTAL * 0.83);
-
-    // Independent fail-open: the intro may never be allowed to cover the site
-    // indefinitely if requestAnimationFrame, Canvas, WebGL, or a driver stalls.
-    const watchdog = window.setTimeout(() => {
-      if (completedRef.current) return;
-      completedRef.current = true;
-      cancelAnimationFrame(rafRef.current);
-      setVisible(false);
-      onComplete();
-    }, TOTAL + 2000);
-
     return () => {
-      cancelAnimationFrame(rafRef.current);
+      window.cancelAnimationFrame(animationFrame);
       window.removeEventListener("resize", resize);
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(watchdog);
     };
-    // Deliberately one lifetime per mounted intro. The parent passes an inline
-    // state transition; depending on that function would restart this effect.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [phase]);
 
-  const skip = () => {
-    if (completedRef.current) return;
-    completedRef.current = true;
-    cancelAnimationFrame(rafRef.current);
-    setVisible(false);
-    window.setTimeout(onComplete, 300);
-  };
+  const current = phaseCopy[phase];
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center"
+          role="dialog"
+          aria-modal="true"
+          aria-label="TRAI ceremonial introduction"
+          className="fixed inset-0 z-[2147483000] flex items-center justify-center overflow-hidden"
           style={{ background: "#050709" }}
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+          transition={{ duration: 0.24 }}
         >
-          {/* Canvas orb */}
-          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+          <canvas
+            ref={canvasRef}
+            className="absolute inset-0 h-full w-full"
+            aria-hidden="true"
+          />
 
-          {/* Text overlay — centered below the orb */}
-          <div
-            className="relative z-10 text-center"
-            style={{ marginTop: "45vh" }}
+          <button
+            type="button"
+            onClick={finish}
+            className="absolute right-4 top-4 z-20 rounded-full border border-white/30 bg-black/55 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:border-[#d8aa43] hover:text-[#f7d778] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7d778] sm:right-8 sm:top-8"
           >
-            {/* TRAI letters */}
-            <AnimatePresence>
-              {(phase === "text" ||
-                phase === "tagline" ||
-                phase === "hold") && (
-                <motion.div
-                  className="flex items-center justify-center gap-[0.12em] mb-6"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.8 }}
+            Skip intro
+          </button>
+
+          <div className="relative z-10 mx-auto flex min-h-full w-full max-w-4xl flex-col items-center justify-end px-5 pb-12 pt-[45vh] text-center sm:pb-16">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={phase}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.35 }}
+                className="max-w-3xl"
+              >
+                <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#d8aa43] sm:text-xs">
+                  {current.eyebrow}
+                </p>
+                <h1
+                  className="text-[clamp(2.3rem,7vw,5.4rem)] font-bold leading-[0.95] tracking-[-0.03em] text-[#f4f0e6]"
+                  style={{ fontFamily: "var(--font-display)" }}
                 >
-                  {["T", "R", "A", "I"].map((letter, i) => (
-                    <motion.span
-                      key={letter}
-                      className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[0.15em]"
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        color: "#f4f0e6",
-                        WebkitTextFillColor: "#f4f0e6",
-                        textShadow: "0 0 40px rgba(244,240,230,0.2)",
-                      }}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        delay: i * 0.12,
-                        duration: 0.6,
-                        ease: [0.23, 1, 0.32, 1],
-                      }}
-                    >
-                      {letter}
-                    </motion.span>
-                  ))}
-                </motion.div>
-              )}
+                  {current.title}
+                </h1>
+                <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-[#f4f0e6]/70 sm:text-base">
+                  {current.body}
+                </p>
+              </motion.div>
             </AnimatePresence>
 
-            {/* Tagline */}
-            <AnimatePresence>
-              {(phase === "tagline" || phase === "hold") && (
-                <motion.p
-                  className="text-xs tracking-[0.28em] uppercase"
-                  style={{
-                    color: "rgba(216,170,67,0.7)",
-                    fontFamily: "var(--font-interface)",
-                  }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.2 }}
-                >
-                  Tamerian Renaissance Alliance Initiative
-                </motion.p>
-              )}
-            </AnimatePresence>
+            <div
+              className="mt-8 flex items-center gap-2"
+              aria-label={`Introduction step ${phase + 1} of 3`}
+            >
+              {[0, 1, 2].map(index => (
+                <span
+                  key={index}
+                  className={`h-1.5 rounded-full transition-all ${
+                    index === phase ? "w-8 bg-[#d8aa43]" : "w-3 bg-white/25"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              type="button"
+              autoFocus
+              onClick={advance}
+              className="mt-7 min-w-48 rounded-full bg-[#d8aa43] px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-[#050709] transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              {phase === 2 ? "Enter TRAI" : "Continue"}
+            </button>
+            <p className="mt-4 text-[10px] uppercase tracking-[0.16em] text-white/45">
+              User-paced · Enter or Space activates · Right Arrow continues ·
+              Escape skips
+            </p>
           </div>
-
-          {/* Skip — subtle, bottom right */}
-          <motion.button
-            onClick={skip}
-            className="absolute bottom-8 right-8 text-xs tracking-[0.18em] uppercase transition-colors"
-            style={{
-              color: "rgba(244,240,230,0.2)",
-              fontFamily: "var(--font-interface)",
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            whileHover={{ color: "rgba(244,240,230,0.5)" }}
-          >
-            Skip
-          </motion.button>
         </motion.div>
       )}
     </AnimatePresence>

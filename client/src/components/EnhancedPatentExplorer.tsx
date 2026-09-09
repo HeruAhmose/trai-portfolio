@@ -335,10 +335,10 @@ const PATENT_CLAIMS: Claim[] = [
     title: "System-Level Performance Validation",
     category: "device",
     summary:
-      "End-to-end transduction with measured sensitivity, repeatability, and manufacturability.",
+      "Application claim calls for end-to-end measurement of sensitivity, repeatability, and manufacturability.",
     details: [
-      "End-to-end transduction",
-      "Measured sensitivity, repeatability, and manufacturability",
+      "Proposed end-to-end transduction gate",
+      "Sensitivity, repeatability, and manufacturability must be measured",
     ],
   },
 ];
@@ -405,13 +405,13 @@ export const EnhancedPatentExplorer: React.FC = () => {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-primary">Patent Claims</span>
+            <span className="text-primary">Application Claims</span>
             <span className="text-foreground/60 mx-2">·</span>
             <span className="text-cyan-400">25 Total Claims</span>
           </h2>
           <p className="text-foreground/70 text-lg max-w-2xl mx-auto">
-            Multi-modal energy harvesting composite from hemp-derived carbon.
-            USPTO Filed Application No. 63/934,269
+            U.S. Provisional Application 63/934,269 · filed December 11, 2025.
+            Claim language is not experimental evidence or a granted patent.
           </p>
         </motion.div>
 
@@ -531,7 +531,7 @@ export const EnhancedPatentExplorer: React.FC = () => {
                         <div className="mb-4">
                           <h5 className="font-bold text-primary mb-3 flex items-center gap-2">
                             <Zap size={16} />
-                            Key Details
+                            Application details
                           </h5>
                           <ul className="space-y-2">
                             {claim.details.map((detail, idx) => (
@@ -555,7 +555,7 @@ export const EnhancedPatentExplorer: React.FC = () => {
                         {claim.specifications && (
                           <div>
                             <h5 className="font-bold text-primary mb-3">
-                              Specifications
+                              Claimed parameters · not measured
                             </h5>
                             <div className="grid grid-cols-2 gap-2">
                               {Object.entries(claim.specifications).map(
@@ -592,7 +592,9 @@ export const EnhancedPatentExplorer: React.FC = () => {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="mt-12 p-6 rounded-xl border border-primary/20 bg-background/30"
         >
-          <h4 className="font-bold text-primary mb-4">Patent Summary</h4>
+          <h4 className="font-bold text-primary mb-4">
+            Provisional application summary
+          </h4>
           <div className="grid md:grid-cols-4 gap-4 text-center">
             <div>
               <p className="text-3xl font-bold text-primary">25</p>

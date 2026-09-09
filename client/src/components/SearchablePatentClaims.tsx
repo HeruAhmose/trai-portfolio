@@ -36,7 +36,7 @@ export const SearchablePatentClaims: React.FC = () => {
   const [sortBy, setSortBy] = useState<"number" | "relevance">("number");
 
   const filteredClaims = useMemo(() => {
-    let filtered = PATENT_CLAIMS;
+    let filtered = [...PATENT_CLAIMS];
 
     // Category filter
     if (selectedCategory !== "all") {
@@ -91,10 +91,12 @@ export const SearchablePatentClaims: React.FC = () => {
         className="mb-8"
       >
         <h2 className="text-4xl font-bold text-primary mb-2">
-          Patent Claims Explorer
+          Provisional Application Claims Explorer
         </h2>
         <p className="text-foreground/70">
-          U.S. Provisional Patent Application 63/934,269 - 25 Claims
+          U.S. Provisional Application 63/934,269 · 25 application claims. These
+          descriptions are claim language—not measured results or a granted
+          patent.
         </p>
       </motion.div>
 
@@ -260,7 +262,7 @@ export const SearchablePatentClaims: React.FC = () => {
                     {/* Specifications */}
                     <div>
                       <h4 className="font-semibold text-foreground mb-3">
-                        Specifications
+                        Claimed parameters · not measured
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {Object.entries(claim.specifications).map(

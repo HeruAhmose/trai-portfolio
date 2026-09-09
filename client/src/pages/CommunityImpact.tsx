@@ -1,256 +1,235 @@
-import { motion } from 'framer-motion';
-import { asset } from '@/lib/media';
-import TechMinutesDashboard from '@/components/TechMinutesDashboard';
-import { SovereignNebulaGL } from '@/components/SovereignNebulaGL';
+import { motion } from "framer-motion";
+import TechMinutesDashboard from "@/components/TechMinutesDashboard";
+import { SovereignNebulaGL } from "@/components/SovereignNebulaGL";
+
+const pillars = [
+  {
+    title: "Proposed Help Desks",
+    color: "border-cyan text-cyan",
+    copy: "The pilot model proposes recurring in-person digital navigation with paid Navigators. No active hub or partner commitment is represented here.",
+  },
+  {
+    title: "Deterministic H.K. Triage",
+    color: "border-gold text-gold",
+    copy: "The TechBridge runtime uses bounded in-browser decision logic for step-by-step routing. It does not request credentials or replace a human Navigator.",
+  },
+  {
+    title: "Proposed TechMinutes® Reporting",
+    color: "border-lime-500 text-lime-500",
+    copy: "The measurement design records minutes, issue category, and resolution status without personal information. No live outcome dataset is represented.",
+  },
+];
+
+const hubPlan = [
+  {
+    name: "Durham-area host target",
+    stage: "PROPOSED YEAR 1",
+    hours: "4–8 hrs/wk target",
+  },
+  {
+    name: "Raleigh-area host target",
+    stage: "PROPOSED YEAR 1",
+    hours: "4–8 hrs/wk target",
+  },
+  {
+    name: "Third host target",
+    stage: "PROPOSED YEAR 2",
+    hours: "Site not selected",
+  },
+  {
+    name: "Fourth host target",
+    stage: "PROPOSED YEAR 2",
+    hours: "Site not selected",
+  },
+];
 
 export default function CommunityImpact() {
-
   return (
-    <div className="min-h-screen relative" style={{ background: '#050709' }}>
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-20">
+    <div className="relative min-h-screen" style={{ background: "#050709" }}>
+      <div className="pointer-events-none fixed inset-0 z-0 opacity-20">
         <SovereignNebulaGL variant="emerald" />
       </div>
+
       <div className="relative z-[1]">
-      {/* Header */}
-      <section className="container mx-auto px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="space-y-6"
-        >
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground">
-            <span className="text-primary neon-text">TECHBRIDGE COLLECTIVE</span>
-          </h1>
-          <p className="text-2xl text-cyan mb-2">Building Bridges of Digital Access</p>
-          <p className="text-xl text-foreground/80 max-w-2xl">
-            Addressing the digital divide in North Carolina. Free, community-based digital navigation services across the Triangle Area (Durham, Raleigh, Chapel Hill). North Carolina has over 1.2M residents lacking adequate broadband access (NCDIT 2023 data).
-          </p>
-          <div className="mt-8 overflow-hidden rounded-lg max-w-2xl">
-            <img src={asset('/media/tamerian/lattice.jpg')} alt="TechBridge Collective — Tech Problems Don't Wait. Neither Do We." className="w-full h-auto" />
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Mission Statement */}
-      <section className="container mx-auto px-4 py-12 border-t border-border">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="max-w-3xl"
-        >
-          <h2 className="text-2xl font-bold text-foreground mb-6">THREE-PILLAR MODEL</h2>
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="p-6 border border-cyan rounded-lg">
-              <h3 className="text-lg font-bold text-cyan mb-2">Help Desk</h3>
-              <p className="text-foreground/80 text-sm">Weekly in-person digital navigation services with paid Digital Navigators. One-on-one assistance with email, banking, healthcare portals, job applications, and more.</p>
-            </div>
-            <div className="p-6 border border-gold rounded-lg">
-              <h3 className="text-lg font-bold text-gold mb-2">H.K. AI Triage</h3>
-              <p className="text-foreground/80 text-sm">24/7 AI-powered guidance system for digital navigation. Horace King-inspired triage interface providing step-by-step assistance anytime, anywhere.</p>
-            </div>
-            <div className="p-6 border border-lime-500 rounded-lg">
-              <h3 className="text-lg font-bold text-lime-500 mb-2">TechMinutes®</h3>
-              <p className="text-foreground/80 text-sm">Impact reporting and measurement system. Tracks outcomes, ROI, and community benefit across all initiatives and hub locations.</p>
-            </div>
-          </div>
-          <p className="text-foreground/80 text-lg leading-relaxed">
-            We believe that the best technology in the world doesn't matter if no one shows you how to use it. Our mission is to connect North Carolinians who lack adequate digital access with the tools, knowledge, and human support they need to thrive.
-          </p>
-        </motion.div>
-      </section>
-
-      {/* Core Values */}
-      <section className="container mx-auto px-4 py-16 border-t border-border">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <h2 className="text-2xl font-bold text-foreground mb-8">OUR DNA</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: '🔄',
-                title: 'Consistency over Novelty',
-                description: 'We show up. Every week. Same time, same place.',
-              },
-              {
-                icon: '🤝',
-                title: 'Human-First Technology',
-                description: 'H.K. triages; humans deliver. Technology serves people, not the reverse.',
-              },
-              {
-                icon: '📊',
-                title: 'Measured Impact',
-                description: 'Every interaction becomes a TechMinute®. We measure what matters.',
-              },
-              {
-                icon: '🏢',
-                title: 'Low-Lift Partnerships',
-                description: 'Host provides space. TechBridge provides everything else.',
-              },
-              {
-                icon: '💰',
-                title: 'Paid Navigators',
-                description: 'No volunteers. Paid staff show up, stay trained, and don\'t churn.',
-              },
-              {
-                icon: '🔒',
-                title: 'Privacy by Design',
-                description: 'No PII. No credential access. We guide; we don\'t control.',
-              },
-            ].map((value, idx) => (
-              <motion.div
-                key={idx}
-                className="p-6 rounded border border-border bg-card hover:border-primary transition-colors"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + idx * 0.05 }}
-                whileHover={{ scale: 1.05, y: -4 }}
-              >
-                <div className="text-4xl mb-4">{value.icon}</div>
-                <h3 className="font-bold text-foreground mb-2">{value.title}</h3>
-                <p className="text-sm text-foreground/80">{value.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
-      {/* TechMinutes Dashboard */}
-      <section className="container mx-auto px-4 py-16 border-t border-border">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <h2 className="text-2xl font-bold text-foreground mb-8">IMPACT DASHBOARD</h2>
-          <TechMinutesDashboard isActive={true} />
-        </motion.div>
-      </section>
-
-      {/* Hub Network */}
-      <section className="container mx-auto px-4 py-16 border-t border-border">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <h2 className="text-2xl font-bold text-foreground mb-8">HUB NETWORK</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                name: 'Durham County Library',
-                location: 'Durham, NC',
-                status: 'PROPOSED PILOT TARGET',
-                hours: '4–8 hrs/wk',
-              },
-              {
-                name: 'Raleigh Digital Impact Center',
-                location: 'Raleigh, NC',
-                status: 'PROPOSED PILOT TARGET',
-                hours: '4–8 hrs/wk',
-              },
-              {
-                name: 'Durham Housing Authority',
-                location: 'Durham, NC',
-                status: 'PROPOSED YEAR 2 TARGET',
-                hours: 'TBD',
-              },
-              {
-                name: 'Raleigh Housing Authority',
-                location: 'Raleigh, NC',
-                status: 'PROPOSED YEAR 2 TARGET',
-                hours: 'TBD',
-              },
-            ].map((hub, idx) => (
-              <motion.div
-                key={idx}
-                className="p-6 rounded border border-border bg-card hover:border-primary transition-colors"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 + idx * 0.05 }}
-                whileHover={{ scale: 1.02 }}
-              >
-                <h3 className="font-bold text-foreground mb-2">{hub.name}</h3>
-                <p className="text-sm text-muted-foreground mb-3">{hub.location}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-primary">{hub.status}</span>
-                  <span className="text-xs font-mono text-muted-foreground">{hub.hours}</span>
+        <section className="container mx-auto px-4 py-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-6"
+          >
+            <p className="font-mono text-xs uppercase tracking-[0.28em] text-primary">
+              Hands organ · designed pilot model
+            </p>
+            <h1 className="text-5xl font-bold text-foreground md:text-6xl">
+              <span className="neon-text text-primary">
+                TECHBRIDGE COLLECTIVE
+              </span>
+            </h1>
+            <p className="text-2xl text-cyan">
+              Building Bridges of Digital Access
+            </p>
+            <p className="max-w-3xl text-xl text-foreground/80">
+              A planned, community-based digital-navigation model for North
+              Carolina. The source record cites 1.2 million residents lacking
+              adequate digital access and proposes a staged Triangle-area pilot.
+            </p>
+            <div className="grid max-w-3xl gap-3 sm:grid-cols-3">
+              {[
+                ["Current state", "Designed · not operating"],
+                ["Achieved outcomes", "0 represented"],
+                ["Host commitments", "None represented"],
+              ].map(([label, value]) => (
+                <div
+                  key={label}
+                  className="rounded-lg border border-primary/25 bg-black/30 p-4"
+                >
+                  <p className="text-xs uppercase tracking-wider text-foreground/50">
+                    {label}
+                  </p>
+                  <p className="mt-2 font-semibold text-primary">{value}</p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
+              ))}
+            </div>
+          </motion.div>
+        </section>
 
-      {/* H.K. AI Overview */}
-      <section className="container mx-auto px-4 py-16 border-t border-border">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="max-w-3xl"
-        >
-          <h2 className="text-2xl font-bold text-foreground mb-6">H.K. AI TRIAGE</h2>
-          <p className="text-foreground/80 mb-6">
-            Named for Horace King, the enslaved master bridge builder who connected communities across the American South, H.K. provides 24/7 step-by-step guidance between visits.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { label: 'Step-by-step guidance', emoji: '📋' },
-              { label: 'Portal navigation', emoji: '🗺️' },
-              { label: 'Smart escalation', emoji: '🎯' },
-              { label: '24/7 availability', emoji: '⏰' },
-            ].map((feature, idx) => (
-              <motion.div
-                key={idx}
-                className="flex items-center gap-4 p-4 rounded border border-border bg-card"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.9 + idx * 0.05 }}
-              >
-                <span className="text-3xl">{feature.emoji}</span>
-                <span className="text-foreground font-semibold">{feature.label}</span>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
+        <section className="container mx-auto border-t border-border px-4 py-12">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <h2 className="mb-3 text-2xl font-bold text-foreground">
+              THREE-PILLAR PILOT MODEL
+            </h2>
+            <p className="mb-8 max-w-3xl text-foreground/65">
+              Every element below is a design commitment or validation target
+              until an operating pilot produces verifiable records.
+            </p>
+            <div className="grid gap-6 md:grid-cols-3">
+              {pillars.map(pillar => (
+                <article
+                  key={pillar.title}
+                  className={`rounded-lg border p-6 ${pillar.color.split(" ")[0]}`}
+                >
+                  <h3
+                    className={`mb-3 text-lg font-bold ${pillar.color.split(" ")[1]}`}
+                  >
+                    {pillar.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-foreground/80">
+                    {pillar.copy}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </motion.div>
+        </section>
 
-      {/* Call to Action */}
-      <section className="container mx-auto px-4 py-16 border-t border-border">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="text-center max-w-2xl mx-auto"
-        >
-          <h2 className="text-3xl font-bold text-foreground mb-6">Ready to Cross the Bridge?</h2>
-          <p className="text-foreground/80 mb-8">
-            Whether you need help with digital access, want to host a hub, or are interested in partnership opportunities, we're here to help.
+        <section className="container mx-auto border-t border-border px-4 py-16">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+          >
+            <h2 className="mb-3 text-2xl font-bold text-foreground">
+              PILOT PLANNING DASHBOARD
+            </h2>
+            <p className="mb-8 max-w-3xl text-foreground/65">
+              Targets and measurement design only. This is not a live impact
+              dashboard.
+            </p>
+            <TechMinutesDashboard isActive />
+          </motion.div>
+        </section>
+
+        <section className="container mx-auto border-t border-border px-4 py-16">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <h2 className="mb-3 text-2xl font-bold text-foreground">
+              PROPOSED HUB SEQUENCE
+            </h2>
+            <p className="mb-8 max-w-3xl text-foreground/65">
+              Geographic targets do not name or imply committed host
+              organizations.
+            </p>
+            <div className="grid gap-6 md:grid-cols-2">
+              {hubPlan.map(hub => (
+                <article
+                  key={hub.name}
+                  className="rounded border border-border bg-card p-6 hover:border-primary"
+                >
+                  <h3 className="mb-2 font-bold text-foreground">{hub.name}</h3>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-mono text-xs text-primary">
+                      {hub.stage}
+                    </span>
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {hub.hours}
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+        <section className="container mx-auto border-t border-border px-4 py-16">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.65 }}
+            className="max-w-3xl"
+          >
+            <h2 className="mb-6 text-2xl font-bold text-foreground">
+              H.K. DETERMINISTIC TRIAGE
+            </h2>
+            <p className="mb-6 text-foreground/80">
+              Named for bridge builder Horace King, the TechBridge H.K.
+              interface provides bounded routing and guidance between human
+              visits. It is not a generative authority and does not claim
+              completed service outcomes.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                "Step-by-step bounded guidance",
+                "Portal navigation",
+                "Human escalation paths",
+                "No credential requests",
+              ].map(feature => (
+                <div
+                  key={feature}
+                  className="rounded border border-border bg-card p-4 font-semibold text-foreground"
+                >
+                  {feature}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+        <section className="container mx-auto border-t border-border px-4 py-16 text-center">
+          <h2 className="mb-5 text-3xl font-bold text-foreground">
+            Review the TechBridge public experience
+          </h2>
+          <p className="mx-auto mb-8 max-w-2xl text-foreground/70">
+            The dedicated site carries the current pilot design, H.K. runtime,
+            and participation paths.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="mailto:hello@techbridge-collective.org"
-              className="px-8 py-3 bg-primary text-background hover:bg-primary/80 rounded font-mono text-sm tracking-widest transition-colors"
-            >
-              GET IN TOUCH
-            </a>
-            <a
-              href="https://techbridge-collective.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-3 border border-primary text-primary hover:bg-primary/10 rounded font-mono text-sm tracking-widest transition-colors"
-            >
-              LEARN MORE
-            </a>
-          </div>
-        </motion.div>
-    </section>
-    </div>
+          <a
+            href="https://techbridge-collective.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex rounded bg-primary px-8 py-3 font-mono text-sm tracking-widest text-background transition-colors hover:bg-primary/80"
+          >
+            OPEN TECHBRIDGE
+          </a>
+        </section>
+      </div>
     </div>
   );
 }

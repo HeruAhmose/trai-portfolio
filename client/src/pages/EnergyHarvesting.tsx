@@ -1,253 +1,144 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { CinematicIntro } from '../components/CinematicIntro';
-import { InteractiveButton } from '../components/InteractiveButton';
+import { motion } from "framer-motion";
+
+const mechanisms = [
+  {
+    name: "Piezoelectric direction",
+    icon: "◇",
+    description:
+      "Mechanical stress is the proposed input for quartz and tourmaline constituents.",
+    targets: [
+      ["Application range", "50–500 μW/cm²"],
+      ["Quartz d₃₃ reference", "~2.3 pC/N"],
+      ["Tourmaline d₃₃ reference", "~5–10 pC/N"],
+    ],
+  },
+  {
+    name: "Thermoelectric direction",
+    icon: "△",
+    description:
+      "A thermal gradient is the proposed input for an integrated conversion pathway.",
+    targets: [
+      ["Application ZT range", "1.0–2.5"],
+      ["Reference comparison", "5–10× vs Bi₂Te₃"],
+      ["Integrated result", "Not measured"],
+    ],
+  },
+  {
+    name: "Spin-Seebeck direction",
+    icon: "◎",
+    description:
+      "Magnetite is proposed as a magnetic constituent within a coupled thermal pathway.",
+    targets: [
+      ["Application enhancement", "+40–60%"],
+      ["Magnetite fraction", "2–20 vol%"],
+      ["Integrated result", "Not measured"],
+    ],
+  },
+];
+
 export const EnergyHarvesting: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [energyLevel, setEnergyLevel] = useState(1);
-  const [particles, setParticles] = useState<Array<{ x: number; y: number; vx: number; vy: number; life: number }>>([]);
-  const [showIntro, setShowIntro] = useState(false);
-// Cinematic intro animation
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setEnergyLevel(1);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Particle system for energy visualization
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setParticles((prev) => {
-        let newParticles = prev.map((p) => ({
-          ...p,
-          x: p.x + p.vx,
-          y: p.y + p.vy,
-          vy: p.vy + 0.1,
-          life: p.life - 0.02,
-        })).filter((p) => p.life > 0);
-
-        // Add new particles
-        if (Math.random() > 0.7) {
-          newParticles.push({
-            x: Math.random() * 800,
-            y: 0,
-            vx: (Math.random() - 0.5) * 4,
-            vy: Math.random() * 2 + 1,
-            life: 1,
-          });
-        }
-
-        return newParticles;
-      });
-    }, 30);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Canvas rendering
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = 800;
-    canvas.height = 400;
-
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, '#0a0e27');
-    gradient.addColorStop(1, '#1a2a4a');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw energy field
-    ctx.fillStyle = `rgba(0, 255, 0, ${0.1 * energyLevel})`;
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, 100 + energyLevel * 50, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Draw particles
-    particles.forEach((p) => {
-      ctx.fillStyle = `rgba(0, 255, 0, ${p.life * 0.8})`;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // Draw energy core
-    ctx.fillStyle = '#00ff00';
-    ctx.shadowColor = '#00ff00';
-    ctx.shadowBlur = 20;
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, 20 + energyLevel * 10, 0, Math.PI * 2);
-    ctx.fill();
-  }, [energyLevel, particles]);
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#050607] via-[#0a1628] to-[#050607] pt-20 pb-20">
-{showIntro && (
-        <CinematicIntro
-          title="Energy Harvesting"
-          subtitle="Thermoelectric & Piezoelectric Power Generation"
-          color="#00ff00"
-          icon="⚡"
-          duration={2.5}
-          onComplete={() => setShowIntro(false)}
-        />
-      )}
-      {/* Cinematic Intro */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: energyLevel > 0 ? 1 : 0, scale: energyLevel > 0 ? 1 : 0.8 }}
-        transition={{ duration: 1.5 }}
-        className="max-w-6xl mx-auto px-4 mb-12"
+    <div className="min-h-screen bg-gradient-to-b from-[#050607] via-[#0a1628] to-[#050607] pb-20 pt-24">
+      <motion.header
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mx-auto mb-12 max-w-6xl px-4 text-center"
       >
-        <h1 className="text-6xl font-bold text-center mb-4">
+        <p className="mb-3 font-mono text-xs uppercase tracking-[0.24em] text-green-300">
+          Patent-application targets · not measured data
+        </p>
+        <h1 className="mb-4 text-5xl font-bold sm:text-6xl">
           <span className="bg-gradient-to-r from-green-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
-            Energy Harvesting Systems
+            Energy-Harvesting Research Directions
           </span>
         </h1>
-        <p className="text-center text-green-400 text-lg mb-8">
-          Thermoelectric & Piezoelectric Power Generation
+        <p className="mx-auto max-w-3xl text-lg leading-relaxed text-cyan-100/70">
+          U.S. Provisional Application 63/934,269 describes proposed
+          piezoelectric, thermoelectric, and magnetic coupling pathways. The
+          values below are application ranges or literature-grounded targets—not
+          results from an integrated TRAI device.
         </p>
-      </motion.div>
+      </motion.header>
 
-      {/* Interactive Canvas */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: energyLevel > 0 ? 1 : 0 }}
-        transition={{ delay: 0.5, duration: 1 }}
-        className="max-w-4xl mx-auto px-4 mb-12"
-      >
-        <canvas
-          ref={canvasRef}
-          className="w-full border-2 border-green-400/50 rounded-lg shadow-lg shadow-green-400/30"
-        />
-      </motion.div>
+      <section className="mx-auto grid max-w-6xl gap-6 px-4 lg:grid-cols-3">
+        {mechanisms.map((mechanism, index) => (
+          <motion.article
+            key={mechanism.name}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ y: -4 }}
+            className="rounded-xl border border-green-400/30 bg-black/45 p-6"
+          >
+            <span className="text-4xl text-green-300" aria-hidden="true">
+              {mechanism.icon}
+            </span>
+            <h2 className="mt-5 text-2xl font-bold text-green-300">
+              {mechanism.name}
+            </h2>
+            <p className="mt-3 min-h-20 text-sm leading-relaxed text-cyan-50/65">
+              {mechanism.description}
+            </p>
+            <div className="mt-6 space-y-3">
+              {mechanism.targets.map(([label, value]) => (
+                <div
+                  key={label}
+                  className="rounded-lg border border-white/10 bg-white/[0.03] p-4"
+                >
+                  <p className="text-[10px] uppercase tracking-wider text-white/40">
+                    {label}
+                  </p>
+                  <p className="mt-1 font-semibold text-cyan-200">{value}</p>
+                </div>
+              ))}
+            </div>
+          </motion.article>
+        ))}
+      </section>
 
-      {/* Content Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: energyLevel > 0 ? 1 : 0, y: energyLevel > 0 ? 0 : 20 }}
-        transition={{ delay: 1, duration: 0.8 }}
-        className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8"
-      >
-        {/* Thermoelectric Section */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="p-6 bg-black/50 rounded-lg border border-green-400/30"
-        >
-          <h3 className="text-2xl font-bold text-green-400 mb-4">Thermoelectric Generation</h3>
-          <div className="space-y-3 text-sm text-cyan-400">
-            <p>
-              <strong>ZT Figure of Merit:</strong> ZT 1.0–2.5 at 250–350K with spin-Seebeck enhancement
-            </p>
-            <p>
-              <strong>Temperature Range:</strong> 250K - 450K operational window
-            </p>
-            <p>
-              <strong>Composition:</strong> 12% magnetite optimized vs Bi₂Te₃ reference (5–10× enhancement)
-            </p>
-            <p>
-              <strong>Patent:</strong> Claim 6(b) · App 63/934,269 · Filed Dec 11, 2025
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Piezoelectric Section */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="p-6 bg-black/50 rounded-lg border border-green-400/30"
-        >
-          <h3 className="text-2xl font-bold text-green-400 mb-4">Piezoelectric Generation</h3>
-          <div className="space-y-3 text-sm text-cyan-400">
-            <p>
-              <strong>Output:</strong> 50–500 μW/cm² · d₃₃ ~2.3–10 pC/N (quartz + tourmaline)
-            </p>
-            <p>
-              <strong>Formulation D:</strong> 30% quartz, 15% tourmaline, optimized matrix
-            </p>
-            <p>
-              <strong>Stress Range:</strong> 10–100 MPa cyclic at 0.1–100 Hz
-            </p>
-            <p>
-              <strong>Patent:</strong> Claim 6(a) · App 63/934,269 · Filed Dec 11, 2025
-            </p>
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {/* Device Integration */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: energyLevel > 0 ? 1 : 0 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
-        className="max-w-6xl mx-auto px-4 mt-12 p-8 bg-gradient-to-r from-black/50 to-black/30 rounded-lg border border-green-400/30"
-      >
-        <h3 className="text-2xl font-bold text-green-400 mb-6 text-center">
-          Integrated Energy Harvesting Device
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="text-4xl mb-2">🌡️</div>
-            <h4 className="font-bold text-cyan-400 mb-2">Thermal Input</h4>
-            <p className="text-sm text-gold-400">
-              Temperature differential across composite material
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl mb-2">⚡</div>
-            <h4 className="font-bold text-cyan-400 mb-2">Energy Conversion</h4>
-            <p className="text-sm text-gold-400">
-              Thermoelectric & piezoelectric energy generation
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl mb-2">🔋</div>
-            <h4 className="font-bold text-cyan-400 mb-2">Power Storage</h4>
-            <p className="text-sm text-gold-400">
-              Efficient energy management and storage circuit
-            </p>
-          </div>
+      <section className="mx-auto mt-12 max-w-6xl px-4">
+        <div className="rounded-xl border border-yellow-300/30 bg-yellow-300/5 p-7">
+          <h2 className="text-2xl font-bold text-yellow-200">
+            Integrated-device evidence gate
+          </h2>
+          <p className="mt-3 max-w-4xl leading-relaxed text-white/65">
+            The proposed combined output range is 80–800 μW/cm². TRAI does not
+            represent that range—or any constituent target—as measured
+            integrated performance. A defensible result requires a documented
+            specimen, calibrated inputs, control samples, uncertainty, raw data,
+            and reproducible testing.
+          </p>
         </div>
-      </motion.div>
+      </section>
 
-      {/* Research Data */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: energyLevel > 0 ? 1 : 0 }}
-        transition={{ delay: 2, duration: 0.8 }}
-        className="max-w-6xl mx-auto px-4 mt-12 p-8 bg-black/50 rounded-lg border border-green-400/30"
-      >
-        <h3 className="text-xl font-bold text-green-400 mb-4">Key Specifications</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-cyan-400 font-mono">
-          <div>
-            <div className="mb-3">
-              <span className="text-green-400">Thermoelectric ZT:</span> 1.0–2.5 (250–350K)
-            </div>
-            <div className="mb-3">
-              <span className="text-green-400">Piezoelectric Output:</span> 50–500 μW/cm²
-            </div>
-            <div className="mb-3">
-              <span className="text-green-400">Conductivity Range:</span> 10²–10⁶ S/m
-            </div>
-          </div>
-          <div>
-            <div className="mb-3">
-              <span className="text-green-400">Operating Temp:</span> 250–350K
-            </div>
-            <div className="mb-3">
-              <span className="text-green-400">Combined Output:</span> 80–800 μW/cm²
-            </div>
-            <div className="mb-3">
-              <span className="text-green-400">Spin-Seebeck:</span> +40–60% enhancement (Fe₃O₄)
-            </div>
-          </div>
+      <section className="mx-auto mt-12 max-w-6xl px-4">
+        <h2 className="mb-6 text-2xl font-bold text-green-300">
+          PROPOSED DEVICE PATH
+        </h2>
+        <div className="grid gap-4 md:grid-cols-4">
+          {[
+            ["01", "Input", "Mechanical, thermal, or magnetic perturbation"],
+            [
+              "02",
+              "Coupling",
+              "Proposed interaction among integrated constituents",
+            ],
+            ["03", "Readout", "Electrical or optical signal to be measured"],
+            ["04", "Verification", "Repeatable performance against controls"],
+          ].map(([number, title, copy]) => (
+            <article
+              key={number}
+              className="rounded-lg border border-green-400/20 bg-black/35 p-5"
+            >
+              <p className="font-mono text-xs text-yellow-300">{number}</p>
+              <h3 className="mt-3 font-bold text-green-300">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/55">
+                {copy}
+              </p>
+            </article>
+          ))}
         </div>
-      </motion.div>
+      </section>
     </div>
   );
 };

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 export interface CinematicIntroProps {
   title: string;
   subtitle: string;
   color: string;
   icon: string;
+  /** Retained for call-site compatibility. Timing never dismisses this intro. */
   duration?: number;
   onComplete?: () => void;
 }
@@ -15,60 +16,82 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
   subtitle,
   color,
   icon,
-  duration = 3,
   onComplete,
 }) => {
   const [show, setShow] = useState(true);
+  const completeRef = useRef(false);
+  const exitTimerRef = useRef<number | null>(null);
+
+  const finish = useCallback(() => {
+    if (completeRef.current) return;
+    completeRef.current = true;
+    setShow(false);
+    exitTimerRef.current = window.setTimeout(() => onComplete?.(), 220);
+  }, [onComplete]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShow(false);
-      onComplete?.();
-    }, duration * 1000);
-
-    return () => clearTimeout(timer);
-  }, [duration, onComplete]);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" || event.key === "ArrowRight") {
+        event.preventDefault();
+        finish();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      if (exitTimerRef.current !== null)
+        window.clearTimeout(exitTimerRef.current);
+    };
+  }, [finish]);
 
   return (
     <AnimatePresence>
       {show && (
         <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${title} introduction`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          transition={{ duration: 0.22 }}
+          className="fixed inset-0 z-[2147483000] flex items-center justify-center bg-black/90 p-5 backdrop-blur-sm"
         >
-          {/* Animated background grid */}
           <motion.div
             className="absolute inset-0 opacity-10"
             style={{
-              backgroundImage: `linear-gradient(0deg, transparent 24%, ${color}40 25%, ${color}40 26%, transparent 27%, transparent 74%, ${color}40 75%, ${color}40 76%, transparent 77%, transparent),
-                                linear-gradient(90deg, transparent 24%, ${color}40 25%, ${color}40 26%, transparent 27%, transparent 74%, ${color}40 75%, ${color}40 76%, transparent 77%, transparent)`,
+              backgroundImage: `linear-gradient(0deg, transparent 24%, ${color}40 25%, ${color}40 26%, transparent 27%, transparent 74%, ${color}40 75%, ${color}40 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, ${color}40 25%, ${color}40 26%, transparent 27%, transparent 74%, ${color}40 75%, ${color}40 76%, transparent 77%, transparent)`,
               backgroundSize: "50px 50px",
             }}
             animate={{ backgroundPosition: ["0 0", "50px 50px"] }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            aria-hidden="true"
           />
 
-          {/* Center content */}
-          <div className="relative z-10 text-center">
-            {/* Icon */}
+          <button
+            type="button"
+            onClick={finish}
+            className="absolute right-4 top-4 z-20 rounded-full border border-white/35 bg-black/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:right-8 sm:top-8"
+            style={{ outlineColor: color }}
+          >
+            Skip intro
+          </button>
+
+          <div className="relative z-10 max-w-3xl text-center">
             <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-8xl mb-8"
+              initial={{ scale: 0.75, rotate: -16, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              transition={{ duration: 0.65, ease: "easeOut" }}
+              className="mb-7 text-7xl"
+              aria-hidden="true"
             >
               {icon}
             </motion.div>
-
-            {/* Title */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-5xl font-bold mb-4"
+              transition={{ delay: 0.15, duration: 0.5 }}
+              className="mb-4 text-4xl font-bold sm:text-6xl"
               style={{
                 backgroundImage: `linear-gradient(135deg, ${color}, ${color}80)`,
                 WebkitBackgroundClip: "text",
@@ -78,70 +101,34 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
             >
               {title}
             </motion.h1>
-
-            {/* Subtitle */}
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="text-xl mb-8"
+              transition={{ delay: 0.25, duration: 0.5 }}
+              className="mb-4 text-lg sm:text-xl"
               style={{ color }}
             >
               {subtitle}
             </motion.p>
-
-            {/* Loading bar */}
-            <motion.div
-              className="w-64 h-1 bg-black/50 rounded-full overflow-hidden"
-              style={{ borderColor: color, borderWidth: 1 }}
+            <p className="mx-auto max-w-xl text-sm leading-6 text-white/65">
+              This section presents architecture, application claims, or
+              research targets. It does not convert a proposal or simulation
+              into measured evidence.
+            </p>
+            <button
+              type="button"
+              autoFocus
+              onClick={finish}
+              className="mt-8 min-w-52 rounded-full px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-black transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              style={{ backgroundColor: color }}
             >
-              <motion.div
-                className="h-full"
-                style={{ backgroundColor: color }}
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ duration, ease: "easeInOut" }}
-              />
-            </motion.div>
-
-            {/* Particle effects */}
-            {[...Array(6)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 rounded-full"
-                style={{
-                  backgroundColor: color,
-                  left: "50%",
-                  top: "50%",
-                }}
-                animate={{
-                  x: Math.cos((i / 6) * Math.PI * 2) * 200,
-                  y: Math.sin((i / 6) * Math.PI * 2) * 200,
-                  opacity: [1, 0],
-                }}
-                transition={{
-                  duration,
-                  ease: "easeOut",
-                }}
-              />
-            ))}
+              Enter section
+            </button>
+            <p className="mt-4 text-[10px] uppercase tracking-[0.16em] text-white/45">
+              User-paced · Enter or Space activates · Right Arrow continues ·
+              Escape skips
+            </p>
           </div>
-
-          {/* Corner accents */}
-          <motion.div
-            className="absolute top-10 left-10 w-20 h-20 border-2"
-            style={{ borderColor: color }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 0.5, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          />
-          <motion.div
-            className="absolute bottom-10 right-10 w-20 h-20 border-2"
-            style={{ borderColor: color }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 0.5, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          />
         </motion.div>
       )}
     </AnimatePresence>

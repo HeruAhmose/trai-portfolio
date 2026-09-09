@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, TrendingUp, Users, Award, Clock } from 'lucide-react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, TrendingUp, Award, Clock } from "lucide-react";
 
 interface MetricData {
   label: string;
@@ -12,7 +12,7 @@ interface MetricData {
 interface CaseStudy {
   id: string;
   title: string;
-  category: 'cybersecurity' | 'materials' | 'community' | 'research';
+  category: "cybersecurity" | "materials" | "community" | "research";
   client?: string;
   timeline: string;
   challenge: string;
@@ -39,29 +39,29 @@ interface CaseStudyCardProps {
 
 const getCategoryColor = (category: string) => {
   switch (category) {
-    case 'cybersecurity':
-      return 'from-primary to-primary/50';
-    case 'materials':
-      return 'from-cyan-400 to-cyan-400/50';
-    case 'community':
-      return 'from-yellow-400 to-yellow-400/50';
-    case 'research':
-      return 'from-green-400 to-green-400/50';
+    case "cybersecurity":
+      return "from-primary to-primary/50";
+    case "materials":
+      return "from-cyan-400 to-cyan-400/50";
+    case "community":
+      return "from-yellow-400 to-yellow-400/50";
+    case "research":
+      return "from-green-400 to-green-400/50";
     default:
-      return 'from-primary to-primary/50';
+      return "from-primary to-primary/50";
   }
 };
 
 const getCategoryLabel = (category: string) => {
   switch (category) {
-    case 'cybersecurity':
-      return '🔒 Cybersecurity';
-    case 'materials':
-      return '⚗️ Material Science';
-    case 'community':
-      return '🤝 Community Impact';
-    case 'research':
-      return '📚 Research';
+    case "cybersecurity":
+      return "🔒 Cybersecurity";
+    case "materials":
+      return "⚗️ Material Science";
+    case "community":
+      return "🤝 Community Impact";
+    case "research":
+      return "📚 Research";
     default:
       return category;
   }
@@ -73,11 +73,6 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
   onToggle,
 }) => {
   const [hoveredMetric, setHoveredMetric] = useState<number | null>(null);
-
-  const containerVariants = {
-    collapsed: { height: 'auto' },
-    expanded: { height: 'auto' },
-  };
 
   return (
     <motion.div
@@ -93,14 +88,13 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
         onClick={onToggle}
         className={`w-full text-left rounded-xl border-2 transition-all duration-300 overflow-hidden ${
           isExpanded
-            ? 'border-primary bg-primary/10 shadow-lg shadow-primary/30'
-            : 'border-primary/30 bg-background/50 hover:border-primary/60 hover:bg-background/70'
+            ? "border-primary bg-primary/10 shadow-lg shadow-primary/30"
+            : "border-primary/30 bg-background/50 hover:border-primary/60 hover:bg-background/70"
         }`}
         style={{
-          boxShadow:
-            isExpanded
-              ? '0 0 30px rgba(255,215,0,0.4), inset 0 0 20px rgba(255,215,0,0.1)'
-              : 'none',
+          boxShadow: isExpanded
+            ? "0 0 30px rgba(255,215,0,0.4), inset 0 0 20px rgba(255,215,0,0.1)"
+            : "none",
         }}
       >
         <div className="p-6">
@@ -109,9 +103,11 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
             <div className="flex-1">
               {/* Category Badge */}
               <div className="inline-block mb-3">
-                <span className={`px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r ${getCategoryColor(
-                  caseStudy.category
-                )} text-background`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r ${getCategoryColor(
+                    caseStudy.category
+                  )} text-background`}
+                >
                   {getCategoryLabel(caseStudy.category)}
                 </span>
               </div>
@@ -121,7 +117,7 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
                 {caseStudy.title}
               </h3>
 
-              {/* Client & Timeline */}
+              {/* Context & stage */}
               <div className="flex flex-wrap gap-4 text-sm text-foreground/70 mb-4">
                 {caseStudy.client && (
                   <div className="flex items-center gap-2">
@@ -185,7 +181,7 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
         {isExpanded && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
             className="overflow-hidden mt-2"
@@ -201,7 +197,9 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
                   <span className="text-2xl">🎯</span>
                   Challenge
                 </h4>
-                <p className="text-foreground/80 leading-relaxed">{caseStudy.challenge}</p>
+                <p className="text-foreground/80 leading-relaxed">
+                  {caseStudy.challenge}
+                </p>
               </motion.div>
 
               {/* Solution Section */}
@@ -212,12 +210,14 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
               >
                 <h4 className="text-lg font-bold text-cyan-400 mb-3 flex items-center gap-2">
                   <span className="text-2xl">💡</span>
-                  Solution
+                  Proposed approach
                 </h4>
-                <p className="text-foreground/80 leading-relaxed">{caseStudy.solution}</p>
+                <p className="text-foreground/80 leading-relaxed">
+                  {caseStudy.solution}
+                </p>
               </motion.div>
 
-              {/* Impact Section */}
+              {/* Evidence boundary */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -225,11 +225,13 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
               >
                 <h4 className="text-lg font-bold text-yellow-400 mb-3 flex items-center gap-2">
                   <span className="text-2xl">📈</span>
-                  Impact
+                  Evidence boundary
                 </h4>
-                <p className="text-foreground/80 leading-relaxed mb-4">{caseStudy.impact}</p>
+                <p className="text-foreground/80 leading-relaxed mb-4">
+                  {caseStudy.impact}
+                </p>
 
-                {/* Results Grid */}
+                {/* Required gates */}
                 <div className="grid md:grid-cols-2 gap-3">
                   {caseStudy.results.map((result, idx) => (
                     <motion.div
@@ -242,7 +244,9 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
                       <p className="font-semibold text-primary text-sm mb-1">
                         {result.title}
                       </p>
-                      <p className="text-xs text-foreground/70">{result.description}</p>
+                      <p className="text-xs text-foreground/70">
+                        {result.description}
+                      </p>
                     </motion.div>
                   ))}
                 </div>
@@ -256,7 +260,7 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
               >
                 <h4 className="text-lg font-bold text-primary mb-3 flex items-center gap-2">
                   <TrendingUp size={20} />
-                  Key Metrics
+                  Documented facts & plan markers
                 </h4>
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {caseStudy.metrics.map((metric, idx) => (
@@ -268,12 +272,16 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
                       className={`p-4 rounded-lg border-2 transition-all ${
                         hoveredMetric === idx
                           ? `border-primary bg-primary/10`
-                          : 'border-primary/20 bg-background/50'
+                          : "border-primary/20 bg-background/50"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-foreground/70">{metric.label}</p>
-                        <div className={`text-${metric.color}`}>{metric.icon}</div>
+                        <p className="text-sm text-foreground/70">
+                          {metric.label}
+                        </p>
+                        <div className={`text-${metric.color}`}>
+                          {metric.icon}
+                        </div>
                       </div>
                       <p className="text-2xl font-bold text-primary">
                         {metric.value}

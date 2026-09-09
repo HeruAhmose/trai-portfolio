@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { InteractiveBlochSphere } from '@/components/InteractiveBlochSphere';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { InteractiveBlochSphere } from "@/components/InteractiveBlochSphere";
 import {
   HolographicPanel,
   FloatingHologram,
@@ -8,9 +8,9 @@ import {
   HolographicGrid,
   HolographicBorder,
   RadarScan,
-} from '@/components/HolographicUI';
+} from "@/components/HolographicUI";
 export default function QuantumResearchEnhanced() {
-const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(true);
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
       {/* Holographic grid background */}
@@ -33,10 +33,12 @@ const [showIntro, setShowIntro] = useState(true);
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 mb-2">
-                Quantum Coherence
+                Quantum-Sensing Hypothesis
               </h1>
               <GlitchText intensity={1.5}>
-                <p className="text-xl text-cyan-300">Room Temperature Quantum States</p>
+                <p className="text-xl text-cyan-300">
+                  Room-temperature research targets · not measured
+                </p>
               </GlitchText>
             </div>
           </div>
@@ -45,9 +47,11 @@ const [showIntro, setShowIntro] = useState(true);
           {showIntro && (
             <HolographicPanel intensity={0.8}>
               <p className="text-cyan-200 leading-relaxed">
-                This visualization presents our groundbreaking research on quantum coherence times measured at room temperature
-                (300K). The AMC hypothesis proposes that rare-earth dopants in quartz hosts could enable room-temperature quantum coherence.
-                Patent Application 63/934,269 (Filed Dec 11, 2025 · 25 Claims). Target coherence T₂ &gt; 500 ns at 300K, with a goal of 1–10 μs. Self-powered by the same composite.
+                This page visualizes a hypothesis from U.S. Provisional
+                Application 63/934,269, filed December 11, 2025. It does not
+                contain measured coherence data. The application target is T₂
+                &gt;500 ns at 300 K, with a goal of 1–10 μs; both remain
+                unconfirmed for the integrated composite.
               </p>
               <button
                 onClick={() => setShowIntro(false)}
@@ -78,48 +82,72 @@ const [showIntro, setShowIntro] = useState(true);
           transition={{ delay: 0.4 }}
           className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"
         >
-          {/* Key findings */}
+          {/* Application record */}
           <HolographicBorder>
-            <h3 className="text-xl font-bold text-cyan-300 mb-4">Key Findings</h3>
+            <h3 className="text-xl font-bold text-cyan-300 mb-4">
+              Application Record
+            </h3>
             <ul className="space-y-3 text-cyan-200/80 text-sm">
               <li className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">→</span>
-                <span>Eu³⁺, Nd³⁺, Er³⁺, Yb³⁺, Ce³⁺ — five rare-earth dopants in quartz host at 0.1–5 atomic % (Claim 7)</span>
+                <span>
+                  Eu³⁺, Nd³⁺, Er³⁺, Yb³⁺, Ce³⁺ — five rare-earth dopants in
+                  quartz host at 0.1–5 atomic % (Claim 7)
+                </span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">→</span>
-                <span>Target: T₂ &gt; 500 ns at 300K · Goal: 1–10 μs · Self-powered by composite energy harvesting</span>
+                <span>
+                  Target: T₂ &gt; 500 ns at 300K · Goal: 1–10 μs · Self-powered
+                  by composite energy harvesting
+                </span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">→</span>
-                <span>Sensing modalities: magnetic field, temperature, and strain — all from one composite</span>
+                <span>
+                  Proposed sensing modalities: magnetic field, temperature, and
+                  strain from one integrated architecture
+                </span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">→</span>
-                <span>Europium ions substituted into quartz lattice create optically addressable quantum centers</span>
+                <span>
+                  Proposed mechanism: rare-earth substitution in a quartz host,
+                  pending synthesis and optical characterization
+                </span>
               </li>
             </ul>
           </HolographicBorder>
 
           {/* Technical specs */}
           <HolographicBorder>
-            <h3 className="text-xl font-bold text-cyan-300 mb-4">Specifications (Claim 7)</h3>
+            <h3 className="text-xl font-bold text-cyan-300 mb-4">
+              Proposed Parameters (Claim 7)
+            </h3>
             <div className="space-y-3 text-sm">
               <div>
-                <div className="text-cyan-400 font-mono text-xs">TEMPERATURE</div>
-                <div className="text-cyan-200">300 K (Room Temperature)</div>
+                <div className="text-cyan-400 font-mono text-xs">
+                  TEMPERATURE
+                </div>
+                <div className="text-cyan-200">300 K target</div>
               </div>
               <div>
                 <div className="text-cyan-400 font-mono text-xs">METHOD</div>
-                <div className="text-cyan-200">Optical pumping + spin readout</div>
+                <div className="text-cyan-200">
+                  Proposed optical pumping + spin readout
+                </div>
               </div>
               <div>
-                <div className="text-cyan-400 font-mono text-xs">HOST MATERIAL</div>
+                <div className="text-cyan-400 font-mono text-xs">
+                  HOST MATERIAL
+                </div>
                 <div className="text-cyan-200">Quartz (SiO₂) Crystal</div>
               </div>
               <div>
                 <div className="text-cyan-400 font-mono text-xs">DOPANTS</div>
-                <div className="text-cyan-200">Eu³⁺, Nd³⁺, Er³⁺, Yb³⁺, Ce³⁺</div>
+                <div className="text-cyan-200">
+                  Eu³⁺, Nd³⁺, Er³⁺, Yb³⁺, Ce³⁺
+                </div>
               </div>
             </div>
           </HolographicBorder>
@@ -134,15 +162,23 @@ const [showIntro, setShowIntro] = useState(true);
         >
           <FloatingHologram delay={0}>
             <div className="text-center">
-              <div className="text-3xl font-bold text-cyan-300 mb-2">T₂ &gt; 500 ns</div>
-              <div className="text-xs text-cyan-200/60">Target · Goal: 1–10 μs (Claim 7)</div>
+              <div className="text-3xl font-bold text-cyan-300 mb-2">
+                T₂ &gt; 500 ns
+              </div>
+              <div className="text-xs text-cyan-200/60">
+                Target · Goal: 1–10 μs (Claim 7)
+              </div>
             </div>
           </FloatingHologram>
 
           <FloatingHologram delay={0.2}>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-300 mb-2">300 K</div>
-              <div className="text-xs text-cyan-200/60">Operating Temperature</div>
+              <div className="text-3xl font-bold text-purple-300 mb-2">
+                300 K
+              </div>
+              <div className="text-xs text-cyan-200/60">
+                Target temperature · unconfirmed
+              </div>
             </div>
           </FloatingHologram>
 

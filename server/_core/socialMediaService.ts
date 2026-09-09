@@ -9,7 +9,7 @@ export interface ShareableSection {
 }
 
 export interface SocialPlatform {
-  name: 'twitter' | 'linkedin' | 'facebook' | 'instagram';
+  name: "twitter" | "linkedin" | "facebook" | "instagram";
   displayName: string;
   icon: string;
   color: string;
@@ -43,28 +43,28 @@ class SocialMediaService {
 
   private platforms: SocialPlatform[] = [
     {
-      name: 'twitter',
-      displayName: 'Twitter/X',
-      icon: '𝕏',
-      color: '#000000',
+      name: "twitter",
+      displayName: "Twitter/X",
+      icon: "𝕏",
+      color: "#000000",
     },
     {
-      name: 'linkedin',
-      displayName: 'LinkedIn',
-      icon: 'in',
-      color: '#0A66C2',
+      name: "linkedin",
+      displayName: "LinkedIn",
+      icon: "in",
+      color: "#0A66C2",
     },
     {
-      name: 'facebook',
-      displayName: 'Facebook',
-      icon: 'f',
-      color: '#1877F2',
+      name: "facebook",
+      displayName: "Facebook",
+      icon: "f",
+      color: "#1877F2",
     },
     {
-      name: 'instagram',
-      displayName: 'Instagram',
-      icon: '📷',
-      color: '#E4405F',
+      name: "instagram",
+      displayName: "Instagram",
+      icon: "📷",
+      color: "#E4405F",
     },
   ];
 
@@ -78,49 +78,55 @@ class SocialMediaService {
   private initializeSections() {
     const sections: ShareableSection[] = [
       {
-        id: 'quantum-research',
-        title: 'Quantum Research & Development',
+        id: "quantum-research",
+        title: "Quantum-Sensing Research Hypothesis",
         description:
-          'Exploring quantum computing applications in cybersecurity and material science. Advanced research in quantum algorithms and cryptography.',
-        url: '/quantum',
-        hashtags: ['#QuantumComputing', '#Cybersecurity', '#Research', '#Innovation'],
-        callToAction: 'Explore Quantum Research',
+          "A conceptual rare-earth quantum-sensing direction with a clearly labeled coherence target. Integrated performance is not measured.",
+        url: "/quantum",
+        hashtags: [
+          "#QuantumComputing",
+          "#Cybersecurity",
+          "#Research",
+          "#Innovation",
+        ],
+        callToAction: "Explore Quantum Research",
       },
       {
-        id: 'material-science',
-        title: 'Advanced Material Science',
+        id: "material-science",
+        title: "Tamerian Materials Research",
         description:
-          'Cutting-edge research in material science with applications in sustainable technology and advanced manufacturing.',
-        url: '/materials',
-        hashtags: ['#MaterialScience', '#Sustainability', '#Innovation', '#Technology'],
-        callToAction: 'Discover Material Science',
+          "Bio-derived multifunctional composites for self-powered sensing. U.S. provisional application 63/934,269; integrated performance is not yet validated.",
+        url: "/materials",
+        hashtags: [
+          "#MaterialScience",
+          "#Sustainability",
+          "#Innovation",
+          "#Technology",
+        ],
+        callToAction: "Discover Material Science",
       },
       {
-        id: 'cybersecurity',
-        title: 'Cybersecurity Solutions',
+        id: "validation-plans",
+        title: "Evidence-Bound Validation Plans",
         description:
-          'Comprehensive cybersecurity frameworks and solutions for enterprise protection. AI-powered threat detection and response.',
-        url: '/cybersecurity',
-        hashtags: ['#Cybersecurity', '#InfoSec', '#AI', '#Protection'],
-        callToAction: 'View Security Solutions',
+          "Documented facts, explicit evidence boundaries, and the next validation gates for Queen Califia, Tamerian, TechBridge, and AMC research.",
+        url: "/case-studies",
+        hashtags: ["#Evidence", "#Validation", "#Cybersecurity", "#Research"],
+        callToAction: "Review Validation Plans",
       },
       {
-        id: 'gesture-control',
-        title: 'Gesture Recognition Technology',
+        id: "community-impact",
+        title: "TechBridge Pilot Design",
         description:
-          'Hands-free interaction technology using advanced gesture recognition. Control interfaces without touching the screen.',
-        url: '/gesture-control',
-        hashtags: ['#GestureRecognition', '#HCI', '#Innovation', '#Technology'],
-        callToAction: 'Try Gesture Control',
-      },
-      {
-        id: 'community-impact',
-        title: 'Community Impact Initiatives',
-        description:
-          'Technology for social good. Building bridges between tech innovation and community development.',
-        url: '/community',
-        hashtags: ['#CommunityImpact', '#TechForGood', '#Innovation', '#SocialGood'],
-        callToAction: 'Learn About Impact',
+          "A designed digital-navigation pilot with planned hubs, Navigator targets, and a TechMinutes measurement model. It is not yet operating.",
+        url: "/community",
+        hashtags: [
+          "#CommunityImpact",
+          "#TechForGood",
+          "#Innovation",
+          "#SocialGood",
+        ],
+        callToAction: "Learn About Impact",
       },
     ];
 
@@ -148,7 +154,7 @@ class SocialMediaService {
    * Generate share URL for Twitter
    */
   generateTwitterShareUrl(section: ShareableSection): string {
-    const text = `${section.title} - ${section.description.substring(0, 100)}... ${section.hashtags.join(' ')}`;
+    const text = `${section.title} - ${section.description.substring(0, 100)}... ${section.hashtags.join(" ")}`;
     const url = `${process.env.VITE_FRONTEND_FORGE_API_URL}${section.url}`;
 
     const params = new URLSearchParams({
@@ -169,7 +175,7 @@ class SocialMediaService {
       url,
       title: section.title,
       summary: section.description,
-      source: 'Jonathan Peoples Portfolio',
+      source: "Jonathan Peoples Portfolio",
     });
 
     return `https://www.linkedin.com/sharing/share-offsite/?${params.toString()}`;
@@ -194,7 +200,7 @@ class SocialMediaService {
    * Generate share URL for Instagram (note: Instagram doesn't have direct sharing API)
    */
   generateInstagramShareUrl(section: ShareableSection): string {
-    const text = `${section.title}\n\n${section.description}\n\n${section.hashtags.join(' ')}\n\nCheck it out: ${process.env.VITE_FRONTEND_FORGE_API_URL}${section.url}`;
+    const text = `${section.title}\n\n${section.description}\n\n${section.hashtags.join(" ")}\n\nCheck it out: ${process.env.VITE_FRONTEND_FORGE_API_URL}${section.url}`;
 
     // Instagram uses copy-to-clipboard approach
     return `instagram://share?text=${encodeURIComponent(text)}`;
@@ -205,7 +211,7 @@ class SocialMediaService {
    */
   getShareUrl(
     sectionId: string,
-    platform: 'twitter' | 'linkedin' | 'facebook' | 'instagram'
+    platform: "twitter" | "linkedin" | "facebook" | "instagram"
   ): string | null {
     const section = this.sections.get(sectionId);
     if (!section) {
@@ -213,13 +219,13 @@ class SocialMediaService {
     }
 
     switch (platform) {
-      case 'twitter':
+      case "twitter":
         return this.generateTwitterShareUrl(section);
-      case 'linkedin':
+      case "linkedin":
         return this.generateLinkedInShareUrl(section);
-      case 'facebook':
+      case "facebook":
         return this.generateFacebookShareUrl(section);
-      case 'instagram':
+      case "instagram":
         return this.generateInstagramShareUrl(section);
       default:
         return null;
@@ -230,7 +236,9 @@ class SocialMediaService {
    * Generate preview card for section
    */
   generatePreviewCard(section: ShareableSection): PreviewCard {
-    const baseUrl = process.env.VITE_FRONTEND_FORGE_API_URL || 'https://portfolio.example.com';
+    const baseUrl =
+      process.env.VITE_FRONTEND_FORGE_API_URL ||
+      "https://portfolio.example.com";
     const fullUrl = `${baseUrl}${section.url}`;
 
     return {
@@ -243,7 +251,7 @@ class SocialMediaService {
       ogImage: section.imageUrl || `${baseUrl}/og-image.png`,
       ogTitle: section.title,
       ogDescription: section.description,
-      twitterCard: 'summary_large_image',
+      twitterCard: "summary_large_image",
     };
   }
 
@@ -254,15 +262,15 @@ class SocialMediaService {
     const preview = this.generatePreviewCard(section);
 
     return {
-      'og:title': preview.ogTitle || section.title,
-      'og:description': preview.ogDescription || section.description,
-      'og:image': preview.ogImage || '',
-      'og:url': preview.url,
-      'og:type': 'website',
-      'twitter:card': preview.twitterCard || 'summary',
-      'twitter:title': section.title,
-      'twitter:description': section.description,
-      'twitter:image': preview.ogImage || '',
+      "og:title": preview.ogTitle || section.title,
+      "og:description": preview.ogDescription || section.description,
+      "og:image": preview.ogImage || "",
+      "og:url": preview.url,
+      "og:type": "website",
+      "twitter:card": preview.twitterCard || "summary",
+      "twitter:title": section.title,
+      "twitter:description": section.description,
+      "twitter:image": preview.ogImage || "",
     };
   }
 
@@ -297,7 +305,7 @@ class SocialMediaService {
   getShareStats(): Array<{ sectionId: string; title: string; shares: number }> {
     return Array.from(this.shareStats.entries()).map(([sectionId, shares]) => ({
       sectionId,
-      title: this.sections.get(sectionId)?.title || 'Unknown',
+      title: this.sections.get(sectionId)?.title || "Unknown",
       shares,
     }));
   }
@@ -320,7 +328,7 @@ class SocialMediaService {
    * Get platform by name
    */
   getPlatform(name: string): SocialPlatform | undefined {
-    return this.platforms.find((p) => p.name === name);
+    return this.platforms.find(p => p.name === name);
   }
 
   /**
@@ -334,7 +342,7 @@ class SocialMediaService {
 
     return {
       section,
-      platforms: this.platforms.map((platform) => ({
+      platforms: this.platforms.map(platform => ({
         ...platform,
         shareUrl: this.getShareUrl(sectionId, platform.name),
       })),
@@ -345,8 +353,12 @@ class SocialMediaService {
   /**
    * Get most shared sections
    */
-  getMostSharedSections(limit: number = 5): Array<{ sectionId: string; title: string; shares: number }> {
-    return this.getShareStats().sort((a, b) => b.shares - a.shares).slice(0, limit);
+  getMostSharedSections(
+    limit: number = 5
+  ): Array<{ sectionId: string; title: string; shares: number }> {
+    return this.getShareStats()
+      .sort((a, b) => b.shares - a.shares)
+      .slice(0, limit);
   }
 
   /**
