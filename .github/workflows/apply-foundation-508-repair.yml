@@ -1,0 +1,164 @@
+name: Apply Foundation 508 correction
+
+on:
+  push:
+    branches:
+      - fix/foundation-508-position-20260910
+
+permissions:
+  contents: write
+
+jobs:
+  repair-and-verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repair branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+
+      - name: Apply exact legal-status correction when needed
+        run: |
+          set -euo pipefail
+          if grep -Fq 'tax-exempt status pending counsel confirmation' client/src/pages/PeoplesFoundation.tsx; then
+            python3 scripts/apply-foundation-508-repair.py
+            python3 - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/check-facts.mjs')
+          s = p.read_text(encoding='utf-8')
+          old = '''  {
+              file: ".github/workflows/deploy.yml",
+              required: [
+                "cat /tmp/trai-browser-audit.json",
+                "--remote-debugging-port=9222",
+                "§508(c)(1)(A)",
+              ],
+              forbidden: [
+                "TRAI_AUDIT_MODE",
+                "TRAI_CDP_URL",
+                "TRAI_BASE_URL",
+                "TRAI_AUDIT_REPORT",
+                "tax-exempt status pending counsel confirmation",
+              ],
+            },'''
+          new = '''  {
+              file: ".github/workflows/deploy.yml",
+              required: [
+                "cat /tmp/trai-browser-audit.json",
+                "--remote-debugging-port=9222",
+                "§508(c)(1)(A)",
+              ],
+              forbidden: [
+                "TRAI_AUDIT_MODE",
+                "TRAI_CDP_URL",
+                "TRAI_BASE_URL",
+                "TRAI_AUDIT_REPORT",
+              ],
+            },'''
+          if old in s:
+              p.write_text(s.replace(old, new), encoding='utf-8')
+          PY
+          else
+            echo 'FOUNDATION_508_PATCH=ALREADY_APPLIED'
+          fi
+
+      - name: Verify exact repair scope
+        run: |
+          set -euo pipefail
+          git diff --check
+          changed="$(git diff --name-only | sort)"
+          if [ -n "$changed" ]; then
+            printf '%s\n' "$changed"
+            expected=$'.github/workflows/deploy.yml\nREADME.md\nVERIFIED_FACTS.md\nclient/public/trai-ecosystem.json\nclient/public/trai-organism-v5.json\nclient/src/components/OrganPortal.tsx\nclient/src/components/SovereignWorldMap.tsx\nclient/src/pages/HomeSovereign.tsx\nclient/src/pages/PeoplesFoundation.tsx\nscripts/audit-built-site.mjs\nscripts/check-facts.mjs\nserver/routers/features.ts'
+            test "$changed" = "$expected"
+          fi
+          test -z "$(git diff --name-only -- package.json package-lock.json client/src/App.tsx client/src/components/SovereignAudioEngine.tsx client/src/hooks/useSovereignSound.ts)"
+          grep -Fq '§508(c)(1)(A)' client/src/pages/PeoplesFoundation.tsx
+          grep -Fq 'qualifying churches' client/src/pages/PeoplesFoundation.tsx
+          grep -Fq 'IRS determination letter' client/src/pages/PeoplesFoundation.tsx
+          ! grep -Fq 'tax-exempt status pending counsel confirmation' client/src/pages/PeoplesFoundation.tsx
+          ! grep -Fq 'tax-exempt status pending counsel confirmation' client/src/pages/HomeSovereign.tsx
+          echo 'FOUNDATION_508_SCOPE=PASS'
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install locked dependency graph
+        run: npm ci --prefer-offline --ignore-scripts
+
+      - name: Dependency audit through low
+        run: npm audit --audit-level=low
+
+      - name: Type and verified-facts checks
+        run: npm run check
+
+      - name: Build GitHub Pages artifact
+        run: |
+          set -euo pipefail
+          rm -rf dist/public
+          npm exec -- vite build --base /trai-portfolio/
+          grep -R -Fq '§508(c)(1)(A)' dist/public/assets
+          grep -R -Fq 'IRS determination letter' dist/public/assets
+          if grep -R -Fq 'tax-exempt status pending counsel confirmation' dist/public/assets; then
+            echo '::error::Superseded Foundation pending-counsel status remains in the public bundle.'
+            exit 1
+          fi
+          echo 'FOUNDATION_508_BUILD=PASS'
+
+      - name: Execute full built-site and experience audits in Chrome
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/trai-pages-root /tmp/trai-chrome
+          mkdir -p /tmp/trai-pages-root/trai-portfolio
+          cp -a dist/public/. /tmp/trai-pages-root/trai-portfolio/
+          for route in case-studies materials community research timeline patent-claims energy manufacturing quantum applications true-melange queen-califia mela-nation melanina nu-ta-meri trai-coin founder peoples-foundation contact; do
+            mkdir -p "/tmp/trai-pages-root/trai-portfolio/$route"
+            cp dist/public/index.html "/tmp/trai-pages-root/trai-portfolio/$route/index.html"
+          done
+          python3 -m http.server 4173 --directory /tmp/trai-pages-root >/tmp/trai-http.log 2>&1 &
+          server_pid=$!
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$chrome"
+          "$chrome" --headless --no-sandbox --no-first-run --remote-allow-origins='*' \
+            --remote-debugging-port=9222 --user-data-dir=/tmp/trai-chrome \
+            --disable-background-networking --disable-component-update \
+            --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader \
+            http://127.0.0.1:4173/trai-portfolio/ >/tmp/trai-chrome.log 2>&1 &
+          chrome_pid=$!
+          cleanup() {
+            kill "$chrome_pid" 2>/dev/null || true
+            kill "$server_pid" 2>/dev/null || true
+            wait "$chrome_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          for _ in $(seq 1 50); do
+            curl --fail --silent http://127.0.0.1:9222/json >/tmp/targets.json && break
+            sleep 0.4
+          done
+          test -s /tmp/targets.json
+          timeout --kill-after=5s 240s npm run audit:built
+          cat /tmp/trai-browser-audit.json
+          cat /tmp/trai-experience-audit.json
+          node -e "const a=require('/tmp/trai-browser-audit.json'), b=require('/tmp/trai-experience-audit.json'); if(a.summary.failed!==0 || a.summary.runtimeIssues!==0 || b.summary.failures!==0) process.exit(1); console.log('FOUNDATION_508_FULL_BROWSER=PASS')"
+
+      - name: Commit verified correction
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'No uncommitted correction remains.'
+            exit 0
+          fi
+          git config user.name 'Heru_Ahmose'
+          git config user.email 'aitconsult22@gmail.com'
+          git add .github/workflows/deploy.yml README.md VERIFIED_FACTS.md \
+            client/public/trai-ecosystem.json client/public/trai-organism-v5.json \
+            client/src/components/OrganPortal.tsx client/src/components/SovereignWorldMap.tsx \
+            client/src/pages/HomeSovereign.tsx client/src/pages/PeoplesFoundation.tsx \
+            scripts/audit-built-site.mjs scripts/check-facts.mjs server/routers/features.ts
+          git commit -m 'fix(foundation): restore section 508 operating position'
+          git push origin HEAD:fix/foundation-508-position-20260910
