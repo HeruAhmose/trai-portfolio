@@ -27,6 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           node --check .github/scripts/diagnose-live-qc-peoples.mjs
+          node --check .github/scripts/probe-peoples-containment.mjs
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
           rm -rf /tmp/live-diagnostic-chrome
@@ -54,6 +55,7 @@ jobs:
           curl --fail --silent http://127.0.0.1:9251/json/version >/dev/null
 
           node .github/scripts/diagnose-live-qc-peoples.mjs
+          node .github/scripts/probe-peoples-containment.mjs
 
       - name: Upload diagnostic evidence
         if: always()
