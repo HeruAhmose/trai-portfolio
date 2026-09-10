@@ -9,7 +9,7 @@
     "preview": "vite preview --port 4173",
     "check": "tsc --noEmit && node scripts/check-facts.mjs",
     "check:facts": "node scripts/check-facts.mjs",
-    "audit:built": "node scripts/audit-built-site.mjs && node scripts/audit-experience-runtime.mjs"
+    "audit:built": "node scripts/audit-built-site.mjs && node scripts/reset-audit-browser.mjs && node scripts/audit-experience-runtime.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
