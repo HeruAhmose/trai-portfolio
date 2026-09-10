@@ -1,7 +1,7 @@
 from pathlib import Path
 
 page = Path("client/src/pages/MeLaNiNa.tsx")
-workflow = Path(".github/workflows/deploy.yml")
+facts = Path("scripts/check-facts.mjs")
 
 text = page.read_text(encoding="utf-8")
 
@@ -47,21 +47,28 @@ if 'data-melanina-collection-archive="true"' not in text:
 
 page.write_text(text, encoding="utf-8")
 
-wf = workflow.read_text(encoding="utf-8")
-anchor = "          grep -R -Fq 'Planning data · no live outcomes' dist/public/assets\n"
-guards = (
-    anchor
-    + "          grep -R -Fq 'data-melanina-collection-archive' dist/public/assets\n"
-    + "          grep -R -Fq 'melanina-poster.jpg' dist/public/assets\n"
-    + "          test -s dist/public/media/video/melanina-poster.jpg\n"
-)
-if "grep -R -Fq 'data-melanina-collection-archive' dist/public/assets" not in wf:
-    if anchor not in wf:
-        raise SystemExit("Deploy workflow build-guard anchor not found")
-    wf = wf.replace(anchor, guards, 1)
-workflow.write_text(wf, encoding="utf-8")
+guard_text = facts.read_text(encoding="utf-8")
+anchor = '''  {
+    file: "client/src/pages/Applications.tsx",
+'''
+rule = '''  {
+    file: "client/src/pages/MeLaNiNa.tsx",
+    required: [
+      'data-melanina-collection-archive="true"',
+      "VIDEO.melanina.poster",
+      "PROVENANCE_LABEL[VIDEO.melanina.provenance]",
+      "Collection source visual",
+    ],
+    forbidden: [],
+  },
+'''
+if 'file: "client/src/pages/MeLaNiNa.tsx"' not in guard_text:
+    if anchor not in guard_text:
+        raise SystemExit("check-facts projection-rule anchor not found")
+    guard_text = guard_text.replace(anchor, rule + anchor, 1)
+facts.write_text(guard_text, encoding="utf-8")
 
 print("MELANINA_PATCH_APPLIED")
 print("PAGE_HAS_ARCHIVE_VISUAL=", 'data-melanina-collection-archive="true"' in text)
 print("PAGE_USES_REGISTERED_MEDIA=", 'VIDEO.melanina.poster' in text)
-print("DEPLOY_GUARD_PRESENT=", "grep -R -Fq 'data-melanina-collection-archive' dist/public/assets" in wf)
+print("FACTS_GUARD_PRESENT=", 'file: "client/src/pages/MeLaNiNa.tsx"' in guard_text)
