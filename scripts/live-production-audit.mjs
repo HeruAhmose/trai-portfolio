@@ -90,23 +90,26 @@ async function auditQC(viewportName, viewport) {
     const nav = await page.goto(result.url, { waitUntil: 'domcontentloaded', timeout: 45000 });
     result.navStatus = nav?.status() ?? null;
     await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
-    result.steps.push({ sealed: await page.getByRole('button', { name: /OPEN SOVEREIGN SEAL/i }).isVisible().catch(() => false) });
-    await page.getByRole('button', { name: /OPEN SOVEREIGN SEAL/i }).click({ timeout: 10000 });
-    await page.getByRole('button', { name: /ENTER COMMAND FIELD/i }).waitFor({ state: 'visible', timeout: 8000 });
+    const openSeal = page.getByRole('button', { name: /OPEN SOVEREIGN SEAL/i });
+    await openSeal.waitFor({ state: 'visible', timeout: 10000 });
+    result.steps.push({ sealed: true });
+    await openSeal.click();
+    const enter = page.getByRole('button', { name: /ENTER COMMAND FIELD/i });
+    await enter.waitFor({ state: 'visible', timeout: 8000 });
     result.steps.push({ authorized: true });
-    await page.getByRole('button', { name: /ENTER COMMAND FIELD/i }).click();
+    await enter.click();
     await page.waitForTimeout(1600);
     await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
     result.dom = await inspect(page);
     result.dashboardVisible = /COMMAND|DASHBOARD|INTELLIGENCE|RESEARCH|THREAT/i.test(result.dom.bodyText);
-    result.queenPortraitVisible = await page.locator('img[alt*="Queen Califia" i]').filter({ visible: true }).count().catch(() => 0);
+    result.queenPortraitVisible = await page.locator('img[alt*="Queen Califia" i]:visible').count().catch(() => 0);
     await page.screenshot({ path: path.join(evidenceDir, `interaction-qc-${viewportName}.png`), fullPage: true });
   } catch (err) {
     result.error = String(err);
     result.dom = await inspect(page).catch(() => ({}));
   }
   Object.assign(result, evidence);
-  result.hardFailure = Boolean(result.error) || result.navStatus >= 400 || (result.dom?.brokenImages?.length || 0) > 0 || evidence.pageErrors.length > 0 || evidence.failedCriticalRequests.length > 0 || evidence.badCriticalResponses.length > 0 || !result.dashboardVisible;
+  result.hardFailure = Boolean(result.error) || (result.navStatus != null && result.navStatus >= 400) || (result.dom?.brokenImages?.length || 0) > 0 || evidence.pageErrors.length > 0 || evidence.failedCriticalRequests.length > 0 || evidence.badCriticalResponses.length > 0 || !result.dashboardVisible;
   await context.close();
   return result;
 }
@@ -117,29 +120,31 @@ async function auditPeoples(viewportName, viewport) {
   try {
     const nav = await page.goto(result.url, { waitUntil: 'domcontentloaded', timeout: 45000 });
     result.navStatus = nav?.status() ?? null;
-    await page.getByRole('button', { name: /Skip the opening sequence/i }).click({ timeout: 10000 });
+    const skip = page.getByRole('button', { name: /Skip the opening sequence/i });
+    await skip.waitFor({ state: 'visible', timeout: 10000 });
+    await skip.click();
     await page.waitForTimeout(900);
     result.steps.push({ introSkipped: true });
     await scrollAll(page);
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(400);
     const launcher = page.getByRole('button', { name: /Open H\.K\. Assistant/i });
-    result.hkLauncherVisible = await launcher.isVisible().catch(() => false);
-    result.hkLauncherText = await launcher.innerText().catch(() => '');
+    await launcher.waitFor({ state: 'visible', timeout: 8000 });
+    result.hkLauncherVisible = true;
+    result.hkLauncherText = await launcher.innerText();
     result.dom = await inspect(page);
     await page.screenshot({ path: path.join(evidenceDir, `interaction-peoples-home-${viewportName}.png`), fullPage: true });
-    if (result.hkLauncherVisible) {
-      await launcher.click();
-      await page.waitForTimeout(700);
-      result.hkOpenTextPresent = /H\.K\.|PORTFOLIO GUIDE|assistant/i.test((await page.locator('body').innerText()).slice(-5000));
-      await page.screenshot({ path: path.join(evidenceDir, `interaction-peoples-hk-${viewportName}.png`), fullPage: false });
-    }
+    await launcher.click();
+    await page.waitForTimeout(700);
+    const bodyAfterHK = await page.locator('body').innerText();
+    result.hkOpenTextPresent = /H\.K\.|PORTFOLIO GUIDE|assistant/i.test(bodyAfterHK);
+    await page.screenshot({ path: path.join(evidenceDir, `interaction-peoples-hk-${viewportName}.png`), fullPage: false });
   } catch (err) {
     result.error = String(err);
     result.dom = await inspect(page).catch(() => ({}));
   }
   Object.assign(result, evidence);
-  result.hardFailure = Boolean(result.error) || result.navStatus >= 400 || (result.dom?.brokenImages?.length || 0) > 0 || evidence.pageErrors.length > 0 || evidence.failedCriticalRequests.length > 0 || evidence.badCriticalResponses.length > 0 || !result.hkLauncherVisible || !result.hkOpenTextPresent;
+  result.hardFailure = Boolean(result.error) || (result.navStatus != null && result.navStatus >= 400) || (result.dom?.brokenImages?.length || 0) > 0 || evidence.pageErrors.length > 0 || evidence.failedCriticalRequests.length > 0 || evidence.badCriticalResponses.length > 0 || !result.hkLauncherVisible || !result.hkOpenTextPresent;
   await context.close();
   return result;
 }
@@ -152,20 +157,20 @@ async function auditTechBridge(viewportName, viewport) {
     result.navStatus = nav?.status() ?? null;
     await page.waitForLoadState('networkidle', { timeout: 12000 }).catch(() => {});
     const launcher = page.locator('[data-hk-launcher="true"]');
-    result.hkLauncherVisible = await launcher.isVisible({ timeout: 10000 }).catch(() => false);
-    if (result.hkLauncherVisible) await launcher.click();
+    await launcher.waitFor({ state: 'visible', timeout: 10000 });
+    result.hkLauncherVisible = true;
+    await launcher.click();
     const dialog = page.getByRole('dialog', { name: /H\.K\. Help Desk Architect/i });
-    result.hkDialogVisible = await dialog.isVisible({ timeout: 8000 }).catch(() => false);
+    await dialog.waitFor({ state: 'visible', timeout: 8000 });
+    result.hkDialogVisible = true;
     const avatar = dialog.locator('img[alt="H.K."]');
-    result.hkAvatar = await avatar.evaluate(img => ({ naturalWidth: img.naturalWidth, naturalHeight: img.naturalHeight, src: img.currentSrc || img.src })).catch(() => null);
+    await avatar.waitFor({ state: 'visible', timeout: 5000 });
+    result.hkAvatar = await avatar.evaluate(img => ({ naturalWidth: img.naturalWidth, naturalHeight: img.naturalHeight, src: img.currentSrc || img.src }));
     const wifi = page.getByRole('button', { name: /Fix Wi-Fi/i });
-    if (await wifi.isVisible().catch(() => false)) {
-      await wifi.click();
-      await page.locator('[aria-label="H.K. triage result"]').waitFor({ state: 'visible', timeout: 4000 });
-      result.triageResultVisible = true;
-    } else {
-      result.triageResultVisible = false;
-    }
+    await wifi.waitFor({ state: 'visible', timeout: 5000 });
+    await wifi.click();
+    await page.locator('[aria-label="H.K. triage result"]').waitFor({ state: 'visible', timeout: 4000 });
+    result.triageResultVisible = true;
     result.dom = await inspect(page);
     await page.screenshot({ path: path.join(evidenceDir, `interaction-techbridge-hk-${viewportName}.png`), fullPage: false });
   } catch (err) {
@@ -173,7 +178,7 @@ async function auditTechBridge(viewportName, viewport) {
     result.dom = await inspect(page).catch(() => ({}));
   }
   Object.assign(result, evidence);
-  result.hardFailure = Boolean(result.error) || result.navStatus >= 400 || (result.dom?.brokenImages?.length || 0) > 0 || evidence.pageErrors.length > 0 || evidence.failedCriticalRequests.length > 0 || evidence.badCriticalResponses.length > 0 || !result.hkDialogVisible || !result.triageResultVisible || !(result.hkAvatar?.naturalWidth > 0);
+  result.hardFailure = Boolean(result.error) || (result.navStatus != null && result.navStatus >= 400) || (result.dom?.brokenImages?.length || 0) > 0 || evidence.pageErrors.length > 0 || evidence.failedCriticalRequests.length > 0 || evidence.badCriticalResponses.length > 0 || !result.hkDialogVisible || !result.triageResultVisible || !(result.hkAvatar?.naturalWidth > 0);
   await context.close();
   return result;
 }
