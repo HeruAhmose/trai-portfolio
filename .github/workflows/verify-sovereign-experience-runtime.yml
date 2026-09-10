@@ -25,7 +25,7 @@ jobs:
           git diff --check origin/main...HEAD
           changed="$(git diff --name-only origin/main...HEAD | sort)"
           printf '%s\n' "$changed"
-          expected=$'.github/workflows/verify-sovereign-experience-runtime.yml\nclient/src/App.tsx\nclient/src/components/CeremonialIntro.tsx\nclient/src/components/PremiumNavigation.tsx\nclient/src/components/SovereignAudioEngine.tsx\nclient/src/components/SovereignCursor.tsx\nclient/src/contexts/SoundPreferencesContext.tsx\nclient/src/hooks/useAudioManager.ts\nclient/src/hooks/useSovereignSound.ts\npackage.json\nscripts/audit-experience-runtime.mjs\nscripts/reset-audit-browser.mjs'
+          expected=$'.github/workflows/verify-sovereign-experience-runtime.yml\nclient/index.html\nclient/public/favicon.svg\nclient/src/App.tsx\nclient/src/components/CeremonialIntro.tsx\nclient/src/components/PremiumNavigation.tsx\nclient/src/components/SovereignAudioEngine.tsx\nclient/src/components/SovereignCursor.tsx\nclient/src/contexts/SoundPreferencesContext.tsx\nclient/src/hooks/useAudioManager.ts\nclient/src/hooks/useSovereignSound.ts\npackage.json\nscripts/audit-experience-runtime.mjs\nscripts/reset-audit-browser.mjs'
           test "$changed" = "$expected"
           test -z "$(git diff --name-only origin/main...HEAD -- package-lock.json)"
           grep -Fq 'enabled: false' client/src/contexts/SoundPreferencesContext.tsx
@@ -33,6 +33,8 @@ jobs:
           grep -Fq 'data-sovereign-route-motion="true"' client/src/App.tsx
           grep -Fq 'data-intro-sound-toggle="true"' client/src/components/CeremonialIntro.tsx
           grep -Fq 'data-sovereign-cursor="true"' client/src/components/SovereignCursor.tsx
+          grep -Fq 'href="%BASE_URL%favicon.svg"' client/index.html
+          test -s client/public/favicon.svg
           if grep -R -Fq 'd2xsxph8kpxj0f.cloudfront.net' client/src/hooks/useAudioManager.ts client/src/hooks/useSovereignSound.ts client/src/components/SovereignAudioEngine.tsx; then
             echo '::error::Sovereign audio path still depends on the retired CloudFront SFX host.'
             exit 1
@@ -64,6 +66,8 @@ jobs:
           grep -R -Fq 'data-intro-sound-toggle' dist/public/assets
           grep -R -Fq 'data-sovereign-cursor' dist/public/assets
           grep -R -Fq 'trai:sfx' dist/public/assets
+          grep -Fq 'href="/trai-portfolio/favicon.svg"' dist/public/index.html
+          test -s dist/public/favicon.svg
           if grep -R -Eq 'sfx-(click|hover|success|error|transition|loading)_[a-f0-9]+\.wav' dist/public/assets; then
             echo '::error::Active build still carries legacy external SFX asset references.'
             grep -RIlE 'sfx-(click|hover|success|error|transition|loading)_[a-f0-9]+\.wav' dist/public/assets || true
@@ -114,7 +118,7 @@ jobs:
           timeout --kill-after=5s 240s npm run audit:built
           cat /tmp/trai-browser-audit.json
           cat /tmp/trai-experience-audit.json
-          node -e "const a=require('/tmp/trai-browser-audit.json'), b=require('/tmp/trai-experience-audit.json'); if(a.summary.failed!==0 || b.summary.failures!==0) process.exit(1); console.log('FULL_BROWSER_AND_EXPERIENCE_AUDIT=PASS')"
+          node -e "const a=require('/tmp/trai-browser-audit.json'), b=require('/tmp/trai-experience-audit.json'); if(a.summary.failed!==0 || a.summary.runtimeIssues!==0 || b.summary.failures!==0) process.exit(1); console.log('FULL_BROWSER_AND_EXPERIENCE_AUDIT=PASS')"
 
           if grep -Fq '/api/trpc/' /tmp/trai-http.log; then
             echo '::error::Static Pages runtime attempted a server-only tRPC request.'
