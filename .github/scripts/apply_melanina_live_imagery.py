@@ -48,27 +48,33 @@ if 'data-melanina-collection-archive="true"' not in text:
 page.write_text(text, encoding="utf-8")
 
 guard_text = facts.read_text(encoding="utf-8")
-anchor = '''  {
-    file: "client/src/pages/Applications.tsx",
-'''
-rule = '''  {
+old_rule = '''  {
     file: "client/src/pages/MeLaNiNa.tsx",
     required: [
+      "MeLaNiNa remains in development",
+      "currently available products",
+    ],
+    forbidden: ["products available now", "EIN filed"],
+  },'''
+new_rule = '''  {
+    file: "client/src/pages/MeLaNiNa.tsx",
+    required: [
+      "MeLaNiNa remains in development",
+      "currently available products",
       'data-melanina-collection-archive="true"',
       "VIDEO.melanina.poster",
       "PROVENANCE_LABEL[VIDEO.melanina.provenance]",
       "Collection source visual",
     ],
-    forbidden: [],
-  },
-'''
-if 'file: "client/src/pages/MeLaNiNa.tsx"' not in guard_text:
-    if anchor not in guard_text:
-        raise SystemExit("check-facts projection-rule anchor not found")
-    guard_text = guard_text.replace(anchor, rule + anchor, 1)
+    forbidden: ["products available now", "EIN filed"],
+  },'''
+if 'data-melanina-collection-archive=\\"true\\"' not in guard_text and 'data-melanina-collection-archive="true"' not in guard_text:
+    if old_rule not in guard_text:
+        raise SystemExit("Existing MeLaNiNa facts rule anchor not found")
+    guard_text = guard_text.replace(old_rule, new_rule, 1)
 facts.write_text(guard_text, encoding="utf-8")
 
 print("MELANINA_PATCH_APPLIED")
 print("PAGE_HAS_ARCHIVE_VISUAL=", 'data-melanina-collection-archive="true"' in text)
 print("PAGE_USES_REGISTERED_MEDIA=", 'VIDEO.melanina.poster' in text)
-print("FACTS_GUARD_PRESENT=", 'file: "client/src/pages/MeLaNiNa.tsx"' in guard_text)
+print("FACTS_GUARD_PRESENT=", 'VIDEO.melanina.poster' in guard_text and 'PROVENANCE_LABEL[VIDEO.melanina.provenance]' in guard_text)
