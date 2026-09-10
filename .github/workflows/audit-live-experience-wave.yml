@@ -22,6 +22,33 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Align QC command-frame sample with product transition
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/scripts/audit-live-experience-wave.mjs')
+          text = path.read_text(encoding='utf-8')
+          old = '''  await clickText(cdp, "ENTER COMMAND FIELD");
+            await sleep(450);
+            const command = await cdp.eval(`(() => ({'''
+          new = '''  await clickText(cdp, "ENTER COMMAND FIELD");
+            await waitForEval(
+              cdp,
+              `document.querySelectorAll('[data-qc-command-frame="prestige-v1"]').length > 0`,
+              50,
+              100
+            );
+            await sleep(100);
+            const command = await cdp.eval(`(() => ({'''
+          if old not in text:
+              raise SystemExit('exact QC command-frame timing marker not found')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+          node --check .github/scripts/audit-live-experience-wave.mjs
+
       - name: Run live Chromium interaction certification
         shell: bash
         run: |
