@@ -1,0 +1,69 @@
+name: Verify MeLaNiNa live imagery repair
+
+on:
+  push:
+    branches:
+      - fix/melanina-live-imagery-20260910
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repair branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Apply idempotent MeLaNiNa repair
+        run: python3 .github/scripts/apply_melanina_live_imagery.py
+
+      - name: Verify repair scope
+        run: |
+          set -euo pipefail
+          git diff --check
+          changed="$(git diff --name-only | sort)"
+          printf '%s\n' "$changed"
+          test "$changed" = $'.github/workflows/deploy.yml\nclient/src/pages/MeLaNiNa.tsx' || test -z "$changed"
+          grep -Fq 'data-melanina-collection-archive="true"' client/src/pages/MeLaNiNa.tsx
+          grep -Fq 'VIDEO.melanina.poster' client/src/pages/MeLaNiNa.tsx
+          grep -Fq 'PROVENANCE_LABEL[VIDEO.melanina.provenance]' client/src/pages/MeLaNiNa.tsx
+          grep -Fq "grep -R -Fq 'data-melanina-collection-archive' dist/public/assets" .github/workflows/deploy.yml
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install locked graph
+        run: npm ci --prefer-offline --ignore-scripts
+
+      - name: Type and evidence checks
+        run: npm run check
+
+      - name: Build Pages artifact and verify registered visual
+        run: |
+          set -euo pipefail
+          rm -rf dist/public
+          npm exec -- vite build --base /trai-portfolio/
+          grep -R -Fq 'data-melanina-collection-archive' dist/public/assets
+          grep -R -Fq 'melanina-poster.jpg' dist/public/assets
+          test -s dist/public/media/video/melanina-poster.jpg
+          test -s dist/public/media/video/melanina.mp4
+          npm run audit:built
+          echo 'MELANINA_BUILD_IDENTITY=PASS'
+
+      - name: Commit verified repair when needed
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- client/src/pages/MeLaNiNa.tsx .github/workflows/deploy.yml; then
+            echo 'MELANINA_REPAIR_ALREADY_COMMITTED=PASS'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add client/src/pages/MeLaNiNa.tsx .github/workflows/deploy.yml
+          git commit -m 'fix(melanina): restore registered collection imagery'
+          git push origin HEAD:fix/melanina-live-imagery-20260910
