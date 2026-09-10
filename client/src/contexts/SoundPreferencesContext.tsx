@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface SoundPreferences {
+  enabled: boolean;
   masterVolume: number;
   clickEnabled: boolean;
   hoverEnabled: boolean;
@@ -17,6 +18,9 @@ interface SoundPreferencesContextType {
 }
 
 const defaultPreferences: SoundPreferences = {
+  // Audio is intentionally opt-in. Web Audio is prepared only after a user gesture
+  // and no audible output is produced until the visitor explicitly enables sound.
+  enabled: false,
   masterVolume: 0.5,
   clickEnabled: true,
   hoverEnabled: true,
@@ -32,12 +36,14 @@ export const SoundPreferencesProvider: React.FC<{ children: React.ReactNode }> =
   const [preferences, setPreferences] = useState<SoundPreferences>(defaultPreferences);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load preferences from localStorage on mount
+  // Merge persisted preferences into the current schema. This prevents an old
+  // localStorage payload from silently omitting newer safety/experience fields.
   useEffect(() => {
     const saved = localStorage.getItem('soundPreferences');
     if (saved) {
       try {
-        setPreferences(JSON.parse(saved));
+        const parsed = JSON.parse(saved) as Partial<SoundPreferences>;
+        setPreferences({ ...defaultPreferences, ...parsed, enabled: parsed.enabled === true });
       } catch (error) {
         console.error('Failed to load sound preferences:', error);
       }
@@ -45,7 +51,6 @@ export const SoundPreferencesProvider: React.FC<{ children: React.ReactNode }> =
     setIsLoaded(true);
   }, []);
 
-  // Save preferences to localStorage whenever they change
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem('soundPreferences', JSON.stringify(preferences));
