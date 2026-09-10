@@ -52,8 +52,61 @@ jobs:
           grep -R -Fq 'melanina-poster.jpg' dist/public/assets
           test -s dist/public/media/video/melanina-poster.jpg
           test -s dist/public/media/video/melanina.mp4
-          npm run audit:built
           echo 'MELANINA_BUILD_IDENTITY=PASS'
+
+      - name: Reproduce production browser audit and MeLaNiNa render
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/trai-pages-root /tmp/trai-chrome /tmp/trai-melanina-chrome
+          mkdir -p /tmp/trai-pages-root/trai-portfolio
+          cp -a dist/public/. /tmp/trai-pages-root/trai-portfolio/
+          for route in case-studies materials community research timeline patent-claims energy manufacturing quantum applications true-melange queen-califia mela-nation melanina nu-ta-meri trai-coin founder peoples-foundation contact; do
+            mkdir -p "/tmp/trai-pages-root/trai-portfolio/$route"
+            cp dist/public/index.html "/tmp/trai-pages-root/trai-portfolio/$route/index.html"
+          done
+
+          python3 -m http.server 4173 --directory /tmp/trai-pages-root >/tmp/trai-http.log 2>&1 &
+          server_pid=$!
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$chrome"
+          "$chrome" \
+            --headless --no-sandbox --no-first-run \
+            --remote-allow-origins='*' \
+            --remote-debugging-port=9222 --user-data-dir=/tmp/trai-chrome \
+            --disable-background-networking --disable-component-update \
+            --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader \
+            http://127.0.0.1:4173/trai-portfolio/ \
+            >/tmp/trai-chrome.log 2>&1 &
+          chrome_pid=$!
+
+          cleanup() {
+            kill "$chrome_pid" 2>/dev/null || true
+            kill "$server_pid" 2>/dev/null || true
+            wait "$chrome_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          for _ in $(seq 1 40); do
+            curl --fail --silent http://127.0.0.1:9222/json >/tmp/targets.json && break
+            sleep 0.5
+          done
+          test -s /tmp/targets.json
+          timeout --kill-after=5s 180s npm run audit:built
+          cat /tmp/trai-browser-audit.json
+
+          timeout 60s "$chrome" \
+            --headless --no-sandbox --no-first-run \
+            --user-data-dir=/tmp/trai-melanina-chrome \
+            --disable-background-networking --disable-component-update \
+            --virtual-time-budget=7000 --dump-dom \
+            http://127.0.0.1:4173/trai-portfolio/melanina/ \
+            >/tmp/melanina.html
+          grep -Fq 'data-melanina-collection-archive="true"' /tmp/melanina.html
+          grep -Fq 'MeLaNiNa Collection 001 — Pyramid No Scheme source rendering' /tmp/melanina.html
+          grep -Fq '/trai-portfolio/media/video/melanina-poster.jpg' /tmp/melanina.html
+          curl --fail --silent http://127.0.0.1:4173/trai-portfolio/media/video/melanina-poster.jpg >/dev/null
+          echo 'MELANINA_LOCAL_BROWSER_RENDER=PASS'
 
       - name: Commit verified repair when needed
         run: |
