@@ -22,11 +22,11 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Measure real Peoples horizontal scrollability
+      - name: Measure Peoples overflow timeline
         shell: bash
         run: |
           set -euo pipefail
-          node --check .github/scripts/diagnose-peoples-scrollability.mjs
+          node --check .github/scripts/diagnose-peoples-overflow-timeline.mjs
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
           rm -rf /tmp/live-diagnostic-chrome
@@ -53,12 +53,12 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:9251/json/version >/dev/null
 
-          node .github/scripts/diagnose-peoples-scrollability.mjs
+          node .github/scripts/diagnose-peoples-overflow-timeline.mjs
 
       - name: Upload diagnostic evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: peoples-horizontal-scrollability-${{ github.sha }}
+          name: peoples-overflow-timeline-${{ github.sha }}
           path: live-diagnostic-evidence/
           if-no-files-found: error
