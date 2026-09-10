@@ -1,9 +1,9 @@
 /**
  * useSovereignSound — synthesized interaction SFX via Web Audio API.
  *
- * One authority now controls the experience: SoundPreferencesContext. Every
- * effect obeys the master opt-in, master volume and its per-effect preference.
- * No external audio assets or microphone access are required.
+ * One authority controls the experience: SoundPreferencesContext. Every effect
+ * obeys the master opt-in, master volume and its per-effect preference. No
+ * external audio assets or microphone access are required.
  */
 import { useCallback } from 'react';
 import { useSoundPreferences } from '@/contexts/SoundPreferencesContext';
@@ -67,8 +67,8 @@ export function useSovereignSound() {
   const { preferences } = useSoundPreferences();
   const volume = Math.max(0, Math.min(1, preferences.masterVolume));
 
-  // Retained as a compatibility no-op for older callers. Sound is never
-  // auto-enabled by a generic first gesture anymore; explicit opt-in governs it.
+  // Compatibility no-op for older callers. Generic gestures no longer enable
+  // audio; the explicit preference toggle is the only authority.
   const enable = useCallback(() => {}, []);
 
   const click = useCallback(() => {
@@ -86,8 +86,7 @@ export function useSovereignSound() {
 
   const navigate = useCallback(() => {
     if (!preferences.enabled || !preferences.transitionEnabled || volume <= 0) return;
-    const tones = [293.66, 369.99, 440];
-    tones.forEach((freq, i) => {
+    [293.66, 369.99, 440].forEach((freq, i) => {
       window.setTimeout(
         () => playTone(freq, 'sine', 0.01, 0.05, 0.35, (0.07 - i * 0.01) * volume),
         i * 60
@@ -123,5 +122,18 @@ export function useSovereignSound() {
     announce('chime');
   }, [preferences.enabled, preferences.successEnabled, volume]);
 
-  return { enable, click, hover, navigate, unlock, region, chime };
+  const error = useCallback(() => {
+    if (!preferences.enabled || !preferences.errorEnabled || volume <= 0) return;
+    const played = playTone(185, 'triangle', 0.005, 0.03, 0.28, 0.055 * volume, -12, 1200);
+    playTone(138.59, 'sine', 0.01, 0.02, 0.34, 0.04 * volume, -8, 700);
+    if (played) announce('error');
+  }, [preferences.enabled, preferences.errorEnabled, volume]);
+
+  const loading = useCallback(() => {
+    if (!preferences.enabled || !preferences.loadingEnabled || volume <= 0) return;
+    const played = playTone(392, 'sine', 0.004, 0.01, 0.12, 0.025 * volume, 0, 1800);
+    if (played) announce('loading');
+  }, [preferences.enabled, preferences.loadingEnabled, volume]);
+
+  return { enable, click, hover, navigate, unlock, region, chime, error, loading };
 }
