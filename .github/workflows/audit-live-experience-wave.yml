@@ -9,9 +9,9 @@ permissions:
   contents: read
 
 jobs:
-  live-experience-wave:
+  live-diagnostics:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
 
     steps:
       - name: Checkout isolated audit branch
@@ -22,40 +22,14 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Align QC command-frame sample with product transition
+      - name: Run focused live diagnostics
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-
-          path = Path('.github/scripts/audit-live-experience-wave.mjs')
-          text = path.read_text(encoding='utf-8')
-          old = '''  await clickText(cdp, "ENTER COMMAND FIELD");
-            await sleep(450);
-            const command = await cdp.eval(`(() => ({'''
-          new = '''  await clickText(cdp, "ENTER COMMAND FIELD");
-            await waitForEval(
-              cdp,
-              `document.querySelectorAll('[data-qc-command-frame="prestige-v1"]').length > 0`,
-              50,
-              100
-            );
-            await sleep(100);
-            const command = await cdp.eval(`(() => ({'''
-          if old not in text:
-              raise SystemExit('exact QC command-frame timing marker not found')
-          path.write_text(text.replace(old, new, 1), encoding='utf-8')
-          PY
-          node --check .github/scripts/audit-live-experience-wave.mjs
-
-      - name: Run live Chromium interaction certification
-        shell: bash
-        run: |
-          set -euo pipefail
+          node --check .github/scripts/diagnose-live-qc-peoples.mjs
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
-          rm -rf /tmp/live-experience-chrome
+          rm -rf /tmp/live-diagnostic-chrome
           "$chrome" \
             --headless \
             --no-sandbox \
@@ -64,27 +38,27 @@ jobs:
             --no-first-run \
             --disable-background-networking \
             --remote-debugging-address=127.0.0.1 \
-            --remote-debugging-port=9250 \
+            --remote-debugging-port=9251 \
             --remote-allow-origins='*' \
-            --user-data-dir=/tmp/live-experience-chrome \
-            about:blank >/tmp/live-experience-chrome.log 2>&1 &
+            --user-data-dir=/tmp/live-diagnostic-chrome \
+            about:blank >/tmp/live-diagnostic-chrome.log 2>&1 &
           chrome_pid=$!
-          trap 'kill "$chrome_pid" 2>/dev/null || true; cat /tmp/live-experience-chrome.log || true' EXIT
+          trap 'kill "$chrome_pid" 2>/dev/null || true; cat /tmp/live-diagnostic-chrome.log || true' EXIT
 
           for _ in $(seq 1 240); do
-            if curl --fail --silent http://127.0.0.1:9250/json/version >/dev/null; then
+            if curl --fail --silent http://127.0.0.1:9251/json/version >/dev/null; then
               break
             fi
             sleep .25
           done
-          curl --fail --silent http://127.0.0.1:9250/json/version >/dev/null
+          curl --fail --silent http://127.0.0.1:9251/json/version >/dev/null
 
-          node .github/scripts/audit-live-experience-wave.mjs
+          node .github/scripts/diagnose-live-qc-peoples.mjs
 
-      - name: Upload live evidence
+      - name: Upload diagnostic evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: live-experience-wave-evidence-${{ github.sha }}
-          path: live-experience-evidence/
+          name: live-qc-peoples-diagnostic-${{ github.sha }}
+          path: live-diagnostic-evidence/
           if-no-files-found: error
