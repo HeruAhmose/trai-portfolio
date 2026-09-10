@@ -25,7 +25,7 @@ jobs:
           git diff --check origin/main...HEAD
           changed="$(git diff --name-only origin/main...HEAD | sort)"
           printf '%s\n' "$changed"
-          expected=$'.github/workflows/verify-sovereign-experience-runtime.yml\nclient/src/App.tsx\nclient/src/components/CeremonialIntro.tsx\nclient/src/components/PremiumNavigation.tsx\nclient/src/components/SovereignAudioEngine.tsx\nclient/src/components/SovereignCursor.tsx\nclient/src/contexts/SoundPreferencesContext.tsx\nclient/src/hooks/useAudioManager.ts\nclient/src/hooks/useSovereignSound.ts\npackage.json\nscripts/audit-experience-runtime.mjs'
+          expected=$'.github/workflows/verify-sovereign-experience-runtime.yml\nclient/src/App.tsx\nclient/src/components/CeremonialIntro.tsx\nclient/src/components/PremiumNavigation.tsx\nclient/src/components/SovereignAudioEngine.tsx\nclient/src/components/SovereignCursor.tsx\nclient/src/contexts/SoundPreferencesContext.tsx\nclient/src/hooks/useAudioManager.ts\nclient/src/hooks/useSovereignSound.ts\npackage.json\nscripts/audit-experience-runtime.mjs\nscripts/reset-audit-browser.mjs'
           test "$changed" = "$expected"
           test -z "$(git diff --name-only origin/main...HEAD -- package-lock.json)"
           grep -Fq 'enabled: false' client/src/contexts/SoundPreferencesContext.tsx
