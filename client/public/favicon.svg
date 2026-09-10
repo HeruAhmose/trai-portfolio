@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="TRAI">
+  <rect width="64" height="64" rx="14" fill="#050709"/>
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#d8aa43" stroke-width="2"/>
+  <ellipse cx="32" cy="32" rx="22" ry="8" fill="none" stroke="#d8aa43" stroke-opacity=".55" stroke-width="1.5" transform="rotate(-28 32 32)"/>
+  <path d="M20 22h24M32 22v23" fill="none" stroke="#f4f0e6" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="3.5" fill="#d8aa43"/>
+</svg>
