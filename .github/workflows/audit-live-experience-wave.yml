@@ -1,0 +1,63 @@
+name: Audit live experience wave
+
+on:
+  push:
+    branches:
+      - audit/live-experience-wave-20260910
+
+permissions:
+  contents: read
+
+jobs:
+  live-experience-wave:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout isolated audit branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24"
+
+      - name: Run live Chromium interaction certification
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$chrome"
+          rm -rf /tmp/live-experience-chrome
+          "$chrome" \
+            --headless \
+            --no-sandbox \
+            --disable-gpu \
+            --disable-dev-shm-usage \
+            --no-first-run \
+            --disable-background-networking \
+            --remote-debugging-address=127.0.0.1 \
+            --remote-debugging-port=9250 \
+            --remote-allow-origins='*' \
+            --user-data-dir=/tmp/live-experience-chrome \
+            about:blank >/tmp/live-experience-chrome.log 2>&1 &
+          chrome_pid=$!
+          trap 'kill "$chrome_pid" 2>/dev/null || true; cat /tmp/live-experience-chrome.log || true' EXIT
+
+          for _ in $(seq 1 240); do
+            if curl --fail --silent http://127.0.0.1:9250/json/version >/dev/null; then
+              break
+            fi
+            sleep .25
+          done
+          curl --fail --silent http://127.0.0.1:9250/json/version >/dev/null
+
+          node .github/scripts/audit-live-experience-wave.mjs
+
+      - name: Upload live evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: live-experience-wave-evidence-${{ github.sha }}
+          path: live-experience-evidence/
+          if-no-files-found: error
