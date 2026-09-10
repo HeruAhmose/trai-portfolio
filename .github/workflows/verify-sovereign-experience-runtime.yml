@@ -25,15 +25,18 @@ jobs:
           git diff --check origin/main...HEAD
           changed="$(git diff --name-only origin/main...HEAD | sort)"
           printf '%s\n' "$changed"
-          expected=$'.github/workflows/verify-sovereign-experience-runtime.yml\nclient/src/App.tsx\nclient/src/components/CeremonialIntro.tsx\nclient/src/components/PremiumNavigation.tsx\nclient/src/components/SovereignAudioEngine.tsx\nclient/src/components/SovereignCursor.tsx\nclient/src/contexts/SoundPreferencesContext.tsx\nclient/src/hooks/useSovereignSound.ts\npackage.json\nscripts/audit-experience-runtime.mjs'
+          expected=$'.github/workflows/verify-sovereign-experience-runtime.yml\nclient/src/App.tsx\nclient/src/components/CeremonialIntro.tsx\nclient/src/components/PremiumNavigation.tsx\nclient/src/components/SovereignAudioEngine.tsx\nclient/src/components/SovereignCursor.tsx\nclient/src/contexts/SoundPreferencesContext.tsx\nclient/src/hooks/useAudioManager.ts\nclient/src/hooks/useSovereignSound.ts\npackage.json\nscripts/audit-experience-runtime.mjs'
           test "$changed" = "$expected"
           test -z "$(git diff --name-only origin/main...HEAD -- package-lock.json)"
-          grep -Fq '"enabled": false' /dev/null 2>/dev/null || true
           grep -Fq 'enabled: false' client/src/contexts/SoundPreferencesContext.tsx
           grep -Fq "window.dispatchEvent(new CustomEvent('trai:sfx'" client/src/hooks/useSovereignSound.ts
           grep -Fq 'data-sovereign-route-motion="true"' client/src/App.tsx
           grep -Fq 'data-intro-sound-toggle="true"' client/src/components/CeremonialIntro.tsx
           grep -Fq 'data-sovereign-cursor="true"' client/src/components/SovereignCursor.tsx
+          if grep -R -Fq 'd2xsxph8kpxj0f.cloudfront.net' client/src/hooks/useAudioManager.ts client/src/hooks/useSovereignSound.ts client/src/components/SovereignAudioEngine.tsx; then
+            echo '::error::Sovereign audio path still depends on the retired CloudFront SFX host.'
+            exit 1
+          fi
           echo 'EXPERIENCE_SCOPE=PASS'
 
       - name: Setup Node
@@ -63,6 +66,7 @@ jobs:
           grep -R -Fq 'trai:sfx' dist/public/assets
           if grep -R -Eq 'sfx-(click|hover|success|error|transition|loading)_[a-f0-9]+\.wav' dist/public/assets; then
             echo '::error::Active build still carries legacy external SFX asset references.'
+            grep -RIlE 'sfx-(click|hover|success|error|transition|loading)_[a-f0-9]+\.wav' dist/public/assets || true
             exit 1
           fi
           echo 'EXPERIENCE_BUILD_CONTRACT=PASS'
