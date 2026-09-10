@@ -12,7 +12,7 @@ interface PremiumNavigationProps {
 }
 
 /**
- * Premium Navigation Component — Enhanced with search, notifications, and all new sections
+ * Premium Navigation Component — search, full estate routing and explicit sound state.
  */
 export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
   activeTab,
@@ -55,6 +55,7 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
 
   return (
     <motion.nav
+      data-premium-navigation="true"
       className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-accent-gold/20"
       style={{
         background:
@@ -66,7 +67,6 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <motion.div className="flex-shrink-0" whileHover={{ scale: 1.05 }}>
             <a
               href={import.meta.env.BASE_URL}
@@ -82,7 +82,6 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
             </a>
           </motion.div>
 
-          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-0.5">
             {primaryNav.map(item => (
               <motion.button
@@ -107,13 +106,14 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
               </motion.button>
             ))}
 
-            {/* More dropdown */}
             <div className="relative">
               <motion.button
                 onClick={() => setMoreOpen(!moreOpen)}
                 className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-all"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                aria-expanded={moreOpen}
+                aria-haspopup="menu"
               >
                 More
                 <ChevronDown
@@ -133,6 +133,7 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
                       exit={{ opacity: 0, scale: 0.95, y: -5 }}
                       transition={{ duration: 0.12 }}
                       className="absolute top-full left-0 mt-1 w-52 bg-[#0a0d10] border border-[#d6a33a]/20 rounded-xl shadow-2xl z-50 overflow-hidden py-1"
+                      role="menu"
                     >
                       {moreNav.map(item => (
                         <button
@@ -143,6 +144,7 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
                               ? "text-[#d6a33a]"
                               : "text-white/70 hover:text-white"
                           }`}
+                          role="menuitem"
                         >
                           <span>{item.icon}</span>
                           <span>{item.label}</span>
@@ -155,15 +157,14 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
             </div>
           </div>
 
-          {/* Right Side Controls */}
           <div className="flex items-center gap-1.5">
-            {/* Search Button */}
             <motion.button
               onClick={onSearchOpen}
               className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-[#d6a33a]/30 hover:bg-[#d6a33a]/5 transition-all text-sm text-white/50 hover:text-white"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               title="Search (Cmd+K)"
+              aria-label="Open command search"
             >
               <Search className="w-4 h-4" />
               <span className="hidden xl:inline text-xs">Search</span>
@@ -172,13 +173,15 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
               </kbd>
             </motion.button>
 
-            {/* Sound Toggle */}
             <motion.button
+              data-navigation-sound-toggle="true"
               onClick={onMuteToggle}
               className="p-2 rounded-lg hover:bg-[#d6a33a]/10 transition-colors"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              title={isMuted ? "Unmute" : "Mute"}
+              title={isMuted ? "Enable sound" : "Mute sound"}
+              aria-label={isMuted ? "Enable sound" : "Mute sound"}
+              aria-pressed={!isMuted}
             >
               {isMuted ? (
                 <VolumeX className="w-5 h-5 text-[#d6a33a]" />
@@ -187,12 +190,13 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
               )}
             </motion.button>
 
-            {/* Mobile Menu Button */}
             <motion.button
               onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden p-2 rounded-lg hover:bg-[#d6a33a]/10 transition-colors"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
+              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isOpen}
             >
               {isOpen ? (
                 <X className="w-6 h-6 text-[#d6a33a]" />
@@ -203,7 +207,6 @@ export const PremiumNavigation: React.FC<PremiumNavigationProps> = ({
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         <AnimatePresence>
           {isOpen && (
             <motion.div

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSoundPreferences } from "@/contexts/SoundPreferencesContext";
+import { useSovereignSound } from "@/hooks/useSovereignSound";
 
 interface CeremonialIntroProps {
   onComplete: () => void;
@@ -31,15 +33,19 @@ export function CeremonialIntro({ onComplete }: CeremonialIntroProps) {
   const exitTimerRef = useRef<number | null>(null);
   const [phase, setPhase] = useState<IntroPhase>(0);
   const [visible, setVisible] = useState(true);
+  const { preferences, updatePreferences } = useSoundPreferences();
+  const sound = useSovereignSound();
 
   const finish = useCallback(() => {
     if (completedRef.current) return;
     completedRef.current = true;
+    sound.chime();
     setVisible(false);
     exitTimerRef.current = window.setTimeout(onComplete, 260);
-  }, [onComplete]);
+  }, [onComplete, sound]);
 
   const advance = useCallback(() => {
+    sound.navigate();
     setPhase(current => {
       if (current === 2) {
         finish();
@@ -47,7 +53,7 @@ export function CeremonialIntro({ onComplete }: CeremonialIntroProps) {
       }
       return (current + 1) as IntroPhase;
     });
-  }, [finish]);
+  }, [finish, sound]);
 
   useEffect(() => {
     return () => {
@@ -172,6 +178,7 @@ export function CeremonialIntro({ onComplete }: CeremonialIntroProps) {
           role="dialog"
           aria-modal="true"
           aria-label="TRAI ceremonial introduction"
+          data-ceremonial-sound={preferences.enabled ? "on" : "off"}
           className="fixed inset-0 z-[2147483000] flex items-center justify-center overflow-hidden"
           style={{ background: "#050709" }}
           initial={{ opacity: 1 }}
@@ -184,13 +191,24 @@ export function CeremonialIntro({ onComplete }: CeremonialIntroProps) {
             aria-hidden="true"
           />
 
-          <button
-            type="button"
-            onClick={finish}
-            className="absolute right-4 top-4 z-20 rounded-full border border-white/30 bg-black/55 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:border-[#d8aa43] hover:text-[#f7d778] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7d778] sm:right-8 sm:top-8"
-          >
-            Skip intro
-          </button>
+          <div className="absolute right-4 top-4 z-20 flex items-center gap-2 sm:right-8 sm:top-8">
+            <button
+              type="button"
+              data-intro-sound-toggle="true"
+              onClick={() => updatePreferences({ enabled: !preferences.enabled })}
+              aria-pressed={preferences.enabled}
+              className="rounded-full border border-[#d8aa43]/45 bg-black/55 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#f7d778] transition-colors hover:border-[#f7d778] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7d778]"
+            >
+              {preferences.enabled ? "Sound on" : "Enable sound"}
+            </button>
+            <button
+              type="button"
+              onClick={finish}
+              className="rounded-full border border-white/30 bg-black/55 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:border-[#d8aa43] hover:text-[#f7d778] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7d778]"
+            >
+              Skip intro
+            </button>
+          </div>
 
           <div className="relative z-10 mx-auto flex min-h-full w-full max-w-4xl flex-col items-center justify-end px-5 pb-12 pt-[45vh] text-center sm:pb-16">
             <AnimatePresence mode="wait">
@@ -235,13 +253,13 @@ export function CeremonialIntro({ onComplete }: CeremonialIntroProps) {
               type="button"
               autoFocus
               onClick={advance}
+              onMouseEnter={sound.hover}
               className="mt-7 min-w-48 rounded-full bg-[#d8aa43] px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-[#050709] transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               {phase === 2 ? "Enter TRAI" : "Continue"}
             </button>
             <p className="mt-4 text-[10px] uppercase tracking-[0.16em] text-white/45">
-              User-paced · Enter or Space activates · Right Arrow continues ·
-              Escape skips
+              User-paced · Enter or Space activates · Right Arrow continues · Escape skips
             </p>
           </div>
         </motion.div>

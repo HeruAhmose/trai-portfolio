@@ -6,14 +6,26 @@ import {
   useRef,
   useState,
 } from "react";
-import { motion } from "framer-motion";
-import { Route, Switch } from "wouter";
+import { motion, useReducedMotion } from "framer-motion";
+import { Route, Switch, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CeremonialIntro } from "./components/CeremonialIntro";
 import { PremiumNavigation } from "./components/PremiumNavigation";
+import {
+  SoundPreferencesProvider,
+  useSoundPreferences,
+} from "./contexts/SoundPreferencesContext";
+import { VoicePreferencesProvider } from "./contexts/VoicePreferencesContext";
+import { GestureNavigationProvider } from "./contexts/GestureNavigationContext";
+import { PremiumFooter } from "./components/PremiumFooter";
+import { SovereignAudioEngine } from "./components/SovereignAudioEngine";
+import { SovereignCursor } from "./components/SovereignCursor";
+import { ScrollProgressIndicator } from "./components/ScrollProgressIndicator";
+import { useSovereignSound } from "./hooks/useSovereignSound";
+
 const CaseStudies = lazy(() => import("./pages/CaseStudies"));
 const MaterialsScience = lazy(() => import("./pages/MaterialsScience"));
 const CommunityImpact = lazy(() => import("./pages/CommunityImpact"));
@@ -23,9 +35,7 @@ const SearchablePatentClaims = lazy(
   () => import("./components/SearchablePatentClaims")
 );
 const EnergyHarvesting = lazy(() =>
-  import("./pages/EnergyHarvesting").then(m => ({
-    default: m.EnergyHarvesting,
-  }))
+  import("./pages/EnergyHarvesting").then(m => ({ default: m.EnergyHarvesting }))
 );
 const Manufacturing = lazy(() =>
   import("./pages/Manufacturing").then(m => ({ default: m.Manufacturing }))
@@ -37,11 +47,6 @@ const QuantumResearchEnhanced = lazy(
   () => import("./pages/QuantumResearchEnhanced")
 );
 const NotFound = lazy(() => import("./pages/NotFound"));
-import { useLocation } from "wouter";
-import { SoundPreferencesProvider } from "./contexts/SoundPreferencesContext";
-import { VoicePreferencesProvider } from "./contexts/VoicePreferencesContext";
-import { GestureNavigationProvider } from "./contexts/GestureNavigationContext";
-import { PremiumFooter } from "./components/PremiumFooter";
 const HomeSovereign = lazy(() => import("./pages/HomeSovereign"));
 const TrueMelangePhi = lazy(() => import("./pages/TrueMelangePhi"));
 const QueenCalifiaPage = lazy(() => import("./pages/QueenCalifia"));
@@ -58,8 +63,6 @@ const CommandPalette = lazy(() =>
     default: module.CommandPalette,
   }))
 );
-import { SovereignAudioEngine } from "./components/SovereignAudioEngine";
-import { ScrollProgressIndicator } from "./components/ScrollProgressIndicator";
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -101,17 +104,17 @@ function Router() {
   );
 }
 
-function App() {
+function SovereignRuntime() {
   const hkLauncherRef = useRef<HTMLButtonElement>(null);
   const [hkAssistantOpen, setHkAssistantOpen] = useState(false);
   const [hkAssistantLoaded, setHkAssistantLoaded] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [commandPaletteLoaded, setCommandPaletteLoaded] = useState(false);
   const [location, setLocation] = useLocation();
-  const [audioEnabled, setAudioEnabled] = useState(true);
-  const [introPhase, setIntroPhase] = useState<
-    "sovereign" | "cinematic" | "done"
-  >(() => {
+  const reduceMotion = useReducedMotion();
+  const { preferences, updatePreferences } = useSoundPreferences();
+  const sound = useSovereignSound();
+  const [introPhase, setIntroPhase] = useState<"sovereign" | "done">(() => {
     if (typeof window !== "undefined") {
       const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
       const rootPath = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
@@ -124,26 +127,34 @@ function App() {
     document.documentElement.classList.add("dark");
   }, []);
 
+  const toggleSound = useCallback(() => {
+    updatePreferences({ enabled: !preferences.enabled });
+  }, [preferences.enabled, updatePreferences]);
+
   const closeHkAssistant = useCallback(() => {
     setHkAssistantOpen(false);
     window.requestAnimationFrame(() => hkLauncherRef.current?.focus());
   }, []);
+
   useEffect(() => {
     if (hkAssistantOpen) setHkAssistantLoaded(true);
   }, [hkAssistantOpen]);
+
   useEffect(() => {
     if (commandPaletteOpen) setCommandPaletteLoaded(true);
   }, [commandPaletteOpen]);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+        event.preventDefault();
+        sound.click();
         setCommandPaletteOpen(prev => !prev);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [sound]);
 
   const handleTabChange = (tabId: string) => {
     const routeMap: Record<string, string> = {
@@ -170,6 +181,7 @@ function App() {
       "trai-coin": "/trai-coin",
     };
     const route = routeMap[tabId] || "/";
+    sound.navigate();
     const transition = (window as any).TRAIOrganismV5?.transitionInternal;
     if (typeof transition === "function") {
       void transition(() => setLocation(route), { label: tabId });
@@ -194,86 +206,109 @@ function App() {
     if (location === "/melanina") return "melanina";
     if (location === "/nu-ta-meri") return "nu-ta-meri";
     if (location === "/trai-coin") return "trai-coin";
+    if (location === "/founder") return "founder";
+    if (location === "/peoples-foundation") return "peoples-foundation";
     return "hero";
   };
 
   return (
+    <VoicePreferencesProvider>
+      <GestureNavigationProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <SovereignCursor />
+            {commandPaletteLoaded && (
+              <Suspense fallback={null}>
+                <CommandPalette
+                  isOpen={commandPaletteOpen}
+                  onClose={() => setCommandPaletteOpen(false)}
+                />
+              </Suspense>
+            )}
+            {introPhase === "sovereign" && (
+              <CeremonialIntro onComplete={() => setIntroPhase("done")} />
+            )}
+            <PremiumNavigation
+              activeTab={getCurrentTab()}
+              onTabChange={handleTabChange}
+              isMuted={!preferences.enabled}
+              onMuteToggle={toggleSound}
+              onSearchOpen={() => {
+                sound.click();
+                setCommandPaletteOpen(true);
+              }}
+            />
+            <motion.main
+              key={location}
+              data-sovereign-route-motion="true"
+              data-motion-reduced={reduceMotion ? "true" : "false"}
+              className="pt-16 min-h-screen bg-background"
+              initial={reduceMotion ? false : { opacity: 0.72, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduceMotion ? { duration: 0 } : { duration: 0.42, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <Router />
+            </motion.main>
+            <PremiumFooter />
+            <ScrollProgressIndicator />
+            <SovereignAudioEngine
+              enabled={preferences.enabled}
+              masterVolume={preferences.masterVolume}
+              onToggle={toggleSound}
+            />
+            <motion.button
+              ref={hkLauncherRef}
+              onClick={() => {
+                sound.unlock();
+                setHkAssistantOpen(!hkAssistantOpen);
+              }}
+              onMouseEnter={sound.hover}
+              className="fixed bottom-4 left-4 z-[2147482400] flex h-14 items-center gap-2 rounded-full px-4 shadow-2xl"
+              style={{
+                background: "linear-gradient(135deg, #D4AF37, #B87333)",
+                boxShadow: "0 0 30px rgba(212,175,55,0.5)",
+              }}
+              whileHover={{
+                scale: 1.06,
+                boxShadow: "0 0 50px rgba(212,175,55,0.8)",
+              }}
+              whileTap={{ scale: 0.94 }}
+              title="Open H.K. Assistant"
+              aria-label={
+                hkAssistantOpen
+                  ? "Close H.K. Assistant"
+                  : "Open H.K. Assistant"
+              }
+              aria-expanded={hkAssistantOpen}
+            >
+              <span className="text-base font-black tracking-[0.12em] text-black">
+                H.K.
+              </span>
+              <span className="hidden text-[9px] font-bold uppercase tracking-[0.18em] text-black/70 sm:inline">
+                Assistant
+              </span>
+            </motion.button>
+            {hkAssistantLoaded && (
+              <Suspense fallback={null}>
+                <HKAssistant
+                  isOpen={hkAssistantOpen}
+                  onClose={closeHkAssistant}
+                />
+              </Suspense>
+            )}
+          </TooltipProvider>
+        </ThemeProvider>
+      </GestureNavigationProvider>
+    </VoicePreferencesProvider>
+  );
+}
+
+function App() {
+  return (
     <ErrorBoundary>
       <SoundPreferencesProvider>
-        <VoicePreferencesProvider>
-          <GestureNavigationProvider>
-            <ThemeProvider>
-              <TooltipProvider>
-                <Toaster />
-                {commandPaletteLoaded && (
-                  <Suspense fallback={null}>
-                    <CommandPalette
-                      isOpen={commandPaletteOpen}
-                      onClose={() => setCommandPaletteOpen(false)}
-                    />
-                  </Suspense>
-                )}
-                {introPhase === "sovereign" && (
-                  <CeremonialIntro onComplete={() => setIntroPhase("done")} />
-                )}
-                <>
-                  <PremiumNavigation
-                    activeTab={getCurrentTab()}
-                    onTabChange={handleTabChange}
-                    isMuted={!audioEnabled}
-                    onMuteToggle={() => setAudioEnabled(!audioEnabled)}
-                    onSearchOpen={() => setCommandPaletteOpen(true)}
-                  />
-                  <main className="pt-16 min-h-screen bg-background">
-                    <Router />
-                  </main>
-                  <PremiumFooter />
-                  <ScrollProgressIndicator />
-                  <SovereignAudioEngine
-                    enabled={audioEnabled}
-                    onToggle={() => setAudioEnabled(a => !a)}
-                  />
-                  <motion.button
-                    ref={hkLauncherRef}
-                    onClick={() => setHkAssistantOpen(!hkAssistantOpen)}
-                    className="fixed bottom-4 left-4 z-[2147482400] flex h-14 items-center gap-2 rounded-full px-4 shadow-2xl"
-                    style={{
-                      background: "linear-gradient(135deg, #D4AF37, #B87333)",
-                      boxShadow: "0 0 30px rgba(212,175,55,0.5)",
-                    }}
-                    whileHover={{
-                      scale: 1.06,
-                      boxShadow: "0 0 50px rgba(212,175,55,0.8)",
-                    }}
-                    whileTap={{ scale: 0.94 }}
-                    title="Open H.K. Assistant"
-                    aria-label={
-                      hkAssistantOpen
-                        ? "Close H.K. Assistant"
-                        : "Open H.K. Assistant"
-                    }
-                    aria-expanded={hkAssistantOpen}
-                  >
-                    <span className="text-base font-black tracking-[0.12em] text-black">
-                      H.K.
-                    </span>
-                    <span className="hidden text-[9px] font-bold uppercase tracking-[0.18em] text-black/70 sm:inline">
-                      Assistant
-                    </span>
-                  </motion.button>
-                  {hkAssistantLoaded && (
-                    <Suspense fallback={null}>
-                      <HKAssistant
-                        isOpen={hkAssistantOpen}
-                        onClose={closeHkAssistant}
-                      />
-                    </Suspense>
-                  )}
-                </>
-              </TooltipProvider>
-            </ThemeProvider>
-          </GestureNavigationProvider>
-        </VoicePreferencesProvider>
+        <SovereignRuntime />
       </SoundPreferencesProvider>
     </ErrorBoundary>
   );
