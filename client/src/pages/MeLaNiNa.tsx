@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "wouter";
 import { IdentityTextileVisual } from "@/components/OrganVisuals";
+import { PROVENANCE_LABEL, VIDEO } from "@/lib/media";
 
 const SKIN = "#d98758";
 const GOLD = "#d6b66a";
@@ -243,7 +244,30 @@ export default function MeLaNiNa() {
               interruption
             </div>
           </div>
-          <PyramidMark />
+          <figure
+            data-melanina-collection-archive="true"
+            className="relative overflow-hidden border border-[#d6b66a]/25 bg-black shadow-[0_28px_90px_rgba(0,0,0,.45)]"
+          >
+            <div className="relative aspect-[5/4] overflow-hidden bg-[#080706]">
+              <img
+                src={VIDEO.melanina.poster}
+                alt="MeLaNiNa Collection 001 — Pyramid No Scheme source rendering"
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_52%,rgba(5,5,5,.82)_100%),radial-gradient(circle_at_50%_40%,transparent_0%,rgba(5,5,5,.14)_72%)]" />
+              <div className="pointer-events-none absolute inset-0 opacity-[.22] mix-blend-screen">
+                <PyramidMark />
+              </div>
+            </div>
+            <figcaption className="flex flex-col gap-2 border-t border-white/10 px-5 py-4 text-[9px] uppercase tracking-[.18em] text-white/42 sm:flex-row sm:items-center sm:justify-between">
+              <span>{VIDEO.melanina.caption} · Collection source visual</span>
+              <span className="text-[#d6b66a]/70">
+                {PROVENANCE_LABEL[VIDEO.melanina.provenance]}
+              </span>
+            </figcaption>
+          </figure>
         </div>
         <div className="relative mx-auto mt-20 max-w-[1500px] px-6 lg:px-14">
           <div className="grid border-y border-white/10 md:grid-cols-4">

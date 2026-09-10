@@ -340,6 +340,10 @@ const PROJECTION_RULES = [
     required: [
       "MeLaNiNa remains in development",
       "currently available products",
+      'data-melanina-collection-archive="true"',
+      "VIDEO.melanina.poster",
+      "PROVENANCE_LABEL[VIDEO.melanina.provenance]",
+      "Collection source visual",
     ],
     forbidden: ["products available now", "EIN filed"],
   },
