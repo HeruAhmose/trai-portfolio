@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Align audit with exact live revisions and observed QC transition
+      - name: Align audit with exact live revisions and observed transitions
         shell: bash
         run: |
           set -euo pipefail
@@ -69,6 +69,37 @@ jobs:
           if text.count(old_qc) != 1:
               raise SystemExit(f'expected exactly one QC command timing block, found {text.count(old_qc)}')
           text = text.replace(old_qc, new_qc, 1)
+
+          old_wave = '''  await cdp.eval(`document.querySelector('[data-techbridge-sound]')?.click(); true`);
+            await sleep(160);
+            const waveformBefore = await cdp.eval(`getComputedStyle(document.querySelector('[data-techbridge-sound] > div > div')).height`);
+            await sleep(230);
+            const waveformAfter = await cdp.eval(`getComputedStyle(document.querySelector('[data-techbridge-sound] > div > div')).height`);
+            const enabled = await cdp.eval(`(() => ({ state: document.querySelector('[data-techbridge-sound]')?.dataset.techbridgeSound, probe: window.__fleetAudioProbe }))()`);
+            if (enabled.state !== "on" || enabled.probe?.contexts < 1 || enabled.probe?.oscillators < 1 || waveformBefore === waveformAfter)
+              fail("TechBridge opt-in/waveform contract failed", { waveformBefore, waveformAfter, enabled });'''
+          new_wave = '''  await cdp.eval(`document.querySelector('[data-techbridge-sound]')?.click(); true`);
+            const waveform = await cdp.eval(`(async () => {
+              const button = document.querySelector('[data-techbridge-sound]');
+              const bars = button ? [...button.querySelectorAll(':scope > div > div')] : [];
+              const samples = [];
+              for (let i = 0; i < 10; i++) {
+                samples.push(bars.map(bar => Number.parseFloat(getComputedStyle(bar).height)));
+                await new Promise(resolve => setTimeout(resolve, 90));
+              }
+              const ranges = bars.map((_, index) => {
+                const values = samples.map(sample => sample[index]).filter(Number.isFinite);
+                return values.length ? Math.max(...values) - Math.min(...values) : 0;
+              });
+              return { barCount: bars.length, samples, ranges, maxRange: Math.max(0, ...ranges) };
+            })()`);
+            const enabled = await cdp.eval(`(() => ({ state: document.querySelector('[data-techbridge-sound]')?.dataset.techbridgeSound, probe: window.__fleetAudioProbe }))()`);
+            if (enabled.state !== "on" || enabled.probe?.contexts < 1 || enabled.probe?.oscillators < 1 || waveform.barCount !== 4 || waveform.maxRange < 0.5)
+              fail("TechBridge opt-in/waveform contract failed", { waveform, enabled });'''
+          if text.count(old_wave) != 1:
+              raise SystemExit(f'expected exactly one TechBridge waveform block, found {text.count(old_wave)}')
+          text = text.replace(old_wave, new_wave, 1)
+          text = text.replace('enabled, waveform: { before: waveformBefore, after: waveformAfter }, hk:', 'enabled, waveform, hk:', 1)
           fleet.write_text(text, encoding='utf-8')
 
           peoples = Path('.fleet-peoples-source/scripts/audit-gallery-overflow.mjs')
