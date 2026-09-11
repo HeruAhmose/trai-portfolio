@@ -9,27 +9,86 @@ permissions:
   contents: read
 
 jobs:
-  live-diagnostics:
+  live-experience-wave:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     steps:
-      - name: Checkout isolated audit branch
+      - name: Checkout isolated fleet audit
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+
+      - name: Checkout exact Peoples production source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          repository: HeruAhmose/peoples-portfolio
+          ref: 6f99872e1ef090efc7bf8588dbb52324d3a9512a
+          path: .fleet-peoples-source
 
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: "24"
 
-      - name: Measure Peoples overflow timeline
+      - name: Align audit with exact live revisions and observed QC transition
         shell: bash
         run: |
           set -euo pipefail
-          node --check .github/scripts/diagnose-peoples-overflow-timeline.mjs
+          python3 - <<'PY'
+          from pathlib import Path
+
+          fleet = Path('.github/scripts/audit-live-experience-wave.mjs')
+          text = fleet.read_text(encoding='utf-8')
+
+          old_sha = 'expectedSha: "46b72b7be116e40cb78ee9bd31e511ad309b652c"'
+          new_sha = 'expectedSha: "6f99872e1ef090efc7bf8588dbb52324d3a9512a"'
+          if text.count(old_sha) != 1:
+              raise SystemExit(f'expected exactly one old Peoples SHA marker, found {text.count(old_sha)}')
+          text = text.replace(old_sha, new_sha, 1)
+
+          old_qc = '''  await clickText(cdp, "ENTER COMMAND FIELD");
+            await sleep(450);
+            const command = await cdp.eval(`(() => ({'''
+          new_qc = '''  await clickText(cdp, "ENTER COMMAND FIELD");
+            await waitForEval(
+              cdp,
+              `[...document.images].some(img =>
+                (img.alt || '').includes('Queen Califia') &&
+                img.complete && img.naturalWidth > 0 &&
+                Number.parseFloat(getComputedStyle(img).opacity || '1') > 0.01 &&
+                img.getClientRects().length > 0
+              )`,
+              50,
+              100
+            );
+            await sleep(100);
+            const command = await cdp.eval(`(() => ({'''
+          if text.count(old_qc) != 1:
+              raise SystemExit(f'expected exactly one QC command timing block, found {text.count(old_qc)}')
+          text = text.replace(old_qc, new_qc, 1)
+          fleet.write_text(text, encoding='utf-8')
+
+          peoples = Path('.fleet-peoples-source/scripts/audit-gallery-overflow.mjs')
+          ptext = peoples.read_text(encoding='utf-8')
+          old_cdp = 'const CDP_HTTP = "http://127.0.0.1:9222";'
+          new_cdp = 'const CDP_HTTP = "http://127.0.0.1:9250";'
+          old_base = 'const BASE = "http://127.0.0.1:4173/peoples-portfolio/";'
+          new_base = 'const BASE = "https://heruahmose.github.io/peoples-portfolio/";'
+          if ptext.count(old_cdp) != 1 or ptext.count(old_base) != 1:
+              raise SystemExit('Peoples production audit target markers are not unique')
+          ptext = ptext.replace(old_cdp, new_cdp, 1).replace(old_base, new_base, 1)
+          peoples.write_text(ptext, encoding='utf-8')
+          PY
+          node --check .github/scripts/audit-live-experience-wave.mjs
+          node --check .fleet-peoples-source/scripts/audit-gallery-overflow.mjs
+
+      - name: Run live Chromium fleet and Peoples production certification
+        shell: bash
+        run: |
+          set -euo pipefail
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$chrome"
-          rm -rf /tmp/live-diagnostic-chrome
+          rm -rf /tmp/live-experience-chrome live-experience-evidence
+          mkdir -p live-experience-evidence
           "$chrome" \
             --headless \
             --no-sandbox \
@@ -38,27 +97,29 @@ jobs:
             --no-first-run \
             --disable-background-networking \
             --remote-debugging-address=127.0.0.1 \
-            --remote-debugging-port=9251 \
+            --remote-debugging-port=9250 \
             --remote-allow-origins='*' \
-            --user-data-dir=/tmp/live-diagnostic-chrome \
-            about:blank >/tmp/live-diagnostic-chrome.log 2>&1 &
+            --user-data-dir=/tmp/live-experience-chrome \
+            about:blank >/tmp/live-experience-chrome.log 2>&1 &
           chrome_pid=$!
-          trap 'kill "$chrome_pid" 2>/dev/null || true; cat /tmp/live-diagnostic-chrome.log || true' EXIT
+          trap 'kill "$chrome_pid" 2>/dev/null || true; cat /tmp/live-experience-chrome.log || true' EXIT
 
           for _ in $(seq 1 240); do
-            if curl --fail --silent http://127.0.0.1:9251/json/version >/dev/null; then
+            if curl --fail --silent http://127.0.0.1:9250/json/version >/dev/null; then
               break
             fi
             sleep .25
           done
-          curl --fail --silent http://127.0.0.1:9251/json/version >/dev/null
+          curl --fail --silent http://127.0.0.1:9250/json/version >/dev/null
 
-          node .github/scripts/diagnose-peoples-overflow-timeline.mjs
+          node .github/scripts/audit-live-experience-wave.mjs
+          node .fleet-peoples-source/scripts/audit-gallery-overflow.mjs
+          mv peoples-gallery-overflow-audit.json live-experience-evidence/peoples-production-gallery-overflow.json
 
-      - name: Upload diagnostic evidence
+      - name: Upload final live evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: peoples-overflow-timeline-${{ github.sha }}
-          path: live-diagnostic-evidence/
+          name: final-live-experience-wave-${{ github.sha }}
+          path: live-experience-evidence/
           if-no-files-found: error
