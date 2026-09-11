@@ -51,12 +51,16 @@ jobs:
           new_qc = '''  await clickText(cdp, "ENTER COMMAND FIELD");
             await waitForEval(
               cdp,
-              `[...document.images].some(img =>
-                (img.alt || '').includes('Queen Califia') &&
-                img.complete && img.naturalWidth > 0 &&
-                Number.parseFloat(getComputedStyle(img).opacity || '1') > 0.01 &&
-                img.getClientRects().length > 0
-              )`,
+              `(() => {
+                const frame = document.querySelector('[data-qc-command-frame="prestige-v1"]');
+                if (!frame) return false;
+                return [...frame.querySelectorAll('img')].some(img =>
+                  (img.alt || '').includes('Queen Califia') &&
+                  img.complete && img.naturalWidth > 0 &&
+                  Number.parseFloat(getComputedStyle(img).opacity || '1') > 0.01 &&
+                  img.getClientRects().length > 0
+                );
+              })()`,
               50,
               100
             );
@@ -112,9 +116,19 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:9250/json/version >/dev/null
 
+          set +e
           node .github/scripts/audit-live-experience-wave.mjs
+          fleet_status=$?
           node .fleet-peoples-source/scripts/audit-gallery-overflow.mjs
-          mv peoples-gallery-overflow-audit.json live-experience-evidence/peoples-production-gallery-overflow.json
+          peoples_status=$?
+          set -e
+
+          if [ -f peoples-gallery-overflow-audit.json ]; then
+            mv peoples-gallery-overflow-audit.json live-experience-evidence/peoples-production-gallery-overflow.json
+          fi
+
+          test "$fleet_status" -eq 0
+          test "$peoples_status" -eq 0
 
       - name: Upload final live evidence
         if: always()
