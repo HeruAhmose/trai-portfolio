@@ -59,6 +59,11 @@ export async function makeRequest<T = unknown>(
 ): Promise<T> {
   const { baseUrl, apiKey } = getMapsConfig();
 
+  // Callers may select a Maps operation, never navigate outside the proxy.
+  if (!/^\/(?:maps\/api\/|v1\/)[A-Za-z0-9/_-]+$/.test(endpoint)) {
+    throw new Error("Maps endpoint must be a supported API path");
+  }
+
   // Construct full URL: baseUrl + /v1/maps/proxy + endpoint
   const url = new URL(`${baseUrl}/v1/maps/proxy${endpoint}`);
 
@@ -74,6 +79,7 @@ export async function makeRequest<T = unknown>(
 
   const response = await fetch(url.toString(), {
     method: options.method || "GET",
+    redirect: "error",
     headers: {
       "Content-Type": "application/json",
     },
