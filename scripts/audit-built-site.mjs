@@ -528,6 +528,14 @@ async function auditRootMobileAndHk() {
   const opened = await evaluate(`(() => {
     const launcher = document.querySelector('button[aria-label="Open H.K. Assistant"]');
     if (!launcher || !launcher.getClientRects().length) return false;
+    window.__traiHkFocusOnMount = null;
+    const observer = new MutationObserver(() => {
+      const dialog = document.querySelector('[role="dialog"][aria-label="H.K. portfolio assistant"]');
+      if (!dialog) return;
+      window.__traiHkFocusOnMount = dialog.contains(document.activeElement);
+      observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
     launcher.click();
     return true;
   })()`);
@@ -546,7 +554,8 @@ async function auditRootMobileAndHk() {
         return {
           text: dialog.innerText,
           rect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom },
-          focusInside: dialog.contains(document.activeElement)
+          focusInside: dialog.contains(document.activeElement),
+          focusOnMount: window.__traiHkFocusOnMount
         };
       })())`)
     );
@@ -554,6 +563,21 @@ async function auditRootMobileAndHk() {
       recordFailure(check, "H.K. does not expose its bounded public runtime");
     if (!hk.focusInside)
       recordFailure(check, "Focus did not enter the H.K. modal");
+    if (hk.focusOnMount !== true)
+      recordFailure(check, "H.K. modal mounted before acquiring keyboard focus");
+
+    // Exercise both ends of the modal with real keyboard events. The initial
+    // input is the last enabled control until a message has been entered.
+    await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
+    await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
+    const forwardFocus = await evaluate(`document.activeElement?.getAttribute("aria-label")`);
+    if (forwardFocus !== "Clear H.K. conversation")
+      recordFailure(check, "Tab escaped the H.K. modal instead of wrapping forward");
+    await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers: 8 });
+    await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers: 8 });
+    const backwardFocus = await evaluate(`document.activeElement?.getAttribute("aria-label")`);
+    if (backwardFocus !== "Message H.K.")
+      recordFailure(check, "Shift+Tab escaped the H.K. modal instead of wrapping backward");
     if (
       hk.rect.left < -1 ||
       hk.rect.right > viewports[1].width + 1 ||
