@@ -101,7 +101,12 @@ export default function HKAssistant({ isOpen, onClose }: HKAssistantProps) {
           'button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])'
         )
       ).filter(
-        control => control.tabIndex >= 0 && control.getClientRects().length > 0
+        // Motion can add tabindex="0" even to a disabled button. Every
+        // selector branch must still exclude disabled controls.
+        control =>
+          !control.matches(":disabled") &&
+          control.tabIndex >= 0 &&
+          control.getClientRects().length > 0
       );
       const first = controls[0];
       const last = controls[controls.length - 1];
