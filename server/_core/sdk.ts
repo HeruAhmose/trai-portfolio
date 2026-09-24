@@ -88,6 +88,8 @@ const createOAuthHttpClient = (): AxiosInstance => {
   return axios.create({
     baseURL,
     timeout: AXIOS_TIMEOUT_MS,
+    // OAuth codes, tokens and redirectUri values belong only to this origin.
+    maxRedirects: 0,
   });
 };
 
