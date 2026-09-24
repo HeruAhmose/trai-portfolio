@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, X, Brain, Loader2, RefreshCw } from "lucide-react";
 import { trpc } from "@/lib/trpc";
@@ -47,6 +47,7 @@ export default function HKAssistant({ isOpen, onClose }: HKAssistantProps) {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const queryHK = trpc.hk.query.useMutation();
 
@@ -80,19 +81,51 @@ export default function HKAssistant({ isOpen, onClose }: HKAssistantProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isOpen) return;
 
-    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 40);
+    // Acquire focus in the opening commit, before the modal is painted. A
+    // timer leaves a visible modal with keyboard focus still in the page.
+    inputRef.current?.focus({ preventScroll: true });
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      event.preventDefault();
-      onClose();
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+      const controls = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter(
+        // Motion can add tabindex="0" even to a disabled button. Every
+        // selector branch must still exclude disabled controls.
+        control =>
+          !control.matches(":disabled") &&
+          control.tabIndex >= 0 &&
+          control.getClientRects().length > 0
+      );
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (!first || !last) return;
+      const outside = !dialog.contains(document.activeElement);
+      if (event.shiftKey && (outside || document.activeElement === first)) {
+        event.preventDefault();
+        last.focus();
+      } else if (
+        !event.shiftKey &&
+        (outside || document.activeElement === last)
+      ) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.clearTimeout(focusTimer);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -177,6 +210,7 @@ export default function HKAssistant({ isOpen, onClose }: HKAssistantProps) {
             exit={{ opacity: 0 }}
           />
           <motion.div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label="H.K. portfolio assistant"

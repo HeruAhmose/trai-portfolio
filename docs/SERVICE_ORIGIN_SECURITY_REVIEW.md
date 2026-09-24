@@ -4,7 +4,7 @@ Reviewed against `b510185d480a119876b31be5c8aef2eb0474e508`, with the redirect a
 
 ## Findings and trust boundary
 
-Code scanning alerts 2 and 3 trace `process.env.BUILT_IN_FORGE_API_URL` through the origin validator to the LLM and Maps clients. Alerts 4, 5 and 6 trace `process.env.OAUTH_SERVER_URL` through the same kind of validator to the OAuth code, access-token and JWT requests. All five source paths were inspected in the scanning UI and source code.
+Code scanning alerts 2 and 3 trace `process.env.BUILT_IN_FORGE_API_URL` through the origin validator to the LLM and Maps clients. After the redirect repair, these same flows are represented by replacement fingerprints 14 and 13 at `98483e5109d47e2c4770ea8dda038738feb1c2fe`; their source traces were rechecked. Alerts 4, 5 and 6 trace `process.env.OAUTH_SERVER_URL` through the same kind of validator to the OAuth code, access-token and JWT requests. All five source paths were inspected in the scanning UI and source code.
 
 These environment values are deployment configuration supplied by the operator. HTTP callers cannot set them. Incoming prompts, addresses, OAuth codes, state and tokens are request payloads or encoded query values; they never select the service origin. The OAuth paths and LLM completion path are constants. HTTPS, origin-only syntax and absence of embedded credentials remain required. Arbitrary operator-selected HTTPS services remain supported; naming a function “trusted” is not itself a security control.
 
